@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rede em Jogo — Networking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg: #0B1120;
+    --bg-grid: #101a30;
+    --surface: #131c30;
+    --surface-2: #1a2540;
+    --line: #253355;
+    --text: #E7ECF5;
+    --muted: #8493B0;
+    --accent: #38BDF8;
+    --accent-dim: #1f5a78;
+    --bad: #FB5B44;
+    --bad-dim: #5c2a22;
+    --good: #4ADE80;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 1px) 0 0/28px 28px,
+      var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding:32px 20px 60px;
+  }
+  .wrap{
+    max-width:980px;
+    margin:0 auto;
+  }
+  header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:28px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:18px;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:28px;
+    letter-spacing:-0.02em;
+    margin:0;
+  }
+  h1 span{color:var(--accent);}
+  .subtitle{
+    color:var(--muted);
+    font-size:14px;
+    max-width:520px;
+    line-height:1.5;
+  }
+  .layout{
+    display:grid;
+    grid-template-columns: 1fr 260px;
+    gap:24px;
+  }
+  @media (max-width: 760px){
+    .layout{grid-template-columns:1fr;}
+  }
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:24px;
+  }
+  .status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .status-row b{color:var(--text);}
+
+  /* Network diagram */
+  .network{
+    display:flex;
+    justify-content:center;
+    margin-bottom:8px;
+  }
+  .network svg{width:280px;height:200px;}
+  .edge{
+    stroke:var(--accent);
+    stroke-width:2.5;
+    transition: stroke 0.35s ease, opacity 0.35s ease;
+  }
+  .edge.broken{
+    stroke:var(--bad);
+    opacity:0.18;
+    stroke-dasharray: 4 4;
+  }
+  .node-contact{
+    fill:var(--surface-2);
+    stroke:var(--accent);
+    stroke-width:2;
+    transition: all 0.35s ease;
+  }
+  .node-contact.broken{
+    stroke:var(--bad-dim);
+    fill:var(--surface);
+    opacity:0.5;
+  }
+  .node-you{
+    fill:var(--accent);
+  }
+  .node-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    fill:var(--muted);
+    text-anchor:middle;
+  }
+  .network-msg{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--muted);
+    min-height:16px;
+    margin-bottom:20px;
+  }
+  .network-msg.win{color:var(--good);}
+  .network-msg.lose{color:var(--bad);}
+
+  /* Word display */
+  .word{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:24px 0 28px;
+  }
+  .letter-slot{
+    min-width:26px;
+    height:38px;
+    border-bottom:3px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:26px;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  .letter-slot.filled{border-bottom-color:var(--accent);}
+  .letter-slot.space{border-bottom:none;width:20px;min-width:20px;}
+
+  /* Keyboard */
+  .keyboard{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:6px;
+    max-width:560px;
+    margin:0 auto;
+  }
+  .key{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:500;
+    font-size:14px;
+    width:34px;
+    height:34px;
+    border-radius:8px;
+    cursor:pointer;
+    transition: all 0.15s ease;
+  }
+  .key:hover:not(:disabled){border-color:var(--accent); color:var(--accent);}
+  .key:disabled{opacity:0.3; cursor:default;}
+  .key.correct{background:var(--accent-dim); border-color:var(--accent); color:var(--accent);}
+  .key.wrong{background:var(--bad-dim); border-color:var(--bad); color:var(--bad); opacity:0.7;}
+
+  /* Reveal / tip */
+  .reveal{
+    display:none;
+    margin-top:22px;
+    padding:18px 20px;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:10px;
+  }
+  .reveal.show{display:block;}
+  .reveal .term{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--accent);
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+  .reveal p{margin:0; font-size:14px; line-height:1.55; color:var(--text);}
+  .next-btn{
+    display:block;
+    margin:20px auto 0;
+    background:var(--accent);
+    color:#04202e;
+    border:none;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:11px 26px;
+    border-radius:8px;
+    cursor:pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .next-btn:hover{transform:translateY(-1px); opacity:0.92;}
+
+  /* Sidebar */
+  .sidebar h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--muted);
+    margin:0 0 16px;
+  }
+  .dots{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap:8px;
+    margin-bottom:24px;
+  }
+  .dot{
+    aspect-ratio:1;
+    border-radius:50%;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    transition: all 0.3s ease;
+  }
+  .dot.done{background:var(--accent); border-color:var(--accent);}
+  .dot.done.missed{background:var(--bad-dim); border-color:var(--bad);}
+  .score{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.8;
+  }
+  .score b{color:var(--text); font-size:20px; font-family:'Space Grotesk',sans-serif;}
+
+  /* Final screen */
+  .final{display:none;}
+  .final.show{display:block;}
+  .final h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:22px;
+    margin:0 0 6px;
+  }
+  .final .big-score{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:48px;
+    font-weight:700;
+    color:var(--accent);
+    margin:8px 0 4px;
+  }
+  .final-list{
+    margin-top:26px;
+    display:grid;
+    gap:10px;
+  }
+  .final-item{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 16px;
+  }
+  .final-item .t{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px; color:var(--accent); text-transform:uppercase; letter-spacing:0.03em;}
+  .final-item p{margin:4px 0 0; font-size:13px; color:var(--muted); line-height:1.5;}
+  .reflect{
+    margin-top:26px;
+  }
+  .reflect label{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  .reflect textarea{
+    width:100%;
+    min-height:80px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:14px;
+    padding:12px;
+    resize:vertical;
+  }
+  .restart-btn{
+    margin-top:20px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .restart-btn:hover{border-color:var(--accent); color:var(--accent);}
+
+  /* Start panel (identificação do estudante) */
+  .start-panel{
+    max-width:520px;
+    margin:0 auto;
+  }
+  .start-panel h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:18px;
+    margin:0 0 6px;
+  }
+  .start-panel .subtitle{max-width:100%; margin-bottom:22px;}
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--muted);
+    margin-bottom:6px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .field input{
+    width:100%;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:15px;
+    padding:12px 14px;
+  }
+  .field input:focus{outline:none; border-color:var(--accent);}
+  .field.readonly input{color:var(--muted); cursor:default;}
+  .field-error{
+    font-size:12px;
+    color:var(--bad);
+    margin-top:10px;
+    min-height:16px;
+  }
+  .start-btn{
+    display:block;
+    width:100%;
+    margin-top:6px;
+    background:var(--accent);
+    color:#04202e;
+    border:none;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    padding:13px 26px;
+    border-radius:8px;
+    cursor:pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .start-btn:hover{transform:translateY(-1px); opacity:0.92;}
+
+  /* Identificação do estudante (aparece no jogo e no print final) */
+  .student-bar{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:6px 16px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--muted);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 14px;
+    margin-bottom:18px;
+  }
+  .student-bar b{color:var(--text);}
+
+  .print-btn{
+    display:block;
+    margin:18px auto 0;
+    background:transparent;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:11px 26px;
+    border-radius:8px;
+    cursor:pointer;
+    transition: all 0.15s ease;
+  }
+  .print-btn:hover{background:var(--accent); color:#04202e;}
+  .print-btn:disabled{opacity:0.5; cursor:default;}
+  .print-hint{
+    text-align:center;
+    font-size:12px;
+    color:var(--muted);
+    margin-top:8px;
+  }
+
+  /* Intro / contextualização */
+  .intro-panel{
+    max-width:620px;
+    margin:0 auto;
+  }
+  .intro-panel h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:19px;
+    margin:0 0 12px;
+  }
+  .intro-text p{
+    color:var(--text);
+    font-size:14.5px;
+    line-height:1.65;
+    margin:0 0 12px;
+  }
+  .intro-text strong{color:var(--accent);}
+  .intro-divider{
+    border:none;
+    border-top:1px solid var(--line);
+    margin:22px 0;
+  }
+  .quiz-question{margin-bottom:22px;}
+  .quiz-question .q-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--accent);
+    margin-bottom:8px;
+  }
+  .quiz-question .q-text{
+    font-size:15px;
+    font-weight:600;
+    margin-bottom:12px;
+    line-height:1.4;
+  }
+  .quiz-options{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .quiz-option{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:11px 14px;
+    cursor:pointer;
+    font-size:14px;
+    line-height:1.4;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .quiz-option:hover{border-color:var(--accent);}
+  .quiz-option input{margin-top:3px; accent-color:var(--accent); flex-shrink:0;}
+  .quiz-option.correct{border-color:var(--good); background:rgba(74,222,128,0.08);}
+  .quiz-option.incorrect{border-color:var(--bad); background:rgba(251,91,68,0.08);}
+  .quiz-feedback{
+    font-size:13px;
+    margin-top:8px;
+    padding:10px 12px;
+    border-radius:8px;
+    background:var(--surface-2);
+    border-left:3px solid var(--accent);
+    display:none;
+    line-height:1.5;
+  }
+  .quiz-feedback.show{display:block;}
+  .intro-error{
+    font-size:12px;
+    color:var(--bad);
+    margin:4px 0 14px;
+    min-height:16px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Rede em <span>Jogo</span></h1>
+      <div class="subtitle">Cada palavra é um conceito de networking. Erre e você perde contatos da sua rede — acerte e desbloqueia a explicação do termo.</div>
+    </div>
+  </header>
+
+  <div class="panel intro-panel" id="intro-panel">
+    <h2>Networking: por que essa palavra importa pra sua carreira?</h2>
+    <div class="intro-text">
+      <p>Boa parte das oportunidades profissionais — vagas, parcerias, indicações, convites — não chega até você por acaso. Ela circula primeiro dentro de <strong>redes de relacionamento</strong>, antes mesmo de virar um anúncio público. É por isso que <strong>networking</strong> deixou de ser "trocar cartão em evento" e virou uma competência que se constrói todo dia, com pequenas atitudes: ouvir com atenção, manter contato, ajudar antes de pedir algo em troca, e cuidar da própria reputação.</p>
+      <p>Antes de entrar no desafio de hoje, responda às duas perguntas abaixo para contextualizar o tema.</p>
+    </div>
+
+    <hr class="intro-divider">
+
+    <div class="quiz-question" data-question="1" data-correct="b">
+      <div class="q-label">Pergunta 1 de 2</div>
+      <div class="q-text">Qual das alternativas melhor define o que é <em>networking</em> no sentido profissional?</div>
+      <div class="quiz-options">
+        <label class="quiz-option"><input type="radio" name="q1" value="a"> Trocar contatos apenas quando você precisa urgentemente de algo de alguém</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="b"> Construir e cultivar relações profissionais de forma intencional e recíproca ao longo do tempo</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="c"> Ter o maior número possível de conexões e seguidores no LinkedIn</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="d"> Participar de eventos corporativos apenas para distribuir currículo</label>
+      </div>
+      <div class="quiz-feedback" id="feedback-1"></div>
+    </div>
+
+    <div class="quiz-question" data-question="2" data-correct="b">
+      <div class="q-label">Pergunta 2 de 2</div>
+      <div class="q-text">Qual é um benefício real de manter uma boa rede de contatos ao longo da carreira?</div>
+      <div class="quiz-options">
+        <label class="quiz-option"><input type="radio" name="q2" value="a"> Ela garante promoções automáticas, mesmo sem entrega de resultado</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="b"> Ela amplia o acesso a oportunidades e informações que nem sempre são divulgadas publicamente</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="c"> Ela substitui a necessidade de qualificação técnica</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="d"> Ela elimina a necessidade de se comunicar bem no ambiente de trabalho</label>
+      </div>
+      <div class="quiz-feedback" id="feedback-2"></div>
+    </div>
+
+    <div class="intro-error" id="intro-error"></div>
+    <button class="start-btn" id="intro-check-btn">Responder e continuar →</button>
+  </div>
+
+  <div class="panel start-panel" id="start-panel" style="display:none;">
+    <h2>Antes de começar</h2>
+    <div class="subtitle">Preencha seus dados. Eles vão aparecer no resultado final, que você vai baixar como imagem para anexar no Classroom.</div>
+    <div class="field">
+      <label for="student-name">Nome completo</label>
+      <input type="text" id="student-name" placeholder="Seu nome completo" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="student-turma">Turma</label>
+      <input type="text" id="student-turma" placeholder="Ex.: 3ºA" autocomplete="off">
+    </div>
+    <div class="field readonly">
+      <label>Data</label>
+      <input type="text" id="student-date" disabled>
+    </div>
+    <div class="field-error" id="start-error"></div>
+    <button class="start-btn" id="start-btn">Começar desafio →</button>
+  </div>
+
+  <div class="layout" style="display:none;">
+    <div class="panel" id="game-panel">
+      <div class="status-row">
+        <span>Palavra <b id="word-index">1</b> de <b id="word-total">20</b></span>
+        <span>Tentativas restantes: <b id="tries-left">6</b></span>
+      </div>
+      <div class="student-bar" id="student-bar-game">
+        <span>Nome: <b id="bar-name-game"></b></span>
+        <span>Turma: <b id="bar-turma-game"></b></span>
+        <span>Data: <b id="bar-date-game"></b></span>
+      </div>
+
+      <div class="network">
+        <svg viewBox="0 0 280 200" id="network-svg"></svg>
+      </div>
+      <div class="network-msg" id="network-msg">&nbsp;</div>
+
+      <div class="word" id="word-display"></div>
+
+      <div class="keyboard" id="keyboard"></div>
+
+      <div class="reveal" id="reveal">
+        <div class="term" id="reveal-term"></div>
+        <p id="reveal-tip"></p>
+        <button class="next-btn" id="next-btn">Próxima palavra →</button>
+      </div>
+    </div>
+
+    <div class="panel sidebar">
+      <h2>Sua rede de estudo</h2>
+      <div class="dots" id="dots"></div>
+      <div class="score">
+        Conexões firmadas<br><b id="score-good">0</b>/<span id="score-total">20</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel final" id="final-panel">
+    <div id="print-area">
+      <div class="student-bar" id="student-bar-final">
+        <span>Nome: <b id="bar-name-final"></b></span>
+        <span>Turma: <b id="bar-turma-final"></b></span>
+        <span>Data: <b id="bar-date-final"></b></span>
+      </div>
+      <h2>Sua rede está completa</h2>
+      <div class="big-score" id="final-score">0/20</div>
+      <div class="subtitle" id="final-msg" style="max-width:100%;"></div>
+
+      <div class="reflect">
+        <label for="reflect-text">Reflexão rápida: qual desses conceitos você mais precisa fortalecer na sua própria rede de contatos hoje? Escreva uma linha para você mesmo.</label>
+        <textarea id="reflect-text" placeholder="Escreva aqui..."></textarea>
+      </div>
+
+      <div class="final-list" id="final-list"></div>
+    </div>
+
+    <button class="print-btn" id="print-btn">📸 Baixar print do resultado</button>
+    <div class="print-hint">Gera uma imagem com seu nome, turma, data e resultado para anexar no Classroom.</div>
+
+    <button class="restart-btn" id="restart-btn">Jogar novamente com nova ordem</button>
+  </div>
+</div>
+
+<script>
+const WORDS = [
+  {w:"NETWORKING", tip:"Construir e cultivar relacionamentos profissionais de forma intencional e recíproca, e não só quando se precisa de algo."},
+  {w:"CONTATO", tip:"Toda pessoa da sua agenda é um contato — mas nem todo contato vira uma conexão de valor real."},
+  {w:"CONEXÃO", tip:"Vínculo mais forte que o simples contato, baseado em interação genuína e alguma confiança mútua."},
+  {w:"PARCERIA", tip:"Colaboração entre partes que trocam valor mutuamente para alcançar um objetivo em comum."},
+  {w:"MENTORIA", tip:"Relação em que alguém mais experiente orienta o desenvolvimento profissional de outra pessoa."},
+  {w:"INDICAÇÃO", tip:"Quando alguém da sua rede recomenda você para uma vaga, cliente ou oportunidade."},
+  {w:"FEEDBACK", tip:"Retorno sincero sobre um desempenho ou comportamento, essencial para crescer profissionalmente."},
+  {w:"CONFIANÇA", tip:"Base de qualquer boa rede de contatos: sem ela, nenhuma conexão profissional se sustenta."},
+  {w:"REPUTAÇÃO", tip:"O que as pessoas dizem sobre você quando você não está na sala."},
+  {w:"OPORTUNIDADE", tip:"Muitas oportunidades surgem não do que você sabe, mas de quem sabe que você existe."},
+  {w:"COMUNICAÇÃO", tip:"Habilidade central do networking: saber ouvir tanto quanto se expressar com clareza."},
+  {w:"RELACIONAMENTO", tip:"Vínculo construído ao longo do tempo, com trocas e interesse genuíno pelo outro."},
+  {w:"INFLUÊNCIA", tip:"Capacidade de gerar impacto positivo nas decisões e percepções de outras pessoas."},
+  {w:"VISIBILIDADE", tip:"Ser conhecido e lembrado dentro da sua área de atuação."},
+  {w:"CREDIBILIDADE", tip:"Se conquista com consistência entre o que se diz e o que de fato se faz."},
+  {w:"PROATIVIDADE", tip:"Tomar a iniciativa de criar e manter conexões, sem esperar que aconteça sozinho."},
+  {w:"COLABORAÇÃO", tip:"Trabalhar junto com outras pessoas, somando esforços para um resultado maior que a soma das partes."},
+  {w:"EMPATIA", tip:"Colocar-se no lugar do outro — essencial para construir conexões genuínas e duradouras."},
+  {w:"LINKEDIN", tip:"Rede social profissional usada para networking, busca de vagas e construção de marca pessoal."},
+  {w:"EVENTO", tip:"Ocasião presencial ou online — feiras, palestras, meetups — ideal para expandir contatos."}
+];
+
+const MAX_TRIES = 6;
+const GAME_WORD_MIN = 10; // quantidade mínima de palavras sorteadas por partida
+const GAME_WORD_MAX = 14; // quantidade máxima de palavras sorteadas por partida
+let order = [];
+let current = 0;
+let guessed = new Set();
+let mistakes = 0;
+let roundOver = false;
+let results = []; // {win: bool}
+let studentName = '';
+let studentTurma = '';
+let studentDateStr = '';
+
+function formatDatePtBR(d){
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+const QUIZ_EXPLANATIONS = {
+  '1': 'Networking é sobre construir relações profissionais genuínas e recíprocas ao longo do tempo — não sobre pedir favores só quando dá aperto.',
+  '2': 'Uma boa rede amplia o acesso a informações e oportunidades que muitas vezes nunca chegam a ser anunciadas publicamente.'
+};
+
+function setupIntroPanel(){
+  const checkBtn = document.getElementById('intro-check-btn');
+  let answered = false;
+
+  checkBtn.addEventListener('click', () => {
+    const err = document.getElementById('intro-error');
+    const questions = document.querySelectorAll('.quiz-question');
+    let allAnswered = true;
+
+    questions.forEach(q => {
+      const qn = q.getAttribute('data-question');
+      const correct = q.getAttribute('data-correct');
+      const selected = q.querySelector(`input[name="q${qn}"]:checked`);
+      if(!selected){ allAnswered = false; return; }
+
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        const input = opt.querySelector('input');
+        opt.classList.remove('correct','incorrect');
+        if(input.value === correct){
+          opt.classList.add('correct');
+        } else if(input === selected){
+          opt.classList.add('incorrect');
+        }
+      });
+
+      const fb = document.getElementById(`feedback-${qn}`);
+      fb.textContent = QUIZ_EXPLANATIONS[qn];
+      fb.classList.add('show');
+    });
+
+    if(!allAnswered){
+      err.textContent = 'Selecione uma alternativa em cada pergunta para continuar.';
+      return;
+    }
+    err.textContent = '';
+
+    if(!answered){
+      answered = true;
+      checkBtn.textContent = 'Ir para o cadastro →';
+      return;
+    }
+
+    document.getElementById('intro-panel').style.display = 'none';
+    document.getElementById('start-panel').style.display = '';
+  });
+}
+
+function setupStartPanel(){
+  studentDateStr = formatDatePtBR(new Date());
+  document.getElementById('student-date').value = studentDateStr;
+
+  document.getElementById('start-btn').addEventListener('click', () => {
+    const nameInput = document.getElementById('student-name');
+    const turmaInput = document.getElementById('student-turma');
+    const name = nameInput.value.trim();
+    const turma = turmaInput.value.trim();
+    const err = document.getElementById('start-error');
+
+    if(!name || !turma){
+      err.textContent = 'Preencha nome e turma para começar.';
+      return;
+    }
+    err.textContent = '';
+    studentName = name;
+    studentTurma = turma;
+
+    document.getElementById('bar-name-game').textContent = studentName;
+    document.getElementById('bar-turma-game').textContent = studentTurma;
+    document.getElementById('bar-date-game').textContent = studentDateStr;
+    document.getElementById('bar-name-final').textContent = studentName;
+    document.getElementById('bar-turma-final').textContent = studentTurma;
+    document.getElementById('bar-date-final').textContent = studentDateStr;
+
+    document.getElementById('start-panel').style.display = 'none';
+    document.querySelector('.layout').style.display = '';
+    init();
+  });
+}
+
+function normalizeKey(ch){
+  const map = {'Á':'A','Â':'A','Ã':'A','À':'A','É':'E','Ê':'E','Í':'I','Ó':'O','Ô':'O','Õ':'O','Ú':'U'};
+  return map[ch] || ch;
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function init(){
+  const count = Math.floor(Math.random() * (GAME_WORD_MAX - GAME_WORD_MIN + 1)) + GAME_WORD_MIN;
+  order = shuffle([...Array(WORDS.length).keys()]).slice(0, count);
+  current = 0;
+  results = [];
+  document.getElementById('word-total').textContent = order.length;
+  document.getElementById('score-total').textContent = order.length;
+  document.getElementById('final-panel').classList.remove('show');
+  document.getElementById('game-panel').style.display = '';
+  document.querySelector('.layout').style.display = '';
+  buildDots();
+  startRound();
+}
+
+function buildDots(){
+  const dots = document.getElementById('dots');
+  dots.innerHTML = '';
+  for(let i=0;i<order.length;i++){
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = 'dot-'+i;
+    dots.appendChild(d);
+  }
+}
+
+function startRound(){
+  guessed = new Set();
+  mistakes = 0;
+  roundOver = false;
+  document.getElementById('word-index').textContent = current+1;
+  document.getElementById('tries-left').textContent = MAX_TRIES;
+  document.getElementById('reveal').classList.remove('show');
+  document.getElementById('network-msg').textContent = '\u00A0';
+  document.getElementById('network-msg').className = 'network-msg';
+  drawNetwork();
+  renderWord();
+  buildKeyboard();
+}
+
+function currentWord(){
+  return WORDS[order[current]];
+}
+
+function renderWord(){
+  const wd = document.getElementById('word-display');
+  wd.innerHTML = '';
+  const word = currentWord().w;
+  for(const ch of word){
+    if(ch === ' '){
+      const s = document.createElement('div');
+      s.className = 'letter-slot space';
+      wd.appendChild(s);
+      continue;
+    }
+    const key = normalizeKey(ch);
+    const slot = document.createElement('div');
+    slot.className = 'letter-slot' + (guessed.has(key) ? ' filled' : '');
+    slot.textContent = guessed.has(key) ? ch : '';
+    wd.appendChild(slot);
+  }
+}
+
+function buildKeyboard(){
+  const kb = document.getElementById('keyboard');
+  kb.innerHTML = '';
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÇ".split('');
+  letters.forEach(l => {
+    const btn = document.createElement('button');
+    btn.className = 'key';
+    btn.textContent = l;
+    btn.addEventListener('click', () => handleGuess(l));
+    kb.appendChild(btn);
+  });
+}
+
+function handleGuess(letter){
+  if(roundOver || guessed.has(letter)) return;
+  guessed.add(letter);
+  const word = currentWord().w;
+  const wordKeys = [...word].map(normalizeKey);
+  const hit = wordKeys.includes(letter);
+
+  const buttons = [...document.querySelectorAll('#keyboard .key')];
+  const btn = buttons.find(b => b.textContent === letter);
+  if(btn){
+    btn.disabled = true;
+    btn.classList.add(hit ? 'correct' : 'wrong');
+  }
+
+  if(!hit){
+    mistakes++;
+    document.getElementById('tries-left').textContent = Math.max(0, MAX_TRIES - mistakes);
+    breakEdge(mistakes);
+  }
+
+  renderWord();
+  checkRoundEnd(wordKeys);
+}
+
+function checkRoundEnd(wordKeys){
+  const win = wordKeys.every(k => guessed.has(k));
+  const lose = mistakes >= MAX_TRIES;
+  if(win){
+    endRound(true);
+  } else if(lose){
+    endRound(false);
+    revealRemaining();
+  }
+}
+
+function revealRemaining(){
+  // reveal all letters visually on loss
+  const word = currentWord().w;
+  [...word].forEach(ch => { if(ch !== ' ') guessed.add(normalizeKey(ch)); });
+  renderWord();
+}
+
+function endRound(win){
+  roundOver = true;
+  results.push(win);
+  document.querySelectorAll('#keyboard .key').forEach(b => b.disabled = true);
+
+  const msg = document.getElementById('network-msg');
+  if(win){
+    msg.textContent = 'Conexão firmada!';
+    msg.className = 'network-msg win';
+  } else {
+    msg.textContent = 'Você perdeu contato com a rede.';
+    msg.className = 'network-msg lose';
+  }
+
+  const dot = document.getElementById('dot-'+current);
+  dot.classList.add('done');
+  if(!win) dot.classList.add('missed');
+
+  document.getElementById('score-good').textContent = results.filter(r=>r).length;
+
+  const reveal = document.getElementById('reveal');
+  document.getElementById('reveal-term').textContent = currentWord().w;
+  document.getElementById('reveal-tip').textContent = currentWord().tip;
+  reveal.classList.add('show');
+
+  document.getElementById('next-btn').textContent = (current === order.length - 1) ? 'Ver resultado final →' : 'Próxima palavra →';
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  if(current === order.length - 1){
+    showFinal();
+  } else {
+    current++;
+    startRound();
+  }
+});
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  document.getElementById('print-btn').disabled = false;
+  document.getElementById('print-btn').textContent = '📸 Baixar print do resultado';
+  init();
+});
+
+document.getElementById('print-btn').addEventListener('click', () => {
+  const btn = document.getElementById('print-btn');
+  const target = document.getElementById('print-area');
+  btn.disabled = true;
+  btn.textContent = 'Gerando imagem...';
+
+  html2canvas(target, {
+    backgroundColor: '#131c30',
+    scale: 2,
+    useCORS: true
+  }).then(canvas => {
+    const link = document.createElement('a');
+    const safeName = (studentName || 'estudante').trim().replace(/\s+/g,'-').toLowerCase();
+    const safeDate = studentDateStr.replace(/\//g,'-');
+    link.download = `resultado-jogo-forca-${safeName}-${safeDate}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.disabled = false;
+    btn.textContent = '📸 Baixar print do resultado';
+  }).catch(err => {
+    console.error('Erro ao gerar print:', err);
+    btn.disabled = false;
+    btn.textContent = '📸 Baixar print do resultado';
+    alert('Não foi possível gerar a imagem automaticamente. Faça uma captura de tela manual (Print Screen) desta tela como alternativa.');
+  });
+});
+
+function showFinal(){
+  document.querySelector('.layout').style.display = 'none';
+  const finalPanel = document.getElementById('final-panel');
+  finalPanel.classList.add('show');
+
+  const wins = results.filter(r=>r).length;
+  document.getElementById('final-score').textContent = wins + '/' + order.length;
+
+  let msg;
+  if(wins === order.length) msg = "Rede impecável — todas as conexões firmadas. Você domina o vocabulário do networking.";
+  else if(wins >= order.length*0.7) msg = "Rede sólida. Vale revisar os termos que escaparam antes da próxima rodada.";
+  else if(wins >= order.length*0.4) msg = "Rede em construção. Releia os conceitos abaixo — eles aparecem bastante na prática do networking.";
+  else msg = "Rede ainda fraca — e tudo bem, é assim que se aprende. Revise os termos abaixo com calma.";
+  document.getElementById('final-msg').textContent = msg;
+
+  const list = document.getElementById('final-list');
+  list.innerHTML = '';
+  order.forEach((idx, i) => {
+    const item = WORDS[idx];
+    const div = document.createElement('div');
+    div.className = 'final-item';
+    div.innerHTML = `<div class="t">${results[i] ? '✓ ' : '· '}${item.w}</div><p>${item.tip}</p>`;
+    list.appendChild(div);
+  });
+}
+
+// ---- Network diagram (signature element) ----
+const NODE_POS = [
+  [140, 30], [220, 65], [240, 140], [180, 185], [100, 185], [40, 140], [60, 65]
+];
+// index 0 = center "you", others = contacts (6 edges)
+function drawNetwork(){
+  const svg = document.getElementById('network-svg');
+  svg.innerHTML = '';
+  const center = [140, 105];
+  const contacts = [[220,55],[250,120],[195,175],[85,175],[30,120],[60,55]];
+
+  contacts.forEach((pos, i) => {
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', center[0]); line.setAttribute('y1', center[1]);
+    line.setAttribute('x2', pos[0]); line.setAttribute('y2', pos[1]);
+    line.setAttribute('class', 'edge');
+    line.setAttribute('id', 'edge-'+i);
+    svg.appendChild(line);
+  });
+
+  contacts.forEach((pos, i) => {
+    const circ = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circ.setAttribute('cx', pos[0]); circ.setAttribute('cy', pos[1]);
+    circ.setAttribute('r', 10);
+    circ.setAttribute('class', 'node-contact');
+    circ.setAttribute('id', 'node-'+i);
+    svg.appendChild(circ);
+  });
+
+  const you = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  you.setAttribute('cx', center[0]); you.setAttribute('cy', center[1]);
+  you.setAttribute('r', 14);
+  you.setAttribute('class', 'node-you');
+  svg.appendChild(you);
+
+  const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+  label.setAttribute('x', center[0]); label.setAttribute('y', center[1]+4);
+  label.setAttribute('class', 'node-label');
+  label.setAttribute('fill', '#04202e');
+  label.setAttribute('font-weight', '600');
+  label.textContent = 'VOCÊ';
+  svg.appendChild(label);
+}
+
+function breakEdge(n){
+  const i = n - 1;
+  const edge = document.getElementById('edge-'+i);
+  const node = document.getElementById('node-'+i);
+  if(edge) edge.classList.add('broken');
+  if(node) node.classList.add('broken');
+}
+
+setupIntroPanel();
+setupStartPanel();
+</script>
+</body>
+</html>
