@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operação Fato Real — Trilha da Checagem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Oswald:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --paper:#E7ECE8;
+  --card:#FCFDFB;
+  --ink:#17202B;
+  --muted:#5C6670;
+  --line:#D3DAD4;
+  --green:#0F6E52;
+  --mint:#38B08A;
+  --red:#C6362B;
+  --gold:#DF9E2B;
+  --shadow:0 2px 0 rgba(23,32,43,.08), 0 14px 34px -18px rgba(23,32,43,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Figtree",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  line-height:1.55;
+  background-image:radial-gradient(circle at 1px 1px, rgba(23,32,43,.05) 1px, transparent 0);
+  background-size:22px 22px;
+}
+.wrap{max-width:820px;margin:0 auto;padding:22px 18px 90px}
+
+/* ---------- header ---------- */
+header.hud{
+  position:sticky;top:0;z-index:40;margin:-22px -18px 22px;padding:14px 18px 12px;
+  background:rgba(231,236,232,.92);backdrop-filter:blur(8px);
+  border-bottom:1.5px solid var(--line);
+}
+.brandrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{
+  font-family:"Oswald",sans-serif;font-weight:700;letter-spacing:.06em;
+  border:2px solid var(--ink);border-radius:7px;padding:4px 9px;transform:rotate(-2deg);
+  background:var(--card);text-transform:uppercase;font-size:.82rem;box-shadow:2px 2px 0 var(--ink)
+}
+.brandrow h1{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.18rem;margin:0;letter-spacing:-.01em}
+.hud-meta{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.xp{font-family:"Space Mono",monospace;font-weight:700;font-size:.92rem;background:var(--ink);color:#fff;padding:5px 11px;border-radius:20px;display:inline-flex;gap:6px;align-items:center}
+.xp b{color:var(--gold)}
+
+/* disinfo meter */
+.meter{margin-top:11px}
+.meter-label{display:flex;justify-content:space-between;font-family:"Oswald",sans-serif;text-transform:uppercase;font-size:.68rem;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.meter-track{height:9px;background:#d7ded8;border-radius:20px;overflow:hidden;border:1px solid var(--line)}
+.meter-fill{height:100%;width:100%;border-radius:20px;background:linear-gradient(90deg,var(--gold),var(--red));transition:width .7s cubic-bezier(.2,.8,.2,1)}
+
+/* trail */
+.trail{display:flex;align-items:center;gap:0;margin:14px 0 2px;overflow-x:auto;padding-bottom:4px}
+.station{display:flex;align-items:center;flex:0 0 auto}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:var(--card);
+  display:grid;place-items:center;font-family:"Space Mono",monospace;font-size:.72rem;font-weight:700;color:var(--muted);transition:.3s}
+.dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.dot.current{border-color:var(--ink);color:var(--ink);box-shadow:0 0 0 3px rgba(23,32,43,.12)}
+.link{width:20px;height:2px;background:var(--line)}
+.link.done{background:var(--green)}
+
+/* ---------- phases ---------- */
+.phase{display:none;animation:rise .45s ease both}
+.phase.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:.74rem;font-weight:600;color:var(--green)}
+.phase h2{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.9rem;line-height:1.05;margin:.15em 0 .3em;letter-spacing:-.02em}
+.lead{color:var(--muted);font-size:1.02rem;margin-top:0}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:18px 18px;margin:16px 0;box-shadow:var(--shadow)}
+.card h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;margin:.1em 0 .3em;font-size:1.15rem}
+.joke{font-style:italic;color:var(--green);font-size:.95rem;border-left:3px solid var(--mint);padding-left:10px;margin-top:10px}
+.tag{display:inline-block;font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:.66rem;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:2px 9px;margin-bottom:6px}
+
+/* inputs */
+label.field{display:block;font-weight:600;margin:14px 0 5px;font-size:.95rem}
+input[type=text], textarea{
+  width:100%;font-family:inherit;font-size:1rem;color:var(--ink);background:#fff;
+  border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;resize:vertical}
+textarea{min-height:96px}
+input:focus,textarea:focus,button:focus-visible{outline:3px solid var(--mint);outline-offset:1px}
+.hint{font-size:.83rem;color:var(--muted);margin-top:4px}
+
+/* mcq */
+.mcq .q{font-weight:600;margin:2px 0 10px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);
+  border-radius:10px;padding:11px 13px;margin:7px 0;font-family:inherit;font-size:.98rem;cursor:pointer;transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--ink);transform:translateX(2px)}
+.opt:disabled{cursor:default}
+.opt .k{font-family:"Space Mono",monospace;font-weight:700;color:var(--muted);margin-right:8px}
+.opt.right{background:#e6f4ee;border-color:var(--green)}
+.opt.right .k{color:var(--green)}
+.opt.wrong{background:#fbe9e7;border-color:var(--red)}
+.opt.wrong .k{color:var(--red)}
+.fb{display:none;margin-top:8px;font-size:.92rem;padding:10px 12px;border-radius:9px;background:#eef2ef;border:1px dashed var(--line)}
+.fb.show{display:block}
+.fb b{color:var(--green)}
+
+/* red flags exercise */
+.msgbox{background:#fff;border:1.5px dashed var(--red);border-radius:12px;padding:14px 15px;font-size:.98rem;line-height:1.7}
+.flag{cursor:pointer;border-radius:5px;padding:0 2px;transition:.15s;border-bottom:2px dotted transparent}
+.flag:hover{background:#fdeecb}
+.flag.on{background:#fbe0dc;border-bottom:2px solid var(--red)}
+.flag.reveal-true{background:#fbe0dc;outline:1.5px solid var(--red)}
+.flag.reveal-false{background:#e6f4ee}
+
+/* classify */
+.headline{background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:12px 14px;margin:10px 0}
+.headline p{margin:0 0 9px;font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:.75rem;font-weight:600;
+  border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:6px 13px;cursor:pointer;transition:.15s}
+.chip:hover:not(:disabled){border-color:var(--ink)}
+.chip.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip:disabled{cursor:default;opacity:.85}
+.verdict{display:none;margin-top:9px;font-size:.9rem}
+.verdict.show{display:block}
+
+/* buttons */
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;align-items:center}
+.btn{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.06em;font-weight:600;
+  font-size:.95rem;border:none;border-radius:11px;padding:13px 22px;cursor:pointer;transition:.15s}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 3px 0 #0a5340}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 0 #0a5340}
+.btn-primary:active{transform:translateY(2px);box-shadow:0 1px 0 #0a5340}
+.btn-primary:disabled{background:#9db3aa;box-shadow:0 3px 0 #7f948b;cursor:not-allowed;transform:none}
+.btn-ghost{background:transparent;border:1.5px solid var(--ink);color:var(--ink)}
+.warnmsg{color:var(--red);font-weight:600;font-size:.9rem;display:none}
+.warnmsg.show{display:inline;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* stamp animation overlay */
+.stampwrap{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(23,32,43,.35);backdrop-filter:blur(2px)}
+.stampwrap.show{display:grid}
+.stamp{
+  font-family:"Oswald",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--red);border:5px solid var(--red);border-radius:12px;padding:16px 26px;text-align:center;
+  background:rgba(252,253,251,.9);transform:scale(3) rotate(14deg);opacity:0;line-height:1.1}
+.stamp small{display:block;font-size:.6em;letter-spacing:.12em;color:var(--ink);margin-top:4px}
+.stampwrap.go .stamp{animation:slam .6s cubic-bezier(.2,1.2,.3,1) forwards}
+@keyframes slam{0%{transform:scale(3) rotate(14deg);opacity:0}60%{transform:scale(.92) rotate(-7deg);opacity:1}75%{transform:scale(1.05) rotate(-7deg)}100%{transform:scale(1) rotate(-7deg);opacity:1}}
+
+/* badges */
+.badgegrid{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.badge{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:.72rem;font-weight:600;
+  border:2px solid var(--green);color:var(--green);border-radius:20px;padding:5px 12px;background:#e9f5f0}
+
+/* final report */
+.report-hero{text-align:center;padding:8px 0 4px}
+.patente{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:2.1rem;color:var(--green);margin:6px 0}
+.bigxp{font-family:"Space Mono",monospace;font-size:1.05rem;font-weight:700}
+.checklist{list-style:none;padding:0;margin:12px 0}
+.checklist li{padding:7px 0;border-bottom:1px dashed var(--line);display:flex;gap:9px;align-items:flex-start}
+.checklist li::before{content:"✔";color:var(--green);font-weight:700}
+
+footer.foot{text-align:center;color:var(--muted);font-size:.8rem;margin-top:26px}
+
+@media (max-width:520px){
+  .phase h2{font-size:1.55rem}
+  .brandrow h1{font-size:1.02rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+<div class="stampwrap" id="stampwrap"><div class="stamp" id="stampText">VERIFICADO<small>+0 XP</small></div></div>
+
+<header class="hud">
+  <div class="brandrow">
+    <span class="logo">NIV</span>
+    <h1>Operação Fato Real</h1>
+    <div class="hud-meta">
+      <span class="xp">XP <b id="xpNum">0</b></span>
+    </div>
+  </div>
+  <div class="meter">
+    <div class="meter-label"><span>Medidor de desinformação na cidade</span><span id="meterPct">100%</span></div>
+    <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+  </div>
+  <div class="trail" id="trail"></div>
+</header>
+
+<main class="wrap">
+
+<!-- ========== FASE 0 — BRIEFING ========== -->
+<section class="phase active" data-phase="0">
+  <span class="eyebrow">Briefing · Recrutamento</span>
+  <h2>Bem-vindo ao Núcleo de Inteligência e Verificação</h2>
+  <p class="lead">A cidade está tomada por boatos. Correntes de WhatsApp anunciam o fim do mundo às terças, áudios afirmam que jacaré foi visto pilotando drone, e uma empresa local quase quebrou por causa de um print falso. Sua missão, caso aceite: virar um <b>checador de fatos</b> e baixar o nível de desinformação até zerar o medidor lá em cima.</p>
+
+  <div class="card">
+    <span class="tag">Identificação do agente</span>
+    <p style="margin:.2em 0 0">Antes de começar, registre-se. Seu nome vai no relatório final que você vai baixar e entregar no Classroom.</p>
+    <label class="field" for="agName">Seu nome completo</label>
+    <input type="text" id="agName" placeholder="Ex.: Maria Eduarda Silva">
+    <label class="field" for="agTurma">Turma</label>
+    <input type="text" id="agTurma" placeholder="Ex.: 3º Ano — Gestão e Negócios">
+    <p class="joke">Aviso do NIV: nenhuma corrente de WhatsApp foi verificada durante a produção deste briefing. Elas continuam mentindo lá fora.</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="startBtn">Aceitar a missão →</button>
+    <span class="warnmsg" id="warn0">Preencha nome e turma para começar.</span>
+  </div>
+</section>
+
+<!-- ========== FASE 1 — POR QUE CHECAR ========== -->
+<section class="phase" data-phase="1">
+  <span class="eyebrow">Fase 01 · Consciência</span>
+  <h2>Por que checar muda tudo</h2>
+  <p class="lead">Uma mentira dá a volta na cidade enquanto a verdade ainda está calçando o tênis. Verificar antes de compartilhar (ou antes de decidir) é o freio que evita estrago — na sua reputação, no seu dinheiro e na cabeça de quem te lê.</p>
+
+  <div class="card">
+    <span class="tag">Situação</span>
+    <p style="margin:.2em 0 0">Chega no grupo da família a mensagem: <i>"URGENTE!!! Banco vai bloquear TODAS as contas amanhã. Repasse para todos os seus contatos AGORA antes que seja tarde!!!"</i>. Seu tio já mandou pra 4 grupos.</p>
+
+    <div class="mcq" data-qid="f1q1" data-points="60" data-correct="c" data-explain="Compartilhar 'só por garantia' é justamente o combustível da desinformação: a mensagem se espalha, gera pânico e ninguém sabe de onde veio. Checar a fonte oficial (site/app do próprio banco, imprensa séria) leva 2 minutos e evita o estrago.">
+      <p class="q">Qual é a atitude de um bom checador aqui?</p>
+      <button class="opt" data-opt="a"><span class="k">A</span>Repassar rápido também, afinal "é melhor prevenir".</button>
+      <button class="opt" data-opt="b"><span class="k">B</span>Ignorar e bloquear o tio para sempre.</button>
+      <button class="opt" data-opt="c"><span class="k">C</span>Procurar a fonte oficial (site/app do banco, veículos e agências de checagem) antes de acreditar ou repassar.</button>
+      <button class="opt" data-opt="d"><span class="k">D</span>Acreditar, porque estava escrito em MAIÚSCULAS e com três pontos de exclamação.</button>
+      <div class="fb"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Reflexão · vale XP</span>
+    <label class="field" for="f1open">Conte uma situação real em que você (ou alguém próximo) quase acreditou ou repassou uma informação falsa. O que aconteceu e o que poderia ter feito diferente?</label>
+    <textarea id="f1open" data-qid="f1open" data-points="80" data-question="Situação real em que quase acreditou/repassou algo falso e o que faria diferente."></textarea>
+    <p class="hint">Escreva pelo menos 2 ou 3 frases. Isso é avaliado pelo professor.</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary phase-next">Concluir fase 01 →</button>
+    <span class="warnmsg">Responda a pergunta e a reflexão antes de avançar.</span>
+  </div>
+</section>
+
+<!-- ========== FASE 2 — KIT DE FERRAMENTAS ========== -->
+<section class="phase" data-phase="2">
+  <span class="eyebrow">Fase 02 · Arsenal</span>
+  <h2>O kit do checador</h2>
+  <p class="lead">Você não precisa checar o mundo sozinho. Existe gente séria fazendo isso há anos. Conheça três aliados — dois brasileiros e um buscador global.</p>
+
+  <div class="card">
+    <span class="tag">Ferramenta 01</span>
+    <h3>Google Fact Check (Fact Check Explorer)</h3>
+    <p>Ferramenta gratuita do Google. O pulo do gato: <b>o Google não é quem checa</b> — ele reúne num só lugar as verificações já feitas por agências e veículos do mundo inteiro. Isso funciona por causa de uma etiqueta técnica no código das páginas (o <i>ClaimReview</i>): o veículo marca "isto aqui é uma checagem", e o Google exibe a alegação, quem verificou e o veredito. Dá para pesquisar por texto e até por imagem, para saber se aquela foto "chocante" já foi desmentida.</p>
+    <p class="joke">Pense nele como o Google de sempre, só que com raio-X para boato.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">Ferramenta 02</span>
+    <h3>Agência Lupa</h3>
+    <p>A <b>primeira agência de checagem do Brasil</b> (de 2015). Faz jornalismo de verificação: pega declarações de figuras públicas, correntes e conteúdos virais e investiga se batem com os fatos. Usa uma metodologia com <b>selos de classificação</b> (verdadeiro, falso, exagerado, distorcido...) e segue as regras internacionais do IFCN — ou seja, mostra as fontes e explica como chegou à conclusão. Você pode até mandar sugestões de checagem pelo WhatsApp.</p>
+    <p class="joke">Se o boato fosse réu, a Lupa seria a perita que apresenta as provas no tribunal.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">Ferramenta 03</span>
+    <h3>Aos Fatos</h3>
+    <p>Plataforma brasileira que estreou em 2015 e já passou de 19 mil checagens. Verifica falas públicas e desinformação que viraliza. O xodó da casa é a <b>Fátima</b>, uma robô checadora (o nome vem de "FactMachine") que responde suas dúvidas sobre boatos no WhatsApp, no Telegram e no site — hoje turbinada com inteligência artificial conectada ao banco de checagens deles. Também segue o padrão do IFCN.</p>
+    <p class="joke">É tipo ter uma amiga jornalista que nunca dorme e detesta corrente falsa.</p>
+  </div>
+
+  <div class="card" style="background:#eef4f0">
+    <p style="margin:0"><b>Selo de confiança:</b> Lupa e Aos Fatos são signatárias do <b>IFCN</b> (a rede internacional de checadores de fatos). Na prática, isso significa que se comprometeram a mostrar fontes, corrigir erros e não ter lado — é o "certificado de qualidade" da checagem séria.</p>
+  </div>
+
+  <div class="card">
+    <div class="mcq" data-qid="f2q1" data-points="60" data-correct="b" data-explain="O Google Fact Check não produz a checagem: ele agrega e mostra verificações feitas por outros (agências e veículos), usando a etiqueta ClaimReview. Quem investiga e dá o veredito são organizações como Lupa e Aos Fatos.">
+      <p class="q">Qual afirmação sobre as ferramentas está <b>correta</b>?</p>
+      <button class="opt" data-opt="a"><span class="k">A</span>O Google Fact Check contrata jornalistas e faz as próprias checagens.</button>
+      <button class="opt" data-opt="b"><span class="k">B</span>O Google Fact Check reúne checagens feitas por outros; Lupa e Aos Fatos é que investigam e dão o veredito.</button>
+      <button class="opt" data-opt="c"><span class="k">C</span>Lupa e Aos Fatos são apps de jogos sobre política.</button>
+      <button class="opt" data-opt="d"><span class="k">D</span>A robô Fátima pertence à Agência Lupa.</button>
+      <div class="fb"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Missão de campo · pesquisa real</span>
+    <p style="margin:.2em 0 .2em"><b>Mão na massa:</b> abra <u>uma</u> destas ferramentas e encontre uma checagem de verdade.</p>
+    <p class="hint" style="margin-top:0">Fact Check Explorer: <b>toolbox.google.com/factcheck/explorer</b> · Lupa: <b>lupa.uol.com.br</b> · Aos Fatos: <b>aosfatos.org</b>. Pesquise um tema que te interessa (saúde, tecnologia, celebridade, eleição...) e registre o que achou.</p>
+    <label class="field" for="f2t1">Qual ferramenta você usou?</label>
+    <input type="text" id="f2t1" data-research="Ferramenta usada" placeholder="Ex.: Aos Fatos">
+    <label class="field" for="f2t2">Qual foi a alegação/boato que a checagem analisou?</label>
+    <input type="text" id="f2t2" data-research="Alegação analisada" placeholder="Ex.: 'Vacina X causa...'">
+    <label class="field" for="f2t3">Qual foi o veredito (verdadeiro, falso, enganoso, exagerado...)?</label>
+    <input type="text" id="f2t3" data-research="Veredito" placeholder="Ex.: Falso">
+    <label class="field" for="f2t4">Cole o link da checagem que você encontrou.</label>
+    <input type="text" id="f2t4" data-research="Link da checagem" placeholder="https://...">
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary phase-next">Concluir fase 02 →</button>
+    <span class="warnmsg">Responda a pergunta e preencha a missão de campo antes de avançar.</span>
+  </div>
+</section>
+
+<!-- ========== FASE 3 — CHECAGEM NA PRÁTICA ========== -->
+<section class="phase" data-phase="3">
+  <span class="eyebrow">Fase 03 · Olho clínico</span>
+  <h2>Treinando o faro para boato</h2>
+  <p class="lead">Boatos deixam pistas. Aprenda a farejar as bandeiras vermelhas e a não sair correndo classificando tudo como verdade.</p>
+
+  <div class="card">
+    <span class="tag">Desafio · caça às bandeiras vermelhas</span>
+    <p style="margin:.2em 0 10px">Chegou este recado. <b>Clique em tudo que parece sinal de alerta</b> e depois confira.</p>
+    <div class="msgbox" id="flagbox">
+      <span class="flag" data-flag="true">🚨URGENTE!!! PASSE ADIANTE ANTES QUE APAGUEM🚨</span>
+      Nutricionista revela que <span class="flag" data-flag="true">tomar suco de limão com sal cura qualquer doença em 3 dias</span>.
+      <span class="flag" data-flag="true">A mídia não mostra isso porque tem interesse!</span>
+      <span class="flag" data-flag="true">Foi meu primo que trabalha no hospital que mandou.</span>
+      <span class="flag" data-flag="false">Publicado por uma pessoa em um grupo de mensagens.</span>
+      <span class="flag" data-flag="true">Compartilhe com TODOS os seus contatos ou algo ruim vai acontecer!!!</span>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn btn-ghost" id="flagCheck">Conferir bandeiras</button>
+      <span id="flagResult" style="font-weight:600;font-size:.92rem"></span>
+    </div>
+    <div class="fb" id="flagFb"><b>Pistas clássicas de boato:</b> urgência e pânico ("URGENTE", "antes que apaguem"), promessa milagrosa, teoria de "a mídia esconde", fonte vaga ("meu primo que trabalha em..."), e o pedido para repassar a todos. Nenhuma delas prova nada — só serve pra te apressar. Que a mensagem veio de um grupo, sozinho, não é sinal de fraude.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Desafio · classifique as manchetes</span>
+    <p style="margin:.2em 0 10px">Sem pesquisar, use o bom senso: qual o cheiro de cada manchete?</p>
+
+    <div class="headline" data-qid="h1" data-points="20" data-correct="falso" data-explain="Cheiro forte de invenção: alegação absurda, sem fonte e feita pra viralizar. Um checador desconfia na hora.">
+      <p>"Estudo secreto revela que segundas-feiras foram oficialmente banidas em país europeu."</p>
+      <div class="chips">
+        <button class="chip" data-val="falso">Provável boato</button>
+        <button class="chip" data-val="suspeito">Suspeito, checar</button>
+        <button class="chip" data-val="plausivel">Plausível</button>
+      </div>
+      <div class="verdict"></div>
+    </div>
+
+    <div class="headline" data-qid="h2" data-points="20" data-correct="suspeito" data-explain="Pode ser real ou distorcido. 'Especialistas afirmam' sem dizer quem, e um número redondo demais, pedem verificação antes de acreditar.">
+      <p>"Especialistas afirmam que quem toma café pela manhã tem 200% mais produtividade."</p>
+      <div class="chips">
+        <button class="chip" data-val="falso">Provável boato</button>
+        <button class="chip" data-val="suspeito">Suspeito, checar</button>
+        <button class="chip" data-val="plausivel">Plausível</button>
+      </div>
+      <div class="verdict"></div>
+    </div>
+
+    <div class="headline" data-qid="h3" data-points="20" data-correct="plausivel" data-explain="Informação sóbria, com fonte identificável e verificável no site oficial. Ainda assim, um bom checador confirma na fonte primária antes de repassar.">
+      <p>"Prefeitura anuncia no site oficial mudança no horário de funcionamento da biblioteca municipal."</p>
+      <div class="chips">
+        <button class="chip" data-val="falso">Provável boato</button>
+        <button class="chip" data-val="suspeito">Suspeito, checar</button>
+        <button class="chip" data-val="plausivel">Plausível</button>
+      </div>
+      <div class="verdict"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="mcq" data-qid="f3q1" data-points="50" data-correct="c" data-explain="O caminho do checador: ir à fonte original, cruzar com veículos e agências confiáveis e checar a data e o contexto. Contar curtidas ou confiar em 'quem mandou' não verifica nada.">
+      <p class="q">Qual é o melhor primeiro passo para verificar uma informação?</p>
+      <button class="opt" data-opt="a"><span class="k">A</span>Ver quantas curtidas e compartilhamentos o post tem.</button>
+      <button class="opt" data-opt="b"><span class="k">B</span>Confiar, porque quem mandou é gente de confiança.</button>
+      <button class="opt" data-opt="c"><span class="k">C</span>Buscar a fonte original e cruzar com veículos e agências confiáveis, checando data e contexto.</button>
+      <button class="opt" data-opt="d"><span class="k">D</span>Pesquisar só até achar alguém que concorde com você.</button>
+      <div class="fb"></div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary phase-next">Concluir fase 03 →</button>
+    <span class="warnmsg">Confira as bandeiras, classifique as três manchetes e responda a pergunta.</span>
+  </div>
+</section>
+
+<!-- ========== FASE 4 — CRISE NA EMPRESA ========== -->
+<section class="phase" data-phase="4">
+  <span class="eyebrow">Fase 04 · No mundo dos negócios</span>
+  <h2>Crise na empresa: quando o boato vira prejuízo</h2>
+  <p class="lead">Desinformação não é só coisa de política e grupo de família. Uma mentira pode derrubar as vendas, assustar clientes e afundar a reputação de um negócio da noite para o dia.</p>
+
+  <div class="card">
+    <span class="tag">Estudo de caso</span>
+    <p style="margin:.2em 0 0">A confeitaria "Doce Ponto" é referência no bairro. Numa manhã, viraliza um áudio no WhatsApp: <i>"Fiquei sabendo que acharam barata no bolo da Doce Ponto e a vigilância vai fechar hoje!"</i>. Ninguém sabe quem gravou. Em duas horas, três clientes cancelam encomendas e o telefone não para. A dona te chama: você cuida da comunicação.</p>
+
+    <div class="mcq" data-qid="f4q1" data-points="80" data-correct="b" data-explain="Combater desinformação na empresa é agir com fato e transparência, rápido: apurar internamente, buscar a origem, publicar um comunicado claro com provas (laudos, alvará, vídeos da cozinha) e, se preciso, acionar a vigilância para atestar. Ignorar deixa o boato crescer; xingar quem espalhou piora tudo; inventar promoção não responde à acusação.">
+      <p class="q">Qual é a resposta mais inteligente para a crise?</p>
+      <button class="opt" data-opt="a"><span class="k">A</span>Ignorar. Boato passa sozinho, não precisa dar palco.</button>
+      <button class="opt" data-opt="b"><span class="k">B</span>Apurar internamente, buscar a origem do áudio e publicar um comunicado transparente com provas (laudo de higiene, alvará, vídeo da cozinha).</button>
+      <button class="opt" data-opt="c"><span class="k">C</span>Postar xingando quem espalhou e ameaçar processar todo o grupo.</button>
+      <button class="opt" data-opt="d"><span class="k">D</span>Lançar uma promoção relâmpago pra desviar o assunto.</button>
+      <div class="fb"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Plano de ação · vale XP</span>
+    <label class="field" for="f4open">Você é responsável por criar uma <b>política antidesinformação</b> para essa empresa. Liste 3 medidas que a Doce Ponto pode adotar para se proteger de boatos no futuro (antes, durante e depois de uma crise).</label>
+    <textarea id="f4open" data-qid="f4open" data-points="90" data-question="Três medidas de uma política antidesinformação para a empresa (antes/durante/depois)."></textarea>
+    <p class="hint">Pense em: monitorar redes, ter canal oficial, treinar a equipe, guardar documentos/laudos, responder rápido com fatos.</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary phase-next">Concluir fase 04 →</button>
+    <span class="warnmsg">Responda a pergunta e escreva seu plano de ação.</span>
+  </div>
+</section>
+
+<!-- ========== FASE 5 — DECISÃO ADMINISTRATIVA ========== -->
+<section class="phase" data-phase="5">
+  <span class="eyebrow">Fase 05 · Cadeira do gestor</span>
+  <h2>A decisão do gestor: pensamento crítico sob pressão</h2>
+  <p class="lead">Gestor bom não é o que decide mais rápido — é o que decide com <b>informação verificada</b>. Uma decisão administrativa tomada em cima de um dado falso custa dinheiro, emprego e reputação.</p>
+
+  <div class="card">
+    <span class="tag">Dilema</span>
+    <p style="margin:.2em 0 0">Chega no seu WhatsApp um "relatório de mercado" encaminhado por um colega: <i>"Nosso maior concorrente vai à falência semana que vem. Precisamos DOBRAR o estoque HOJE pra dominar o mercado!"</i>. Sem fonte, sem autor, sem data. O grupo está eufórico e querem sua aprovação para gastar o caixa.</p>
+
+    <div class="mcq" data-qid="f5q1" data-points="60" data-correct="c" data-explain="Pensamento crítico é pausar e verificar antes de comprometer recursos. A decisão certa exige checar a fonte, cruzar com dados oficiais e imprensa séria, e desconfiar da pressa e da euforia — que são justamente o que golpes e boatos exploram.">
+      <p class="q">Como o pensamento crítico orienta a decisão?</p>
+      <button class="opt" data-opt="a"><span class="k">A</span>Aprovar já: oportunidade não espera, e todo mundo está animado.</button>
+      <button class="opt" data-opt="b"><span class="k">B</span>Recusar tudo por medo e não fazer nada nunca.</button>
+      <button class="opt" data-opt="c"><span class="k">C</span>Segurar a decisão, verificar a fonte, cruzar com dados oficiais e imprensa confiável, e só então decidir com base em fatos.</button>
+      <button class="opt" data-opt="d"><span class="k">D</span>Perguntar no grupo se mais gente acredita — se a maioria acredita, deve ser verdade.</button>
+      <div class="fb"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Antes de decidir · vale XP</span>
+    <label class="field" for="f5open">Escreva <b>3 perguntas críticas</b> que todo gestor deveria fazer antes de tomar uma decisão importante baseada em uma informação recebida. (Ex.: "De onde veio esse dado? Quem se beneficia se eu acreditar?")</label>
+    <textarea id="f5open" data-qid="f5open" data-points="100" data-question="Três perguntas críticas antes de decidir com base numa informação recebida."></textarea>
+    <p class="hint">Dica: fonte, evidência, interesse por trás, data/contexto, e o que acontece se estiver errado.</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary phase-next">Concluir fase 05 →</button>
+    <span class="warnmsg">Responda a pergunta e escreva suas 3 perguntas críticas.</span>
+  </div>
+</section>
+
+<!-- ========== FINAL — RELATÓRIO ========== -->
+<section class="phase" data-phase="6">
+  <span class="eyebrow">Missão concluída</span>
+  <h2>Relatório de missão</h2>
+  <div class="report-hero">
+    <p style="margin:0;color:var(--muted)">Cidade protegida. Medidor de desinformação zerado. Sua patente:</p>
+    <div class="patente" id="patente">—</div>
+    <p class="bigxp">Pontuação final: <b id="finalXp">0</b> XP</p>
+    <div class="badgegrid" id="badgeGrid" style="justify-content:center"></div>
+  </div>
+
+  <div class="card">
+    <h3>O que você levou dessa trilha</h3>
+    <ul class="checklist">
+      <li>Verificar antes de acreditar (ou de repassar) evita estragos de reputação, dinheiro e saúde.</li>
+      <li>Google Fact Check reúne checagens de outros; Lupa e Aos Fatos investigam e dão o veredito, seguindo o padrão do IFCN.</li>
+      <li>Boato deixa pistas: urgência, promessa milagrosa, fonte vaga e o eterno "repasse a todos".</li>
+      <li>Na empresa, transparência com fatos derruba o boato; silêncio o alimenta.</li>
+      <li>Boa decisão administrativa nasce de informação verificada, não de pressa nem de euforia do grupo.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="background:#eef4f0">
+    <h3 style="margin-top:0">Último passo: entregar no Classroom</h3>
+    <p style="margin:.2em 0 0">Baixe seu relatório em PDF e envie na atividade do Google Classroom. Ele traz suas respostas, sua pesquisa e sua pontuação — é o comprovante da missão.</p>
+    <div class="actions">
+      <button class="btn btn-primary" id="downloadBtn">⬇ Baixar meu relatório (PDF)</button>
+      <span id="dlMsg" style="font-weight:600;font-size:.9rem;color:var(--green)"></span>
+    </div>
+  </div>
+
+  <footer class="foot">Núcleo de Inteligência e Verificação · Atividade pedagógica sobre checagem de fatos e pensamento crítico.</footer>
+</section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  var TOTAL_PHASES = 6; // fases 1..5 + final(6); briefing=0
+  var state = {
+    name:"", turma:"", phase:0, xp:0,
+    answers:{}, badges:[], flagsDone:false
+  };
+
+  var PHASE_BADGE = {
+    1:"Selo Consciência", 2:"Selo Arsenal", 3:"Selo Olho Clínico",
+    4:"Selo Antifake Empresarial", 5:"Selo Gestor Crítico"
+  };
+
+  /* ---------- helpers ---------- */
+  function $(s,ctx){return (ctx||document).querySelector(s);}
+  function $all(s,ctx){return Array.prototype.slice.call((ctx||document).querySelectorAll(s));}
+  function addXP(n){ state.xp+=n; $("#xpNum").textContent=state.xp; }
+  function phaseEl(p){ return $('.phase[data-phase="'+p+'"]'); }
+
+  /* ---------- build trail ---------- */
+  (function buildTrail(){
+    var t=$("#trail"), labels=["●","1","2","3","4","5","★"];
+    labels.forEach(function(lb,i){
+      if(i>0){var l=document.createElement("span");l.className="link";l.dataset.link=i;t.appendChild(l);}
+      var st=document.createElement("span"); st.className="station";
+      var d=document.createElement("span"); d.className="dot"; d.dataset.dot=i; d.textContent=lb;
+      st.appendChild(d); t.appendChild(st);
+    });
+    updateTrail();
+  })();
+
+  function updateTrail(){
+    // dot index: 0=briefing,1..5 fases,6=final
+    $all(".dot").forEach(function(d){
+      var i=+d.dataset.dot; d.classList.remove("done","current");
+      if(i<state.phase) d.classList.add("done");
+      if(i===state.phase) d.classList.add("current");
+    });
+    $all(".link").forEach(function(l){ if(+l.dataset.link<=state.phase) l.classList.add("done"); else l.classList.remove("done"); });
+  }
+
+  function updateMeter(){
+    var done = Math.max(0, state.phase); // phases completed roughly = current index
+    var pct = Math.max(0, Math.round(100 - (Math.min(state.phase,TOTAL_PHASES)/TOTAL_PHASES)*100));
+    if(state.phase>=6) pct=0;
+    $("#meterFill").style.width=pct+"%";
+    $("#meterPct").textContent=pct+"%";
+  }
+
+  /* ---------- navigation ---------- */
+  function goTo(p){
+    phaseEl(state.phase).classList.remove("active");
+    state.phase=p;
+    phaseEl(p).classList.add("active");
+    updateTrail(); updateMeter();
+    window.scrollTo({top:0,behavior:"smooth"});
+    if(p===6) renderFinal();
+  }
+
+  /* ---------- stamp animation ---------- */
+  function stamp(text, sub, cb){
+    var w=$("#stampwrap"), s=$("#stampText");
+    s.innerHTML=text+"<small>"+sub+"</small>";
+    w.classList.add("show");
+    // force reflow then animate
+    void s.offsetWidth; w.classList.add("go");
+    setTimeout(function(){
+      w.classList.remove("show","go");
+      if(cb) cb();
+    },1050);
+  }
+
+  /* ---------- MCQ handler ---------- */
+  $all(".mcq").forEach(function(mcq){
+    var answered=false;
+    var correct=mcq.dataset.correct, pts=+mcq.dataset.points, explain=mcq.dataset.explain;
+    var qid=mcq.dataset.qid, qtext=$(".q",mcq).textContent;
+    $all(".opt",mcq).forEach(function(opt){
+      opt.addEventListener("click",function(){
+        if(answered) return; answered=true;
+        var chosen=opt.dataset.opt, ok=(chosen===correct);
+        $all(".opt",mcq).forEach(function(o){o.disabled=true;});
+        opt.classList.add(ok?"right":"wrong");
+        if(!ok){ var c=$('.opt[data-opt="'+correct+'"]',mcq); if(c) c.classList.add("right"); }
+        var fb=$(".fb",mcq); fb.innerHTML=(ok?"<b>Boa! ✔</b> ":"<b>Quase. </b>")+explain; fb.classList.add("show");
+        if(ok) addXP(pts);
+        state.answers[qid]={type:"mcq",q:qtext,chosen:opt.textContent.trim().replace(/\s+/g," "),correct:ok};
+      });
+    });
+  });
+
+  /* ---------- red flags ---------- */
+  $all("#flagbox .flag").forEach(function(f){
+    f.addEventListener("click",function(){ if(state.flagsDone) return; f.classList.toggle("on"); });
+  });
+  $("#flagCheck").addEventListener("click",function(){
+    if(state.flagsDone) return; state.flagsDone=true;
+    var flags=$all("#flagbox .flag"), hit=0, total=0, wrong=0;
+    flags.forEach(function(f){
+      var isRed=f.dataset.flag==="true", picked=f.classList.contains("on");
+      if(isRed) total++;
+      if(isRed && picked){hit++; f.classList.add("reveal-true");}
+      else if(isRed && !picked){f.classList.add("reveal-true");}
+      else if(!isRed && picked){wrong++; f.classList.add("reveal-false");}
+    });
+    var gained=Math.max(0,(hit*15)-(wrong*10)); if(gained>90)gained=90;
+    addXP(gained);
+    $("#flagResult").textContent="Você achou "+hit+" de "+total+" bandeiras. +"+gained+" XP";
+    $("#flagFb").classList.add("show");
+    $("#flagCheck").disabled=true; $("#flagCheck").style.opacity=".6";
+    state.answers["f3flags"]={type:"info",q:"Caça às bandeiras vermelhas",chosen:"Encontrou "+hit+"/"+total+" bandeiras."};
+  });
+
+  /* ---------- classify headlines ---------- */
+  $all(".headline").forEach(function(h){
+    var done=false, correct=h.dataset.correct, pts=+h.dataset.points, explain=h.dataset.explain, qid=h.dataset.qid;
+    $all(".chip",h).forEach(function(chip){
+      chip.addEventListener("click",function(){
+        if(done) return; done=true;
+        var val=chip.dataset.val, ok=(val===correct);
+        $all(".chip",h).forEach(function(c){c.disabled=true;});
+        chip.classList.add("sel");
+        var v=$(".verdict",h);
+        v.innerHTML=(ok?"<b style='color:var(--green)'>Certeiro! ✔</b> ":"<b style='color:var(--red)'>Reveja: </b>")+explain;
+        v.classList.add("show");
+        if(ok) addXP(pts);
+        h._answered=true;
+      });
+    });
+  });
+
+  /* ---------- phase validation & next ---------- */
+  function validatePhase(p){
+    var el=phaseEl(p), ok=true;
+    // MCQs answered?
+    $all(".mcq",el).forEach(function(m){ if(!state.answers[m.dataset.qid]) ok=false; });
+    // textareas filled (min length)?
+    $all("textarea[data-qid]",el).forEach(function(t){ if(t.value.trim().length<12) ok=false; });
+    // research inputs?
+    $all("input[data-research]",el).forEach(function(i){ if(i.value.trim().length<2) ok=false; });
+    // phase 3 specifics
+    if(p===3){
+      if(!state.flagsDone) ok=false;
+      $all(".headline",el).forEach(function(h){ if(!h._answered) ok=false; });
+    }
+    return ok;
+  }
+
+  function collectOpen(p){
+    var el=phaseEl(p);
+    $all("textarea[data-qid]",el).forEach(function(t){
+      if(!state.answers[t.dataset.qid]){ addXP(+t.dataset.points||0); }
+      state.answers[t.dataset.qid]={type:"open",q:t.dataset.question,chosen:t.value.trim()};
+    });
+    var research={};
+    $all("input[data-research]",el).forEach(function(i){ research[i.dataset.research]=i.value.trim(); });
+    if(Object.keys(research).length){
+      if(!state.answers["_research_"+p]){ addXP(120); }
+      state.answers["_research_"+p]={type:"research",q:"Missão de campo — pesquisa em ferramenta de checagem",data:research};
+    }
+  }
+
+  $all(".phase-next").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var p=state.phase, warn=btn.parentNode.querySelector(".warnmsg");
+      if(!validatePhase(p)){
+        warn.classList.add("show"); setTimeout(function(){warn.classList.remove("show");},2600); return;
+      }
+      collectOpen(p);
+      if(PHASE_BADGE[p] && state.badges.indexOf(PHASE_BADGE[p])===-1) state.badges.push(PHASE_BADGE[p]);
+      stamp("Verificado", "Fase "+("0"+p)+" · "+PHASE_BADGE[p], function(){ goTo(p+1); });
+    });
+  });
+
+  /* ---------- start ---------- */
+  $("#startBtn").addEventListener("click",function(){
+    var n=$("#agName").value.trim(), tu=$("#agTurma").value.trim();
+    if(n.length<2 || tu.length<1){ var w=$("#warn0"); w.classList.add("show"); setTimeout(function(){w.classList.remove("show");},2600); return; }
+    state.name=n; state.turma=tu; addXP(50);
+    stamp("Agente registrado", "+50 XP · Bem-vindo ao NIV", function(){ goTo(1); });
+  });
+
+  /* ---------- final ---------- */
+  function patenteFor(xp){
+    if(xp>=850) return "Guardião dos Fatos";
+    if(xp>=600) return "Agente de Verificação";
+    if(xp>=350) return "Checador Júnior";
+    return "Checador Aprendiz";
+  }
+  function renderFinal(){
+    $("#finalXp").textContent=state.xp;
+    $("#patente").textContent=patenteFor(state.xp);
+    var g=$("#badgeGrid"); g.innerHTML="";
+    state.badges.forEach(function(b){ var s=document.createElement("span"); s.className="badge"; s.textContent=b; g.appendChild(s); });
+  }
+
+  /* ---------- PDF ---------- */
+  $("#downloadBtn").addEventListener("click",function(){
+    try{ buildPDF(); }
+    catch(e){ $("#dlMsg").style.color="var(--red)"; $("#dlMsg").textContent="Não foi possível gerar o PDF aqui. Tente abrir o arquivo hospedado (GitHub Pages) e baixar de novo."; }
+  });
+
+  function buildPDF(){
+    var jsPDF=window.jspdf.jsPDF;
+    var doc=new jsPDF({unit:"pt",format:"a4"});
+    var W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight();
+    var M=48, y=0, maxW=W-M*2;
+    var INK=[23,32,43], GREEN=[15,110,82], MUTED=[92,102,112], RED=[198,54,43];
+
+    function ensure(h){ if(y+h>H-46){ doc.addPage(); y=54; } }
+    function line(){ doc.setDrawColor(210,218,212); doc.setLineWidth(1); doc.line(M,y,W-M,y); y+=14; }
+    function h(txt,size,color){ ensure(size+8); doc.setFont("helvetica","bold"); doc.setFontSize(size); doc.setTextColor.apply(doc,color||INK); doc.text(txt,M,y); y+=size+6; }
+    function p(txt,size,color,bold){
+      doc.setFont("helvetica",bold?"bold":"normal"); doc.setFontSize(size||11); doc.setTextColor.apply(doc,color||INK);
+      var lines=doc.splitTextToSize(txt,maxW);
+      lines.forEach(function(ln){ ensure(size+2); doc.text(ln,M,y); y+=(size||11)+3; });
+    }
+
+    // header band
+    doc.setFillColor.apply(doc,GREEN); doc.rect(0,0,W,70,"F");
+    doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(18);
+    doc.text("RELATORIO DE MISSAO — OPERACAO FATO REAL",M,34);
+    doc.setFontSize(10); doc.setFont("helvetica","normal");
+    doc.text("Nucleo de Inteligencia e Verificacao · Trilha de Checagem de Fatos",M,52);
+    y=92;
+
+    // agent info
+    var now=new Date();
+    p("Agente: "+state.name,12,INK,true);
+    p("Turma: "+state.turma,11,INK);
+    p("Data: "+now.toLocaleDateString("pt-BR")+" "+now.toLocaleTimeString("pt-BR").slice(0,5),11,MUTED);
+    y+=4;
+    p("Pontuacao final: "+state.xp+" XP   |   Patente: "+patenteFor(state.xp),12,GREEN,true);
+    if(state.badges.length) p("Selos conquistados: "+state.badges.join(" · "),10,MUTED);
+    y+=6; line();
+
+    // answers by phase
+    var order=[
+      {t:"FASE 01 — Por que checar muda tudo", ids:["f1q1","f1open"]},
+      {t:"FASE 02 — O kit do checador", ids:["f2q1","_research_2"]},
+      {t:"FASE 03 — Treinando o faro para boato", ids:["f3flags","h1","h2","h3","f3q1"]},
+      {t:"FASE 04 — Crise na empresa", ids:["f4q1","f4open"]},
+      {t:"FASE 05 — A decisao do gestor", ids:["f5q1","f5open"]}
+    ];
+
+    order.forEach(function(sec){
+      ensure(40); h(sec.t,13,GREEN);
+      sec.ids.forEach(function(id){
+        var a=state.answers[id]; if(!a) return;
+        if(a.type==="mcq"){
+          p("• "+a.q,11,INK,true);
+          p("   Resposta: "+a.chosen+"  ["+(a.correct?"correta":"incorreta")+"]",10,a.correct?GREEN:RED);
+        } else if(a.type==="open"){
+          p("• "+a.q,11,INK,true);
+          p(a.chosen||"(sem resposta)",10,MUTED);
+        } else if(a.type==="research"){
+          p("• "+a.q,11,INK,true);
+          Object.keys(a.data).forEach(function(k){ p("   "+k+": "+(a.data[k]||"-"),10,MUTED); });
+        } else if(a.type==="info"){
+          p("• "+a.q+": "+a.chosen,10,MUTED);
+        }
+        y+=3;
+      });
+      y+=4;
+    });
+
+    line();
+    p("Este relatorio e o comprovante da atividade. Envie-o na tarefa correspondente do Google Classroom para avaliacao do professor.",9,MUTED,false);
+
+    // footer page numbers
+    var pages=doc.internal.getNumberOfPages();
+    for(var i=1;i<=pages;i++){ doc.setPage(i); doc.setFontSize(8); doc.setTextColor.apply(doc,MUTED);
+      doc.text("Operacao Fato Real · pagina "+i+"/"+pages, M, H-22); }
+
+    var safe=(state.name||"agente").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]+/g,"_").toLowerCase();
+    doc.save("relatorio_fato_real_"+safe+".pdf");
+    $("#dlMsg").style.color="var(--green)";
+    $("#dlMsg").textContent="Relatório gerado! Agora é só enviar no Classroom.";
+  }
+
+  updateMeter();
+})();
+</script>
+</body>
+</html>
