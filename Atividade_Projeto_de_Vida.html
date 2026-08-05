@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atividade · Autoimagem e a superação de crenças limitantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
+<style>
+  :root{
+    --teal-900:#16302B;
+    --teal-700:#1D3B36;
+    --teal-500:#2A9D8F;
+    --teal-100:#E4F1EE;
+    --gold:#E9B949;
+    --gold-soft:#FCF3E0;
+    --coral:#E76F51;
+    --coral-soft:#FBEDE8;
+    --ink:#22333B;
+    --grey:#5C6B70;
+    --line:#D8E1DE;
+    --page:#EEF3F1;
+    --card:#FFFFFF;
+    --serif:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Nunito Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;font-family:var(--sans);color:var(--ink);
+    background:var(--page);line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px 140px;}
+
+  /* ---------- Cabeçalho ---------- */
+  .hero{
+    background:var(--teal-700);color:#fff;border-radius:0 0 26px 26px;
+    padding:38px 40px 34px;margin-bottom:26px;position:relative;overflow:hidden;
+  }
+  .hero::after{content:"";position:absolute;right:-70px;top:-70px;width:220px;height:220px;
+    border-radius:50%;background:rgba(42,157,143,.22);}
+  .hero .eyebrow{font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--gold);}
+  .hero h1{font-family:var(--serif);font-weight:700;font-size:33px;line-height:1.15;margin:10px 0 6px;max-width:640px;}
+  .hero p{margin:0;color:#CFE0DC;font-size:15px;max-width:620px;}
+  .hero .badge{position:absolute;right:34px;bottom:30px;font-size:12px;color:#9FB6B1;letter-spacing:1px;}
+
+  /* ---------- Identificação ---------- */
+  .idcard{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px 24px;margin-bottom:26px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px;
+  }
+  .field label{display:block;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--grey);margin-bottom:6px;}
+  .field input{
+    width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;
+    font-family:var(--sans);font-size:15.5px;color:var(--ink);background:#fff;transition:border-color .15s,box-shadow .15s;
+  }
+  .field input:focus{outline:none;border-color:var(--teal-500);box-shadow:0 0 0 3px rgba(42,157,143,.16);}
+  .field input.err{border-color:var(--coral);box-shadow:0 0 0 3px rgba(231,111,81,.14);}
+
+  /* ---------- Seções ---------- */
+  .section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 28px;margin-bottom:22px;}
+  .stag{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .snum{flex:none;width:34px;height:34px;border-radius:50%;background:var(--teal-500);color:#fff;
+    font-family:var(--serif);font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  .stag h2{font-family:var(--serif);font-weight:700;font-size:23px;margin:0;color:var(--ink);}
+  .shint{margin:2px 0 18px 46px;color:var(--grey);font-size:14.5px;}
+
+  /* ---------- Escala de autoimagem ---------- */
+  .scale-row{padding:15px 0;border-top:1px solid #EDF1F0;}
+  .scale-row:first-of-type{border-top:none;}
+  .scale-q{font-size:15.5px;font-weight:600;margin-bottom:10px;color:var(--ink);}
+  .scale-opts{display:flex;gap:8px;flex-wrap:wrap;}
+  .opt{
+    flex:1 1 0;min-width:120px;text-align:center;padding:9px 8px;border:1.5px solid var(--line);
+    border-radius:10px;font-size:13.5px;font-weight:700;color:var(--grey);cursor:pointer;
+    background:#fff;transition:all .13s;user-select:none;
+  }
+  .opt:hover{border-color:var(--teal-500);color:var(--teal-500);}
+  .opt.sel{background:var(--teal-500);border-color:var(--teal-500);color:#fff;box-shadow:0 3px 10px rgba(42,157,143,.28);}
+
+  /* ---------- Transformação de crenças ---------- */
+  .belief{display:grid;grid-template-columns:1fr 48px 1fr;gap:12px;align-items:stretch;margin-bottom:16px;}
+  .belief .col{border-radius:12px;padding:14px 15px;display:flex;flex-direction:column;}
+  .belief .from{background:var(--coral-soft);}
+  .belief .to{background:var(--teal-100);}
+  .belief .tag{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .belief .from .tag{color:var(--coral);}
+  .belief .to .tag{color:var(--teal-500);}
+  .belief .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .belief .from .dot{background:var(--coral);}
+  .belief .to .dot{background:var(--teal-500);}
+  .belief textarea{
+    flex:1;width:100%;border:none;background:transparent;resize:vertical;min-height:64px;
+    font-family:var(--serif);font-style:italic;font-size:15.5px;color:var(--ink);line-height:1.45;
+  }
+  .belief textarea::placeholder{color:#A9B4B1;font-style:italic;}
+  .belief textarea:focus{outline:none;}
+  .belief .arrow{display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:26px;font-weight:800;}
+  .tipbox{background:var(--gold-soft);border-radius:12px;padding:13px 16px;font-size:14px;color:#7a5f16;margin-top:4px;}
+  .tipbox b{color:#8a6a12;}
+
+  /* ---------- Valores (chips) ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px;}
+  .chip{
+    padding:9px 15px;border:1.5px solid var(--line);border-radius:999px;font-size:14px;font-weight:700;
+    color:var(--grey);cursor:pointer;background:#fff;transition:all .13s;user-select:none;
+  }
+  .chip:hover{border-color:var(--teal-500);color:var(--teal-500);}
+  .chip.sel{background:var(--teal-700);border-color:var(--teal-700);color:#fff;}
+  .chip.sel::before{content:"✓ ";}
+  .counter{font-size:13px;color:var(--grey);margin:12px 0 4px;}
+  .counter b{color:var(--teal-500);}
+
+  /* ---------- Áreas de texto abertas ---------- */
+  .open label{display:block;font-size:15px;font-weight:700;color:var(--ink);margin:4px 0 9px;}
+  .open textarea{
+    width:100%;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;
+    font-family:var(--sans);font-size:15px;color:var(--ink);resize:vertical;min-height:96px;background:#fff;line-height:1.55;
+  }
+  .open textarea:focus{outline:none;border-color:var(--teal-500);box-shadow:0 0 0 3px rgba(42,157,143,.14);}
+  .open + .open{margin-top:18px;}
+
+  .quote{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--teal-700);
+    background:var(--teal-100);border-radius:12px;padding:16px 20px;margin:2px 0 20px 0;}
+
+  /* ---------- Barra de ações ---------- */
+  .actionbar{
+    position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);padding:14px 20px;z-index:40;
+  }
+  .actionbar .inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .progress{flex:1;min-width:160px;}
+  .progress .bar{height:9px;background:#E3EAE8;border-radius:99px;overflow:hidden;}
+  .progress .fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal-500),var(--gold));transition:width .35s;}
+  .progress span{font-size:12.5px;color:var(--grey);font-weight:700;}
+  .btn{border:none;border-radius:11px;padding:13px 22px;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .15s;}
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--teal-500);color:#fff;box-shadow:0 4px 14px rgba(42,157,143,.35);}
+  .btn-primary:hover{background:#248a7e;}
+  .btn-ghost{background:#fff;color:var(--teal-700);border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--teal-500);color:var(--teal-500);}
+
+  .toast{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:var(--coral);color:#fff;
+    padding:12px 22px;border-radius:12px;font-weight:700;font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.18);
+    opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:60;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+  @media (max-width:680px){
+    .hero{padding:30px 24px;border-radius:0 0 20px 20px;}
+    .hero h1{font-size:26px;}
+    .hero .badge{display:none;}
+    .idcard{grid-template-columns:1fr;}
+    .section{padding:22px 20px;}
+    .belief{grid-template-columns:1fr;}
+    .belief .arrow{transform:rotate(90deg);height:26px;}
+    .wrap{padding-bottom:170px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Projeto de Vida · Módulo 1</div>
+    <h1>Autoimagem e a superação de crenças limitantes</h1>
+    <p>Um convite para olhar para dentro, reconhecer o seu valor e transformar aquilo que te limita. Preencha com calma e sinceridade — não há resposta certa ou errada.</p>
+    <div class="badge">Habilidades para a Vida Pessoal e Profissional</div>
+  </header>
+
+  <!-- Identificação -->
+  <div class="idcard">
+    <div class="field">
+      <label for="nome">Nome completo</label>
+      <input type="text" id="nome" placeholder="Digite seu nome completo" autocomplete="name" />
+    </div>
+    <div class="field">
+      <label for="turma">Turma</label>
+      <input type="text" id="turma" placeholder="Ex.: 2º A" />
+    </div>
+    <div class="field">
+      <label for="data">Data</label>
+      <input type="date" id="data" />
+    </div>
+  </div>
+
+  <!-- Seção 1 — Autoimagem -->
+  <section class="section">
+    <div class="stag"><div class="snum">1</div><h2>Como eu me enxergo</h2></div>
+    <p class="shint">A autoimagem é a forma como você acredita ser. Leia cada frase e marque o quanto ela combina com você hoje.</p>
+    <div id="scaleList"></div>
+  </section>
+
+  <!-- Seção 2 — Crenças -->
+  <section class="section">
+    <div class="stag"><div class="snum">2</div><h2>Da crença que prende à crença que impulsiona</h2></div>
+    <p class="shint">Toda pessoa carrega crenças limitantes — frases que assumimos como verdade e que nos travam. Escreva duas que já passaram pela sua cabeça e reescreva cada uma como uma crença que te fortalece.</p>
+    <div id="beliefList"></div>
+    <div class="tipbox">💡 <b>Dica:</b> muitas vezes basta acrescentar a palavra <b>“ainda”</b>. “Eu não sei fazer isso” vira “Eu <b>ainda</b> não sei fazer isso, mas posso aprender”.</div>
+  </section>
+
+  <!-- Seção 3 — Valores -->
+  <section class="section">
+    <div class="stag"><div class="snum">3</div><h2>Os valores que me guiam</h2></div>
+    <p class="shint">Valores são princípios que orientam nossas escolhas. Selecione os que você considera mais importantes para a sua vida.</p>
+    <div class="chips" id="chips"></div>
+    <div class="counter">Selecionados: <b id="valCount">0</b> <span id="valSug">— escolha de 3 a 5.</span></div>
+    <div class="open" style="margin-top:16px;">
+      <label for="valPorque">Escolha um desses valores e explique por que ele é tão importante para você:</label>
+      <textarea id="valPorque" placeholder="Ex.: A honestidade é importante para mim porque..."></textarea>
+    </div>
+  </section>
+
+  <!-- Seção 4 — Narrativa -->
+  <section class="section">
+    <div class="stag"><div class="snum">4</div><h2>Uma história que me inspira</h2></div>
+    <p class="shint">Nossa narrativa de vida — família, cultura e convívio — molda quem somos.</p>
+    <div class="open">
+      <label for="inspira">Conte sobre uma pessoa, um momento ou uma história que te inspira. O que você aprende com ela?</label>
+      <textarea id="inspira" placeholder="Escreva aqui..."></textarea>
+    </div>
+  </section>
+
+  <!-- Seção 5 — Protagonismo / compromisso -->
+  <section class="section">
+    <div class="stag"><div class="snum">5</div><h2>Meu protagonismo</h2></div>
+    <p class="shint">Ser protagonista é assumir o papel principal da própria história.</p>
+    <div class="quote">“Toda grande história começa com alguém que acreditou ser possível.”</div>
+    <div class="open">
+      <label for="passo">Um passo concreto que vou dar para fortalecer a minha autoimagem:</label>
+      <textarea id="passo" placeholder="Ex.: Vou me permitir errar ao aprender algo novo, sem me criticar tanto..."></textarea>
+    </div>
+    <div class="open">
+      <label for="sonho">Um sonho que quero construir no meu Projeto de Vida:</label>
+      <textarea id="sonho" placeholder="Escreva aqui o seu sonho..."></textarea>
+    </div>
+  </section>
+
+</div>
+
+<!-- Barra de ações -->
+<div class="actionbar">
+  <div class="inner">
+    <div class="progress">
+      <div class="bar"><div class="fill" id="fill"></div></div>
+      <span id="pct">0% concluído</span>
+    </div>
+    <button class="btn btn-ghost" id="btnPrint">Imprimir</button>
+    <button class="btn btn-primary" id="btnPdf">Baixar PDF</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Dados ----------
+  var SCALE = ["Raramente","Às vezes","Quase sempre","Sempre"];
+  var STATEMENTS = [
+    "Reconheço as minhas qualidades e pontos fortes.",
+    "Confio na minha capacidade de aprender coisas novas.",
+    "Aceito os meus erros como parte do meu crescimento.",
+    "Sinto-me à vontade para expressar as minhas ideias.",
+    "Acredito que posso construir o futuro que desejo."
+  ];
+  var VALUES = ["Respeito","Honestidade","Responsabilidade","Empatia","Justiça",
+    "Solidariedade","Gratidão","Coragem","Persistência","Criatividade",
+    "Liberdade","Família","Amizade","Disciplina","Fé"];
+
+  var state = { scale:{}, values:{} };
+
+  // ---------- Monta escala ----------
+  var scaleList = document.getElementById("scaleList");
+  STATEMENTS.forEach(function(txt, i){
+    var row = document.createElement("div");
+    row.className = "scale-row";
+    var q = document.createElement("div");
+    q.className = "scale-q";
+    q.textContent = (i+1) + ". " + txt;
+    var opts = document.createElement("div");
+    opts.className = "scale-opts";
+    SCALE.forEach(function(label, j){
+      var o = document.createElement("div");
+      o.className = "opt";
+      o.textContent = label;
+      o.setAttribute("data-i", i);
+      o.setAttribute("data-v", j);
+      o.addEventListener("click", function(){
+        state.scale[i] = j;
+        Array.prototype.forEach.call(opts.children, function(c){ c.classList.remove("sel"); });
+        o.classList.add("sel");
+        updateProgress();
+      });
+      opts.appendChild(o);
+    });
+    row.appendChild(q); row.appendChild(opts);
+    scaleList.appendChild(row);
+  });
+
+  // ---------- Monta crenças ----------
+  var beliefList = document.getElementById("beliefList");
+  for (var b=0; b<2; b++){
+    var wrap = document.createElement("div");
+    wrap.className = "belief";
+    wrap.innerHTML =
+      '<div class="col from"><div class="tag"><span class="dot"></span>Crença que me limita</div>'+
+        '<textarea class="bfrom" placeholder="Ex.: Eu não sou bom o suficiente."></textarea></div>'+
+      '<div class="arrow">&rarr;</div>'+
+      '<div class="col to"><div class="tag"><span class="dot"></span>Crença que me impulsiona</div>'+
+        '<textarea class="bto" placeholder="Reescreva de forma que te fortaleça..."></textarea></div>';
+    beliefList.appendChild(wrap);
+  }
+
+  // ---------- Monta valores ----------
+  var chipsWrap = document.getElementById("chips");
+  var valCount = document.getElementById("valCount");
+  var valSug = document.getElementById("valSug");
+  VALUES.forEach(function(v){
+    var c = document.createElement("div");
+    c.className = "chip";
+    c.textContent = v;
+    c.addEventListener("click", function(){
+      c.classList.toggle("sel");
+      state.values[v] = c.classList.contains("sel");
+      var n = countValues();
+      valCount.textContent = n;
+      valSug.textContent = (n>=3 && n<=5) ? "— ótima escolha!" : "— escolha de 3 a 5.";
+      updateProgress();
+    });
+    chipsWrap.appendChild(c);
+  });
+  function countValues(){ return Object.keys(state.values).filter(function(k){return state.values[k];}).length; }
+
+  // ---------- Data padrão ----------
+  (function(){
+    var d = new Date();
+    var iso = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    document.getElementById("data").value = iso;
+  })();
+
+  // ---------- Progresso ----------
+  var fields = ["nome","turma","valPorque","inspira","passo","sonho"];
+  fields.forEach(function(id){ document.getElementById(id).addEventListener("input", updateProgress); });
+  document.addEventListener("input", function(e){
+    if (e.target.classList && (e.target.classList.contains("bfrom")||e.target.classList.contains("bto"))) updateProgress();
+  });
+
+  function computeDone(){
+    var total = 0, done = 0;
+    // nome + turma
+    total += 2;
+    if (val("nome")) done++;
+    if (val("turma")) done++;
+    // escala (5)
+    total += STATEMENTS.length;
+    done += Object.keys(state.scale).length;
+    // crenças (2 pares -> conta cada par preenchido)
+    var pairs = document.querySelectorAll(".belief");
+    total += pairs.length;
+    Array.prototype.forEach.call(pairs, function(p){
+      var f = p.querySelector(".bfrom").value.trim();
+      var t = p.querySelector(".bto").value.trim();
+      if (f && t) done++;
+    });
+    // valores
+    total += 1; if (countValues() >= 3) done++;
+    // textos abertos (4)
+    ["valPorque","inspira","passo","sonho"].forEach(function(id){ total++; if(val(id)) done++; });
+    return Math.round(done/total*100);
+  }
+  function updateProgress(){
+    var p = computeDone();
+    document.getElementById("fill").style.width = p + "%";
+    document.getElementById("pct").textContent = p + "% concluído";
+  }
+  function val(id){ return document.getElementById(id).value.trim(); }
+
+  // ---------- Toast ----------
+  var toastEl = document.getElementById("toast");
+  var toastTimer;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+  }
+
+  // ---------- Validação ----------
+  function validate(){
+    var ok = true;
+    ["nome","turma"].forEach(function(id){
+      var el = document.getElementById(id);
+      if (!el.value.trim()){ el.classList.add("err"); ok = false; }
+      else el.classList.remove("err");
+    });
+    if (!ok){
+      toast("Preencha o nome completo e a turma antes de salvar.");
+      document.getElementById("nome").scrollIntoView({behavior:"smooth",block:"center"});
+    }
+    return ok;
+  }
+
+  // ---------- Gera folha de respostas para PDF ----------
+  function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function multiline(s){ return esc(s).replace(/\n/g,"<br>"); }
+
+  function buildAnswerSheet(){
+    var nome = val("nome"), turma = val("turma"), data = document.getElementById("data").value;
+    var dataFmt = data ? data.split("-").reverse().join("/") : "";
+
+    var scaleRows = STATEMENTS.map(function(t,i){
+      var ans = (state.scale[i] != null) ? SCALE[state.scale[i]] : "—";
+      return '<tr><td class="q">'+(i+1)+'. '+esc(t)+'</td><td class="a">'+ans+'</td></tr>';
+    }).join("");
+
+    var beliefRows = "";
+    document.querySelectorAll(".belief").forEach(function(p){
+      var f = p.querySelector(".bfrom").value.trim();
+      var t = p.querySelector(".bto").value.trim();
+      if (!f && !t) return;
+      beliefRows += '<div class="brow"><div class="bfromp"><span>Limita</span>'+multiline(f||"—")+'</div>'+
+        '<div class="btop"><span>Impulsiona</span>'+multiline(t||"—")+'</div></div>';
+    });
+    if (!beliefRows) beliefRows = '<p class="empty">— não preenchido —</p>';
+
+    var selVals = Object.keys(state.values).filter(function(k){return state.values[k];});
+    var valTags = selVals.length ? selVals.map(function(v){return '<span class="tag">'+esc(v)+'</span>';}).join("") : '<span class="empty">— nenhum selecionado —</span>';
+
+    function block(title, content){
+      return '<div class="ablock"><h3>'+title+'</h3><div class="atext">'+(content||'<span class="empty">— não preenchido —</span>')+'</div></div>';
+    }
+
+    return ''+
+    '<div class="sheet">'+
+      '<div class="shead">'+
+        '<div class="skick">Projeto de Vida · Módulo 1</div>'+
+        '<h1>Autoimagem e a superação de crenças limitantes</h1>'+
+        '<div class="smeta"><span><b>Nome:</b> '+esc(nome)+'</span><span><b>Turma:</b> '+esc(turma)+'</span><span><b>Data:</b> '+esc(dataFmt)+'</span></div>'+
+      '</div>'+
+      '<div class="ablock"><h3>1 · Como eu me enxergo</h3>'+
+        '<table class="stab"><thead><tr><td>Afirmação</td><td>Resposta</td></tr></thead><tbody>'+scaleRows+'</tbody></table></div>'+
+      '<div class="ablock"><h3>2 · Da crença que prende à crença que impulsiona</h3>'+beliefRows+'</div>'+
+      '<div class="ablock"><h3>3 · Os valores que me guiam</h3><div class="tags">'+valTags+'</div>'+
+        '<div class="atext" style="margin-top:10px">'+ (multiline(val("valPorque")) || '<span class="empty">— não preenchido —</span>') +'</div></div>'+
+      block("4 · Uma história que me inspira", multiline(val("inspira")))+
+      block("5 · Um passo para fortalecer a minha autoimagem", multiline(val("passo")))+
+      block("Um sonho no meu Projeto de Vida", multiline(val("sonho")))+
+      '<div class="sfoot">Atividade de Projeto de Vida — CEEP Castaldi</div>'+
+    '</div>';
+  }
+
+  var SHEET_CSS = ''+
+    '.sheet{font-family:"Nunito Sans",Arial,sans-serif;color:#22333B;width:720px;padding:34px 40px;background:#fff;}'+
+    '.shead{border-bottom:3px solid #2A9D8F;padding-bottom:14px;margin-bottom:18px;}'+
+    '.skick{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#2A9D8F;}'+
+    '.shead h1{font-family:"Fraunces",Georgia,serif;font-size:22px;margin:6px 0 12px;color:#1D3B36;}'+
+    '.smeta{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:#22333B;}'+
+    '.smeta b{color:#5C6B70;font-weight:800;}'+
+    '.ablock{margin-bottom:18px;page-break-inside:avoid;}'+
+    '.ablock h3{font-family:"Fraunces",Georgia,serif;font-size:16px;color:#1D3B36;margin:0 0 9px;}'+
+    '.atext{font-size:14px;line-height:1.55;white-space:normal;background:#F4F7F6;border-radius:9px;padding:11px 14px;min-height:20px;}'+
+    '.empty{color:#9AA7A3;font-style:italic;}'+
+    '.stab{width:100%;border-collapse:collapse;font-size:13.5px;}'+
+    '.stab thead td{background:#1D3B36;color:#fff;font-weight:800;padding:8px 12px;font-size:12px;letter-spacing:.5px;}'+
+    '.stab thead td:last-child{width:130px;text-align:center;}'+
+    '.stab td{padding:9px 12px;border-bottom:1px solid #E4EAE8;}'+
+    '.stab td.a{text-align:center;font-weight:800;color:#2A9D8F;}'+
+    '.brow{display:flex;gap:10px;margin-bottom:9px;}'+
+    '.bfromp,.btop{flex:1;border-radius:9px;padding:10px 13px;font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:14px;line-height:1.45;}'+
+    '.bfromp{background:#FBEDE8;} .btop{background:#E4F1EE;}'+
+    '.bfromp span,.btop span{display:block;font-family:"Nunito Sans",Arial,sans-serif;font-style:normal;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}'+
+    '.bfromp span{color:#E76F51;} .btop span{color:#2A9D8F;}'+
+    '.tags{display:flex;flex-wrap:wrap;gap:7px;}'+
+    '.tags .tag{background:#1D3B36;color:#fff;border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:700;}'+
+    '.sfoot{margin-top:22px;padding-top:12px;border-top:1px solid #E4EAE8;font-size:11px;color:#9AA7A3;text-align:center;}';
+
+  function fileName(){
+    var nome = val("nome").replace(/\s+/g,"_").replace(/[^\w\-À-ÿ]/g,"");
+    var turma = val("turma").replace(/\s+/g,"").replace(/[^\w\-À-ÿ]/g,"");
+    return "ProjetoDeVida_" + (nome||"Aluno") + (turma?("_"+turma):"") + ".pdf";
+  }
+
+  // ---------- Baixar PDF ----------
+  document.getElementById("btnPdf").addEventListener("click", function(){
+    if (!validate()) return;
+
+    if (typeof html2pdf === "undefined"){
+      toast("Abrindo a janela de impressão para salvar em PDF...");
+      setTimeout(printFallback, 400);
+      return;
+    }
+    var holder = document.createElement("div");
+    holder.style.position = "fixed"; holder.style.left = "-10000px"; holder.style.top = "0";
+    var style = document.createElement("style"); style.textContent = SHEET_CSS;
+    holder.appendChild(style);
+    var content = document.createElement("div");
+    content.innerHTML = buildAnswerSheet();
+    holder.appendChild(content);
+    document.body.appendChild(holder);
+
+    toast("Gerando o seu PDF...");
+    var opt = {
+      margin:[10,8,12,8],
+      filename:fileName(),
+      image:{type:"jpeg",quality:0.98},
+      html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff"},
+      jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},
+      pagebreak:{mode:["css","legacy"]}
+    };
+    html2pdf().set(opt).from(content.querySelector(".sheet")).save().then(function(){
+      document.body.removeChild(holder);
+    }).catch(function(){
+      document.body.removeChild(holder);
+      toast("Não foi possível gerar direto. Abrindo a impressão...");
+      setTimeout(printFallback, 400);
+    });
+  });
+
+  // ---------- Imprimir / Salvar como PDF (fallback nativo) ----------
+  function printFallback(){
+    var w = window.open("", "_blank");
+    if (!w){ toast("Permita pop-ups para imprimir, ou use o menu do navegador (Ctrl+P)."); return; }
+    w.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">'+
+      '<title>'+fileName().replace(/\.pdf$/,"")+'</title>'+
+      '<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&family=Nunito+Sans:wght@400;700;800&display=swap" rel="stylesheet">'+
+      '<style>@page{margin:12mm;} body{margin:0;} '+SHEET_CSS+' .sheet{width:auto;padding:0;}</style></head><body>'+
+      buildAnswerSheet()+
+      '<script>window.onload=function(){setTimeout(function(){window.print();},350);};<\/script>'+
+      '</body></html>');
+    w.document.close();
+  }
+  document.getElementById("btnPrint").addEventListener("click", function(){
+    if (!validate()) return;
+    printFallback();
+  });
+
+  updateProgress();
+})();
+</script>
+</body>
+</html>
