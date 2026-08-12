@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Minha Linha do Tempo Pessoal — Projeto de Vida</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --plum:#5B2A42; --plum2:#7A3B57; --rose:#C97B84; --amber:#E8A33D;
+    --ink:#3A2A31; --muted:#8A7A80; --tint:#F6ECEF; --tint2:#FBF5F8;
+    --border:#E4D3D9; --bg:#F3EEF0; --white:#fff;
+    --radius:14px; --shadow:0 6px 22px rgba(91,42,66,.10);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px 64px}
+
+  /* ---- header ---- */
+  header.hero{
+    background:linear-gradient(135deg,var(--plum),var(--plum2));
+    color:#fff;border-radius:0 0 var(--radius) var(--radius);
+    padding:30px 28px 26px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .wrap-hero{max-width:900px;margin:0 auto;padding:0 16px}
+  .eyebrow{color:var(--amber);font-weight:700;letter-spacing:.14em;font-size:.72rem;text-transform:uppercase;margin:0 0 8px}
+  header.hero h1{margin:0;font-size:1.9rem;line-height:1.15;font-weight:800}
+  header.hero p.sub{margin:8px 0 0;color:#E9D6DB;font-style:italic;font-size:1rem}
+  .timeline-motif{display:flex;align-items:center;gap:0;margin-top:20px;opacity:.9}
+  .timeline-motif .rail{height:2px;background:var(--plum2);flex:1}
+  .timeline-motif .dot{width:12px;height:12px;border-radius:50%;background:var(--rose);flex:0 0 auto}
+  .timeline-motif .dot.last{background:var(--amber)}
+
+  /* ---- how-to note ---- */
+  .note{
+    background:var(--tint);border-radius:12px;padding:14px 16px;margin:20px 0 8px;
+    font-size:.92rem;color:var(--ink);border:1px solid var(--border)
+  }
+  .note b{color:var(--plum)}
+  .note .time{color:var(--muted);font-style:italic;display:block;margin-top:4px;font-size:.86rem}
+
+  /* ---- identity row ---- */
+  .idrow{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin:18px 0 6px}
+  .field label{display:block;font-size:.8rem;font-weight:700;color:var(--plum);margin:0 0 5px}
+  input,textarea{
+    width:100%;font:inherit;color:var(--ink);background:var(--white);
+    border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;transition:border-color .15s,box-shadow .15s
+  }
+  input:focus,textarea:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(232,163,61,.22)}
+  textarea{resize:vertical;min-height:120px}
+
+  /* ---- sections ---- */
+  section.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 22px 24px;margin:18px 0}
+  .shead{display:flex;align-items:center;gap:12px;margin:0 0 4px}
+  .snum{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--amber);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:1rem}
+  .shead h2{margin:0;font-size:1.2rem;color:var(--plum)}
+  .sdesc{color:var(--muted);font-size:.9rem;margin:2px 0 16px 42px}
+
+  .q{margin:0 0 14px}
+  .q > label{display:block;font-size:.95rem;color:var(--ink);margin:0 0 6px}
+
+  /* ---- timeline moments ---- */
+  .timeline{margin-top:6px;padding-left:26px;position:relative}
+  .timeline::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--rose)}
+  .moment{position:relative;background:var(--tint2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:0 0 14px}
+  .moment::before{content:attr(data-n);position:absolute;left:-26px;top:16px;width:20px;height:20px;border-radius:50%;background:var(--amber);color:#fff;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px var(--bg)}
+  .moment .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .moment .mlabel{font-size:.78rem;font-weight:700;color:var(--plum);margin:0 0 5px;display:block}
+
+  /* ---- actions ---- */
+  .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:22px 0 6px}
+  button{font:inherit;font-weight:700;border:none;border-radius:12px;padding:14px 22px;cursor:pointer;transition:transform .08s,filter .15s,background .15s}
+  button:active{transform:translateY(1px)}
+  .btn-primary{background:var(--plum);color:#fff}
+  .btn-primary:hover{filter:brightness(1.08)}
+  .btn-ghost{background:transparent;color:var(--plum);border:1.5px solid var(--border)}
+  .btn-ghost:hover{background:var(--tint)}
+  .saved{color:var(--muted);font-size:.84rem;margin-left:auto}
+  .saved b{color:#2E7D32}
+
+  footer{color:var(--muted);font-size:.82rem;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid var(--border)}
+  footer .ver{color:var(--plum);font-weight:700}
+
+  /* ---- responsive ---- */
+  @media (max-width:640px){
+    header.hero h1{font-size:1.5rem}
+    .idrow{grid-template-columns:1fr}
+    .moment .pair{grid-template-columns:1fr}
+    .actions{flex-direction:column;align-items:stretch}
+    .saved{margin:6px 0 0;text-align:center}
+    button{width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap-hero">
+      <p class="eyebrow">Projeto de Vida • Atividade</p>
+      <h1>Minha Linha do Tempo Pessoal</h1>
+      <p class="sub">Identidade e trajetória de vida — EJA Módulo 2 (Manhã, Turma A)</p>
+      <div class="timeline-motif" aria-hidden="true">
+        <span class="dot"></span><span class="rail"></span>
+        <span class="dot"></span><span class="rail"></span>
+        <span class="dot"></span><span class="rail"></span>
+        <span class="dot"></span><span class="rail"></span>
+        <span class="dot last"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="note">
+      <b>Como fazer:</b> preencha os campos abaixo, clique em <b>“Baixar PDF para o Classroom”</b> e anexe o arquivo na tarefa.
+      <span class="time">Tempo estimado: cerca de 20 minutos. Não existe resposta certa ou errada — o que vale é a sua história.</span>
+    </div>
+
+    <div class="idrow">
+      <div class="field"><label for="nome">Nome completo</label><input id="nome" type="text" autocomplete="name" placeholder="Seu nome" /></div>
+      <div class="field"><label for="turma">Turma</label><input id="turma" type="text" placeholder="Ex.: 2 A" /></div>
+      <div class="field"><label for="data">Data</label><input id="data" type="text" placeholder="dd/mm/aaaa" /></div>
+    </div>
+
+    <!-- Section 1 -->
+    <section class="card">
+      <div class="shead"><span class="snum">1</span><h2>Quem sou eu?</h2></div>
+      <p class="sdesc">Comece se conhecendo um pouco melhor.</p>
+      <div class="q"><label for="q1">Escreva 3 palavras que definem você:</label><input id="q1" type="text" /></div>
+      <div class="q"><label for="q2">Algo que você faz bem:</label><input id="q2" type="text" /></div>
+      <div class="q"><label for="q3">Um valor muito importante para você:</label><input id="q3" type="text" /></div>
+    </section>
+
+    <!-- Section 2 -->
+    <section class="card">
+      <div class="shead"><span class="snum">2</span><h2>Minha linha do tempo</h2></div>
+      <p class="sdesc">Escolha 3 momentos marcantes da sua vida. Para cada um, diga o que aconteceu e o que você aprendeu.</p>
+      <div class="timeline">
+        <div class="moment" data-n="1">
+          <div class="pair">
+            <div><span class="mlabel">O que aconteceu</span><input id="m1a" type="text" /></div>
+            <div><span class="mlabel">O que eu aprendi</span><input id="m1b" type="text" /></div>
+          </div>
+        </div>
+        <div class="moment" data-n="2">
+          <div class="pair">
+            <div><span class="mlabel">O que aconteceu</span><input id="m2a" type="text" /></div>
+            <div><span class="mlabel">O que eu aprendi</span><input id="m2b" type="text" /></div>
+          </div>
+        </div>
+        <div class="moment" data-n="3">
+          <div class="pair">
+            <div><span class="mlabel">O que aconteceu</span><input id="m3a" type="text" /></div>
+            <div><span class="mlabel">O que eu aprendi</span><input id="m3b" type="text" /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section class="card">
+      <div class="shead"><span class="snum">3</span><h2>Olhando para o futuro</h2></div>
+      <p class="sdesc">Um momento mudou o seu caminho? Como a sua história se conecta com os seus sonhos?</p>
+      <div class="q"><label for="reflexao" class="sr-hide" style="position:absolute;left:-9999px">Reflexão</label>
+        <textarea id="reflexao" placeholder="Escreva aqui a sua reflexão..."></textarea>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button class="btn-primary" id="btnPdf" type="button">Baixar PDF para o Classroom</button>
+      <button class="btn-ghost" id="btnClear" type="button">Limpar respostas</button>
+      <span class="saved" id="savedMsg" aria-live="polite"></span>
+    </div>
+
+    <footer>
+      Prof. Alex Ferreira Novaes • Aula de 12/08/2026 • CEEBJA de Londrina<br />
+      <span class="ver">Projeto de Vida • Atividade v1.0</span>
+    </footer>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var STORE = "ptd_linhadotempo_v1";
+  var ids = ["nome","turma","data","q1","q2","q3","m1a","m1b","m2a","m2b","m3a","m3b","reflexao"];
+  var savedMsg = document.getElementById("savedMsg");
+  var saveTimer = null;
+
+  function val(id){ var el = document.getElementById(id); return el ? el.value.trim() : ""; }
+
+  // ---------- autosave (localStorage, degrada com segurança) ----------
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORE);
+      if(!raw) return;
+      var data = JSON.parse(raw);
+      ids.forEach(function(id){ if(data[id] != null){ var el=document.getElementById(id); if(el) el.value = data[id]; } });
+    }catch(e){/* sem persistência: segue sem salvar */}
+  }
+  function save(){
+    try{
+      var data = {}; ids.forEach(function(id){ data[id] = val(id); });
+      localStorage.setItem(STORE, JSON.stringify(data));
+      flash("Salvo automaticamente");
+    }catch(e){ /* ignora */ }
+  }
+  function flash(txt){
+    savedMsg.innerHTML = "<b>✔</b> " + txt;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){ savedMsg.textContent = ""; }, 1600);
+  }
+
+  ids.forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener("input", function(){ clearTimeout(saveTimer); saveTimer = setTimeout(save, 500); });
+  });
+
+  // prefill data de hoje se vazio
+  (function(){
+    var d = document.getElementById("data");
+    if(d && !d.value){ var t=new Date(); d.value = String(t.getDate()).padStart(2,"0")+"/"+String(t.getMonth()+1).padStart(2,"0")+"/"+t.getFullYear(); }
+  })();
+
+  load();
+
+  // ---------- limpar ----------
+  document.getElementById("btnClear").addEventListener("click", function(){
+    if(!confirm("Deseja apagar todas as respostas desta atividade?")) return;
+    ids.forEach(function(id){ var el=document.getElementById(id); if(el) el.value=""; });
+    try{ localStorage.removeItem(STORE); }catch(e){}
+    flash("Respostas apagadas");
+    document.getElementById("nome").focus();
+  });
+
+  // ---------- gerar PDF ----------
+  function nomeArquivo(){
+    var n = val("nome").replace(/[^\p{L}\p{N} ]/gu,"").trim().replace(/\s+/g,"_");
+    return "LinhaDoTempo_" + (n || "aluno") + ".pdf";
+  }
+
+  function gerarPDF(){
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert("Não foi possível carregar o gerador de PDF. Você pode usar Ctrl+P e salvar como PDF.");
+      window.print();
+      return;
+    }
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF({unit:"pt", format:"a4"});
+    var W = doc.internal.pageSize.getWidth();
+    var H = doc.internal.pageSize.getHeight();
+    var M = 42, y = 0;
+
+    function ensure(space){ if(y + space > H - 46){ doc.addPage(); y = 50; } }
+    function heading(num, title){
+      ensure(46); y += 8;
+      doc.setFillColor(232,163,61); doc.roundedRect(M, y-13, 18, 18, 3, 3, "F");
+      doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(11);
+      doc.text(String(num), M+9, y-0.5, {align:"center"});
+      doc.setTextColor(91,42,66); doc.setFontSize(13);
+      doc.text(title, M+28, y);
+      y += 14;
+    }
+    function qa(question, answer){
+      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(58,42,49);
+      var ql = doc.splitTextToSize(question, W-2*M);
+      ensure(ql.length*14 + 8); doc.text(ql, M, y); y += ql.length*14 + 2;
+      doc.setFont("helvetica","normal"); doc.setTextColor(30,30,30); doc.setFontSize(11);
+      var ans = answer && answer.length ? answer : "—";
+      var al = doc.splitTextToSize(ans, W-2*M);
+      ensure(al.length*15 + 10); doc.text(al, M, y); y += al.length*15 + 12;
+    }
+
+    // header band
+    doc.setFillColor(91,42,66); doc.rect(0,0,W,74,"F");
+    doc.setTextColor(232,163,61); doc.setFont("helvetica","bold"); doc.setFontSize(9);
+    doc.text("PROJETO DE VIDA  •  ATIVIDADE", M, 26);
+    doc.setTextColor(255,255,255); doc.setFontSize(18);
+    doc.text("Minha Linha do Tempo Pessoal", M, 48);
+    doc.setTextColor(233,214,219); doc.setFont("helvetica","italic"); doc.setFontSize(10);
+    doc.text("Identidade e trajetória de vida  |  EJA - Módulo 2 (Manhã, Turma A)", M, 64);
+    y = 100;
+
+    // identificação
+    doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(91,42,66);
+    var idline = "Nome: " + (val("nome")||"____________________") + "     Turma: " + (val("turma")||"______") + "     Data: " + (val("data")||"__________");
+    var idl = doc.splitTextToSize(idline, W-2*M);
+    doc.text(idl, M, y); y += idl.length*15 + 8;
+    doc.setDrawColor(228,211,217); doc.setLineWidth(1); doc.line(M, y, W-M, y); y += 16;
+
+    heading(1, "Quem sou eu?");
+    qa("Três palavras que me definem:", val("q1"));
+    qa("Algo que eu faço bem:", val("q2"));
+    qa("Um valor muito importante para mim:", val("q3"));
+
+    heading(2, "Minha linha do tempo");
+    for(var i=1;i<=3;i++){
+      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(122,59,87);
+      ensure(16); doc.text("Momento "+i, M, y); y += 14;
+      qa("O que aconteceu:", val("m"+i+"a"));
+      qa("O que eu aprendi:", val("m"+i+"b"));
+    }
+
+    heading(3, "Olhando para o futuro");
+    qa("Um momento mudou o meu caminho? Como a minha história se conecta com os meus sonhos?", val("reflexao"));
+
+    // rodapé em todas as páginas
+    var pages = doc.internal.getNumberOfPages();
+    for(var p=1;p<=pages;p++){
+      doc.setPage(p);
+      doc.setDrawColor(228,211,217); doc.setLineWidth(1); doc.line(M, H-40, W-M, H-40);
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(138,122,128);
+      doc.text("Prof. Alex Ferreira Novaes  •  Aula de 12/08/2026  •  CEEBJA de Londrina", M, H-28);
+      doc.setTextColor(91,42,66); doc.setFont("helvetica","bold");
+      doc.text("Pagina "+p+"/"+pages, W-M, H-28, {align:"right"});
+    }
+
+    save();
+    doc.save(nomeArquivo());
+  }
+
+  document.getElementById("btnPdf").addEventListener("click", gerarPDF);
+})();
+</script>
+</body>
+</html>
