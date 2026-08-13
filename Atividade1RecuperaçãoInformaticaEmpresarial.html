@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atividade de Revisão — Informática Empresarial (Aula 34)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --azul:#00799A;
+    --azul-escuro:#00485E;
+    --verde:#5AA02C;
+    --verde-claro:#eaf3e2;
+    --areia:#f4f7f8;
+    --tinta:#1c2b31;
+    --cinza:#5f6f75;
+    --borda:#d6e0e3;
+    --alerta:#a5320f;
+    --sombra:0 2px 10px rgba(0,72,94,.08);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--areia);color:var(--tinta);line-height:1.55;font-size:16px;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:16px 16px 60px}
+
+  /* Cabeçalho */
+  header.top{
+    background:linear-gradient(135deg,var(--azul-escuro),var(--azul));
+    color:#fff;border-radius:14px;padding:22px 24px;box-shadow:var(--sombra);
+  }
+  header.top .tag{display:inline-block;background:rgba(255,255,255,.15);
+    padding:3px 12px;border-radius:999px;font-size:12.5px;letter-spacing:.4px;font-weight:600;margin-bottom:10px}
+  header.top h1{margin:0 0 4px;font-size:22px;line-height:1.25}
+  header.top p{margin:2px 0;font-size:14px;opacity:.95}
+  .meta-linha{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:13.5px;opacity:.95}
+
+  /* Blocos e caixas */
+  .card{background:#fff;border:1px solid var(--borda);border-radius:12px;
+    padding:18px 20px;margin-top:16px;box-shadow:var(--sombra)}
+  .instr{background:var(--verde-claro);border:1px solid #cfe0bf;border-left:6px solid var(--verde)}
+  .instr h2{margin:0 0 8px;color:#3c6b1b;font-size:17px}
+  .instr ol{margin:8px 0 0 18px;padding:0}
+  .instr li{margin:5px 0}
+
+  /* Identificação */
+  .ident h2{margin:0 0 12px;font-size:17px;color:var(--azul-escuro)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+  .grid .full{grid-column:1/-1}
+  label{display:block;font-size:13px;font-weight:600;color:var(--cinza);margin-bottom:4px}
+  input[type=text],input[type=date],textarea{
+    width:100%;border:1.5px solid var(--borda);border-radius:8px;padding:9px 11px;
+    font-size:15px;font-family:inherit;color:var(--tinta);background:#fdfefe}
+  input:focus,textarea:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(0,121,154,.12)}
+  @media(max-width:620px){.grid{grid-template-columns:1fr}}
+
+  /* Numeração dos blocos */
+  .bloco > h2{display:flex;align-items:center;gap:12px;margin:0 0 4px;font-size:18px;color:var(--azul-escuro)}
+  .num{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:var(--azul);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+  .bloco .subtitulo{color:var(--cinza);font-size:13.5px;margin:0 0 12px 46px}
+  .bloco ol.q{margin:0 0 0 20px;padding:0}
+  .bloco ol.q > li{margin:9px 0}
+  .bloco ul.alt{list-style:none;margin:5px 0 0;padding:0 0 0 4px}
+  .bloco ul.alt li{margin:3px 0;font-size:15px}
+  .banco{background:#eef6f8;border:1px dashed var(--azul);border-radius:8px;padding:10px 14px;
+    margin:6px 0 12px;font-size:14.5px}
+  .banco b{color:var(--azul-escuro)}
+  .dica{font-size:13.5px;color:var(--cinza);font-style:italic;margin:8px 0 0}
+
+  /* Área de fotos */
+  .fotos{margin-top:14px;border-top:1px dashed var(--borda);padding-top:12px}
+  .fotos .rot{font-size:13.5px;font-weight:600;color:var(--verde);margin-bottom:8px}
+  .fotos .rot::before{content:"📷 ";}
+  .add{display:inline-flex;align-items:center;gap:7px;cursor:pointer;background:var(--verde);
+    color:#fff;border:none;border-radius:8px;padding:9px 15px;font-size:14px;font-weight:600;font-family:inherit}
+  .add:hover{filter:brightness(1.06)}
+  .add input{display:none}
+  .thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .thumb{position:relative;width:104px;height:104px;border-radius:8px;overflow:hidden;
+    border:1.5px solid var(--borda);background:#f0f4f5}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb button{position:absolute;top:3px;right:3px;width:22px;height:22px;border:none;border-radius:50%;
+    background:rgba(165,50,15,.92);color:#fff;font-size:13px;line-height:1;cursor:pointer}
+  .vazio{font-size:13px;color:#9aa8ad;margin-top:6px}
+
+  /* Barra de ações */
+  .acoes{position:sticky;bottom:0;margin-top:22px;background:#fff;border:1px solid var(--borda);
+    border-radius:12px;padding:12px 16px;box-shadow:0 -4px 14px rgba(0,72,94,.08);
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+  .status{font-size:13px;color:var(--cinza)}
+  .status b{color:var(--verde)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{border:none;border-radius:9px;padding:11px 18px;font-size:15px;font-weight:600;
+    cursor:pointer;font-family:inherit}
+  .btn-pdf{background:var(--azul);color:#fff}
+  .btn-pdf:hover{filter:brightness(1.07)}
+  .btn-limpar{background:#fff;color:var(--alerta);border:1.5px solid #e6c3b8}
+  .btn-limpar:hover{background:#fceeea}
+
+  footer.rod{margin-top:24px;text-align:center;font-size:12.5px;color:#8a979c;line-height:1.5}
+
+  .aviso{background:#fff6f2;border:1px solid #ecc7ba;color:var(--alerta);border-radius:8px;
+    padding:10px 14px;font-size:13.5px;margin-top:12px;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <span class="tag">RECUPERAÇÃO · ATIVIDADE DE REVISÃO</span>
+    <h1>Redes sociais, informação e pensamento crítico</h1>
+    <p>Informática Empresarial — 1ª Série · Curso Técnico em Administração</p>
+    <p>Aula 34 · CEEP Castaldi — Londrina/PR</p>
+    <div class="meta-linha">
+      <span>Prof. Me. Alex Ferreira Novaes</span>
+      <span>Valor: revisão / recuperação de atividades</span>
+    </div>
+  </header>
+
+  <!-- INSTRUÇÕES -->
+  <section class="card instr">
+    <h2>Como fazer esta atividade</h2>
+    <ol>
+      <li>Preencha seus dados no campo <b>Identificação</b> abaixo.</li>
+      <li>Resolva <b>todos os blocos no seu caderno</b>, com letra legível, numerando cada resposta.</li>
+      <li>A cada bloco concluído, <b>tire uma foto</b> da página do caderno e anexe no botão <b>“Adicionar foto”</b> correspondente.</li>
+      <li>Ao terminar, clique em <b>“Exportar PDF”</b>. O arquivo já sai com seus dados e todas as fotos.</li>
+      <li>Envie o PDF na tarefa do <b>Google Classroom</b>.</li>
+    </ol>
+  </section>
+
+  <!-- IDENTIFICAÇÃO -->
+  <section class="card ident">
+    <h2>Identificação</h2>
+    <div class="grid">
+      <div class="full">
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" data-save placeholder="Digite seu nome completo">
+      </div>
+      <div>
+        <label for="turma">Turma</label>
+        <input type="text" id="turma" data-save placeholder="Ex.: 1º A">
+      </div>
+      <div>
+        <label for="data">Data</label>
+        <input type="date" id="data" data-save>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCO 1 -->
+  <section class="card bloco">
+    <h2><span class="num">1</span> Verdadeiro ou Falso</h2>
+    <p class="subtitulo">No caderno, escreva o número e <b>V</b> ou <b>F</b>. Depois, <b>reescreva corrigidas</b> as afirmações falsas.</p>
+    <ol class="q">
+      <li>As redes sociais permitem que as informações sejam divulgadas muito rapidamente.</li>
+      <li>Tudo o que aparece nas redes sociais representa um fato verdadeiro.</li>
+      <li>Muitas curtidas e compartilhamentos garantem que uma informação é verdadeira.</li>
+      <li>Verificar a fonte é um cuidado importante antes de compartilhar um conteúdo.</li>
+      <li>Os algoritmos mostram ao usuário conteúdos parecidos com os seus interesses.</li>
+      <li>Os influenciadores digitais só podem trazer efeitos positivos.</li>
+      <li>Pensar criticamente é analisar a informação antes de acreditar nela.</li>
+      <li>Compartilhar primeiro e pesquisar depois é uma atitude responsável.</li>
+    </ol>
+    <div class="fotos" data-fotos="b1"></div>
+  </section>
+
+  <!-- BLOCO 2 -->
+  <section class="card bloco">
+    <h2><span class="num">2</span> Múltipla escolha</h2>
+    <p class="subtitulo">Copie a letra da alternativa correta de cada questão no caderno.</p>
+    <ol class="q">
+      <li>Qual atitude demonstra o <b>uso responsável</b> das redes sociais?
+        <ul class="alt"><li>a) Compartilhar qualquer notícia recebida.</li>
+        <li>b) Acreditar apenas no número de curtidas.</li>
+        <li>c) Verificar a fonte antes de compartilhar.</li>
+        <li>d) Compartilhar primeiro e pesquisar depois.</li></ul></li>
+      <li>“Construção da verdade” nas redes sociais significa que:
+        <ul class="alt"><li>a) tudo o que viraliza é verdade.</li>
+        <li>b) a percepção das pessoas pode ser influenciada por curtidas, comentários e compartilhamentos.</li>
+        <li>c) só os influenciadores dizem a verdade.</li>
+        <li>d) toda notícia antiga é falsa.</li></ul></li>
+      <li>Os algoritmos das plataformas podem causar:
+        <ul class="alt"><li>a) mais contato com ideias diferentes.</li>
+        <li>b) menos contato com ideias diferentes e maior risco de acreditar em informações falsas.</li>
+        <li>c) o fim das fake news.</li>
+        <li>d) verificação automática das fontes.</li></ul></li>
+      <li>Um influenciador digital pode:
+        <ul class="alt"><li>a) apenas informar e ensinar.</li>
+        <li>b) apenas divulgar produtos.</li>
+        <li>c) informar e ensinar, mas também divulgar informações incorretas.</li>
+        <li>d) nunca errar.</li></ul></li>
+      <li>Antes de compartilhar uma informação, é recomendável:
+        <ul class="alt"><li>a) olhar somente o título.</li>
+        <li>b) confiar porque um amigo enviou.</li>
+        <li>c) verificar a fonte, a data e o autor.</li>
+        <li>d) compartilhar rápido para avisar todos.</li></ul></li>
+      <li>No caso de Mariana, a publicação de que a empresa “estava falindo” era:
+        <ul class="alt"><li>a) verdadeira.</li>
+        <li>b) falsa, desmentida por nota oficial.</li>
+        <li>c) confirmada pelos órgãos.</li>
+        <li>d) sem importância.</li></ul></li>
+    </ol>
+    <div class="fotos" data-fotos="b2"></div>
+  </section>
+
+  <!-- BLOCO 3 -->
+  <section class="card bloco">
+    <h2><span class="num">3</span> Complete as frases</h2>
+    <p class="subtitulo">Copie as frases no caderno preenchendo as lacunas com as palavras do banco.</p>
+    <div class="banco"><b>Banco de palavras:</b> impulso · fonte · algoritmos · crítico · evidências · influenciadores</div>
+    <ol class="q">
+      <li>Muitas pessoas compartilham por __________, sem verificar a __________ da informação.</li>
+      <li>As plataformas usam __________ para mostrar conteúdos parecidos com os interesses do usuário.</li>
+      <li>Pensamento __________ é analisar antes de acreditar e buscar __________.</li>
+      <li>Os __________ digitais têm o poder de alcançar milhões de seguidores.</li>
+    </ol>
+    <div class="fotos" data-fotos="b3"></div>
+  </section>
+
+  <!-- BLOCO 4 -->
+  <section class="card bloco">
+    <h2><span class="num">4</span> Cuidados antes de compartilhar</h2>
+    <p class="subtitulo">Copie no caderno os <b>6 cuidados</b> para verificar se uma informação é verdadeira (vistos na aula).</p>
+    <p class="dica">Dica: pense em fonte, outros sites, páginas oficiais, data, autor e títulos chamativos.</p>
+    <div class="fotos" data-fotos="b4"></div>
+  </section>
+
+  <!-- BLOCO 5 -->
+  <section class="card bloco">
+    <h2><span class="num">5</span> Responda com suas palavras</h2>
+    <p class="subtitulo">Responda no caderno, de 2 a 4 linhas cada.</p>
+    <ol class="q">
+      <li>Por que tantas pessoas acreditaram e compartilharam a notícia falsa sobre a empresa (caso de Mariana)? Cite pelo menos 2 motivos.</li>
+      <li>Explique, com suas palavras, o que é a “construção da verdade” nas redes sociais.</li>
+      <li>Como os algoritmos podem fazer uma pessoa ver apenas um lado de um assunto? Qual é o risco disso?</li>
+      <li>Cite dois pontos positivos e dois pontos negativos do papel dos influenciadores digitais.</li>
+      <li>No caso do produto de alimentos que “fazia mal à saúde”, explique como uma única postagem pôde prejudicar a empresa.</li>
+    </ol>
+    <div class="fotos" data-fotos="b5"></div>
+  </section>
+
+  <!-- BLOCO 6 -->
+  <section class="card bloco">
+    <h2><span class="num">6</span> Prática: Mapa da Influência</h2>
+    <p class="subtitulo">Desenhe no caderno o <b>fluxograma</b> do caminho de uma informação nas redes sociais.</p>
+    <p>Use este exemplo como base:</p>
+    <div class="banco">Publicação → Curtidas → Compartilhamentos → Comentários → Influenciadores → Grande alcance → Formação da opinião pública → Impacto nas empresas e na sociedade.</div>
+    <p>Depois do fluxograma, escreva no caderno:</p>
+    <ol class="q">
+      <li>Onde a informação pode ser alterada?</li>
+      <li>Onde surgem as opiniões pessoais?</li>
+      <li>Quando ocorre a perda da veracidade?</li>
+      <li>Qual atitude poderia impedir a divulgação de informações falsas?</li>
+    </ol>
+    <div class="fotos" data-fotos="b6"></div>
+  </section>
+
+  <!-- BLOCO 7 -->
+  <section class="card bloco">
+    <h2><span class="num">7</span> Prática: Cartaz “Pense antes de compartilhar!”</h2>
+    <p class="subtitulo">Crie um cartaz no caderno (ou em uma folha) contendo os 4 itens abaixo.</p>
+    <ol class="q">
+      <li>Um <b>slogan</b> criativo.</li>
+      <li><b>Três dicas</b> para verificar informações.</li>
+      <li>Um <b>desenho</b> ou imagem.</li>
+      <li>Uma <b>frase de conscientização</b> sobre responsabilidade digital.</li>
+    </ol>
+    <div class="fotos" data-fotos="b7"></div>
+  </section>
+
+  <!-- BLOCO 8 -->
+  <section class="card bloco">
+    <h2><span class="num">8</span> Reflexão final</h2>
+    <p class="subtitulo">Responda no caderno, de 3 a 5 linhas.</p>
+    <ol class="q">
+      <li>Você já recebeu uma notícia falsa em alguma rede social? Conte a experiência e o que faria diferente hoje. Se nunca recebeu, explique como se protegeria de uma fake news.</li>
+    </ol>
+    <div class="fotos" data-fotos="b8"></div>
+  </section>
+
+  <div class="aviso" id="aviso"></div>
+
+  <!-- AÇÕES -->
+  <div class="acoes">
+    <div class="status" id="status">Progresso salvo automaticamente neste dispositivo.</div>
+    <div class="btns">
+      <button class="btn btn-limpar" id="btnLimpar">Limpar tudo</button>
+      <button class="btn btn-pdf" id="btnPdf">Exportar PDF</button>
+    </div>
+  </div>
+
+  <footer class="rod">
+    Baseado no material RCO+aulas (SEED/PR) — uso exclusivo em sala de aula.<br>
+    Após exportar, envie o PDF na tarefa do Google Classroom.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "ie_aula34_revisao_v1";
+  var MAX_DIM = 1400;        // redimensiona a maior dimensão da foto
+  var JPEG_Q  = 0.72;        // qualidade da compressão
+  var state = { ident:{}, fotos:{} }; // fotos: { b1:[dataUrl,...], ... }
+
+  // ---- Carregar estado salvo ----
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ state = JSON.parse(raw); state.ident = state.ident||{}; state.fotos = state.fotos||{}; }
+  }catch(e){ state = { ident:{}, fotos:{} }; }
+
+  // ---- Persistência ----
+  function salvar(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      flashStatus("Salvo automaticamente ✓");
+      esconderAviso();
+    }catch(e){
+      // Geralmente cota excedida por muitas/fotos grandes
+      mostrarAviso("As fotos estão ocupando muito espaço para o salvamento automático. Não se preocupe: elas continuam aqui e entram no PDF normalmente. Se possível, exporte o PDF logo após anexar.");
+    }
+  }
+  var stTimer;
+  function flashStatus(txt){
+    var el = document.getElementById("status");
+    el.innerHTML = "<b>"+txt+"</b>";
+    clearTimeout(stTimer);
+    stTimer = setTimeout(function(){ el.textContent = "Progresso salvo automaticamente neste dispositivo."; }, 1800);
+  }
+  function mostrarAviso(msg){ var a=document.getElementById("aviso"); a.textContent=msg; a.style.display="block"; }
+  function esconderAviso(){ document.getElementById("aviso").style.display="none"; }
+
+  // ---- Identificação ----
+  document.querySelectorAll("[data-save]").forEach(function(inp){
+    if(state.ident[inp.id] != null) inp.value = state.ident[inp.id];
+    inp.addEventListener("input", function(){
+      state.ident[inp.id] = inp.value;
+      salvar();
+    });
+  });
+
+  // ---- Redimensiona/compacta imagem ----
+  function comprimir(file){
+    return new Promise(function(resolve,reject){
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        var img = new Image();
+        img.onload = function(){
+          var w = img.width, h = img.height;
+          if(w > h && w > MAX_DIM){ h = Math.round(h*MAX_DIM/w); w = MAX_DIM; }
+          else if(h >= w && h > MAX_DIM){ w = Math.round(w*MAX_DIM/h); h = MAX_DIM; }
+          var c = document.createElement("canvas");
+          c.width = w; c.height = h;
+          c.getContext("2d").drawImage(img,0,0,w,h);
+          resolve({ url:c.toDataURL("image/jpeg", JPEG_Q), w:w, h:h });
+        };
+        img.onerror = reject;
+        img.src = ev.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ---- Render das áreas de foto ----
+  function renderFotos(cont){
+    var key = cont.getAttribute("data-fotos");
+    var lista = state.fotos[key] || [];
+    var thumbs = lista.map(function(item,i){
+      var src = (typeof item === "string") ? item : item.url;
+      return '<div class="thumb"><img src="'+src+'" alt="Foto '+(i+1)+'">'
+           + '<button data-rm="'+i+'" title="Remover">✕</button></div>';
+    }).join("");
+    cont.innerHTML =
+      '<div class="rot">Anexe aqui a(s) foto(s) da sua resposta no caderno</div>'
+      + '<label class="add">＋ Adicionar foto'
+      + '<input type="file" accept="image/*" multiple></label>'
+      + (lista.length ? '<div class="thumbs">'+thumbs+'</div>'
+                      : '<div class="vazio">Nenhuma foto anexada ainda.</div>');
+
+    cont.querySelector('input[type=file]').addEventListener("change", function(ev){
+      var files = Array.prototype.slice.call(ev.target.files||[]);
+      if(!files.length) return;
+      flashStatus("Processando foto(s)...");
+      Promise.all(files.map(comprimir)).then(function(urls){
+        state.fotos[key] = (state.fotos[key]||[]).concat(urls);
+        salvar();
+        renderFotos(cont);
+      }).catch(function(){
+        mostrarAviso("Não foi possível ler uma das imagens. Tente outra foto.");
+      });
+      ev.target.value = "";
+    });
+
+    cont.querySelectorAll("[data-rm]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var i = parseInt(btn.getAttribute("data-rm"),10);
+        state.fotos[key].splice(i,1);
+        salvar();
+        renderFotos(cont);
+      });
+    });
+  }
+  document.querySelectorAll("[data-fotos]").forEach(renderFotos);
+
+  // ---- Limpar tudo ----
+  document.getElementById("btnLimpar").addEventListener("click", function(){
+    if(!confirm("Tem certeza que deseja apagar TODAS as respostas e fotos desta atividade? Esta ação não pode ser desfeita.")) return;
+    state = { ident:{}, fotos:{} };
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    document.querySelectorAll("[data-save]").forEach(function(i){ i.value=""; });
+    document.querySelectorAll("[data-fotos]").forEach(renderFotos);
+    esconderAviso();
+    flashStatus("Atividade reiniciada");
+  });
+
+  // ---- Exportar PDF ----
+  var BLOCOS = [
+    ["b1","Bloco 1 — Verdadeiro ou Falso"],
+    ["b2","Bloco 2 — Múltipla escolha"],
+    ["b3","Bloco 3 — Complete as frases"],
+    ["b4","Bloco 4 — Cuidados antes de compartilhar"],
+    ["b5","Bloco 5 — Responda com suas palavras"],
+    ["b6","Bloco 6 — Mapa da Influência"],
+    ["b7","Bloco 7 — Cartaz 'Pense antes de compartilhar!'"],
+    ["b8","Bloco 8 — Reflexão final"]
+  ];
+
+  document.getElementById("btnPdf").addEventListener("click", function(){
+    var nome = (state.ident.nome||"").trim();
+    if(!nome){
+      alert("Preencha seu NOME COMPLETO antes de exportar o PDF.");
+      document.getElementById("nome").focus();
+      return;
+    }
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert("A biblioteca de PDF não carregou. Verifique sua conexão com a internet e recarregue a página.");
+      return;
+    }
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF({unit:"mm",format:"a4"});
+    var PW = 210, PH = 297, M = 16, cursor;
+
+    function novaPagina(){ doc.addPage(); cursor = M; }
+    function precisa(h){ if(cursor + h > PH - M){ novaPagina(); } }
+
+    // ---- Cabeçalho ----
+    doc.setFillColor(0,72,94);
+    doc.rect(0,0,PW,30,"F");
+    doc.setTextColor(255,255,255);
+    doc.setFont("helvetica","bold"); doc.setFontSize(14);
+    doc.text("Atividade de Revisão — Recuperação", M, 13);
+    doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    doc.text("Informática Empresarial · 1ª Série · Aula 34 — Redes sociais e pensamento crítico", M, 20);
+    doc.text("CEEP Castaldi — Londrina/PR · Prof. Me. Alex Ferreira Novaes", M, 25.5);
+
+    cursor = 40;
+    doc.setTextColor(28,43,49);
+    doc.setFont("helvetica","bold"); doc.setFontSize(12);
+    doc.text("Identificação", M, cursor); cursor += 7;
+    doc.setFont("helvetica","normal"); doc.setFontSize(11);
+    doc.text("Nome: " + nome, M, cursor); cursor += 6.5;
+    doc.text("Turma: " + (state.ident.turma||"—") + "     Data: " + fmtData(state.ident.data), M, cursor); cursor += 6.5;
+
+    var totalFotos = BLOCOS.reduce(function(s,b){ return s + ((state.fotos[b[0]]||[]).length); },0);
+    doc.text("Total de fotos anexadas: " + totalFotos, M, cursor); cursor += 4;
+    doc.setDrawColor(214,224,227); doc.line(M, cursor, PW-M, cursor); cursor += 8;
+
+    // ---- Blocos com fotos ----
+    BLOCOS.forEach(function(b){
+      var fotos = state.fotos[b[0]] || [];
+      precisa(12);
+      doc.setFont("helvetica","bold"); doc.setFontSize(11.5);
+      doc.setTextColor(0,72,94);
+      doc.text(b[1], M, cursor); cursor += 6.5;
+      doc.setTextColor(28,43,49);
+
+      if(!fotos.length){
+        doc.setFont("helvetica","italic"); doc.setFontSize(10);
+        doc.setTextColor(150,160,165);
+        doc.text("(sem foto anexada)", M, cursor); cursor += 8;
+        doc.setTextColor(28,43,49);
+        return;
+      }
+
+      fotos.forEach(function(item){
+        var url = (typeof item === "string") ? item : item.url;
+        var pw  = (item && item.w) ? item.w : 1400;
+        var ph  = (item && item.h) ? item.h : 1050;
+        var maxW = PW - 2*M;
+        var maxH = 150; // mm por imagem
+        var wmm = maxW, hmm = wmm * ph / pw;
+        if(hmm > maxH){ hmm = maxH; wmm = hmm * pw / ph; }
+        precisa(hmm + 6);
+        try{ doc.addImage(url,"JPEG", M, cursor, wmm, hmm); }
+        catch(e){ /* ignora imagem problemática */ }
+        cursor += hmm + 6;
+      });
+      cursor += 2;
+    });
+
+    // ---- Rodapé em todas as páginas ----
+    var total = doc.internal.getNumberOfPages();
+    for(var p=1;p<=total;p++){
+      doc.setPage(p);
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.5);
+      doc.setTextColor(140,151,156);
+      doc.text("Informática Empresarial — Aula 34 · Página "+p+" de "+total, M, PH-8);
+    }
+
+    var arq = "Atividade_Revisao_Aula34_" + slug(nome) + ".pdf";
+    doc.save(arq);
+    flashStatus("PDF gerado ✓");
+  });
+
+  function fmtData(iso){
+    if(!iso) return "—";
+    var p = iso.split("-"); if(p.length!==3) return iso;
+    return p[2]+"/"+p[1]+"/"+p[0];
+  }
+  function slug(s){
+    return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+            .replace(/[^a-zA-Z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,40) || "aluno";
+  }
+})();
+</script>
+</body>
+</html>
