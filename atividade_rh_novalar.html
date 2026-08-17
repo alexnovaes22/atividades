@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudo de Caso RH — NovaLar Móveis &amp; Decorações</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --petroleo:#12455A;
+    --petroleo-esc:#0C3040;
+    --teal:#0E7C86;
+    --ocre:#C98A2B;
+    --plum:#7A4A78;
+    --slate:#3F5E8C;
+    --forest:#3C6E47;
+    --ink:#1C2B33;
+    --ink-suave:#4A5C66;
+    --papel:#FBF8F2;
+    --papel-2:#F2ECE0;
+    --linha:#E3DBCB;
+    --branco:#FFFFFF;
+    --alerta:#B24A2E;
+    --sombra:0 1px 2px rgba(18,69,90,.06),0 8px 24px rgba(18,69,90,.08);
+    --raio:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--papel);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.55;font-size:16px;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px 90px}
+
+  /* Cabeçalho */
+  .topo{
+    position:sticky;top:0;z-index:40;
+    background:rgba(251,248,242,.92);backdrop-filter:saturate(1.4) blur(8px);
+    border-bottom:1px solid var(--linha);
+  }
+  .topo-in{max-width:900px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+  .marca{display:flex;align-items:center;gap:10px;min-width:0}
+  .marca .selo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--petroleo),var(--teal));
+    display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;letter-spacing:.5px;flex:none}
+  .marca b{font-size:15px;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .marca span{display:block;font-size:11px;color:var(--ink-suave);letter-spacing:.4px;text-transform:uppercase}
+  .topo .acoes{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .salvo{font-size:12px;color:var(--forest);display:flex;align-items:center;gap:6px;white-space:nowrap}
+  .salvo i{width:8px;height:8px;border-radius:50%;background:var(--forest);display:inline-block}
+  .salvo.off i{background:var(--linha)}
+
+  .btn{border:0;border-radius:10px;padding:9px 15px;font-size:14px;font-weight:600;cursor:pointer;
+    font-family:inherit;transition:transform .06s ease, box-shadow .15s ease, background .15s ease}
+  .btn:active{transform:translateY(1px)}
+  .btn-pdf{background:var(--petroleo);color:#fff;box-shadow:var(--sombra)}
+  .btn-pdf:hover{background:var(--petroleo-esc)}
+  .btn-ghost{background:transparent;color:var(--petroleo);border:1px solid var(--linha)}
+  .btn-ghost:hover{background:var(--papel-2)}
+  .btn-alerta{background:transparent;color:var(--alerta);border:1px solid #E6C6BB}
+  .btn-alerta:hover{background:#F7ECE7}
+
+  /* Herói */
+  .heroi{padding:40px 0 8px}
+  .eyebrow{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);font-weight:700}
+  .heroi h1{font-size:clamp(28px,5vw,42px);line-height:1.08;margin:12px 0 10px;letter-spacing:-.02em;color:var(--petroleo)}
+  .heroi .sub{font-size:17px;color:var(--ink-suave);max-width:60ch}
+  .tri{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .tri span{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--linha);background:var(--branco)}
+  .tri span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:1px}
+  .tri .t1::before{background:var(--teal)}
+  .tri .t2::before{background:var(--ocre)}
+  .tri .t3::before{background:var(--plum)}
+
+  /* Cartões genéricos */
+  .card{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra);margin-top:22px}
+  .card-pad{padding:22px 24px}
+  h2.sec{font-size:13px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-suave);margin:0 0 14px;font-weight:700}
+
+  /* Identificação */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-suave);margin-bottom:5px}
+  .field input{width:100%;padding:10px 12px;border:1px solid var(--linha);border-radius:9px;font-size:15px;font-family:inherit;background:var(--papel);color:var(--ink)}
+  .field input:focus{outline:2px solid var(--teal);outline-offset:1px;background:#fff}
+  .integrantes{margin-top:16px}
+  .integrantes .lin{display:flex;align-items:center;gap:10px;margin-top:9px}
+  .integrantes .num{width:26px;height:26px;border-radius:7px;background:var(--papel-2);color:var(--petroleo);font-weight:700;font-size:13px;display:grid;place-items:center;flex:none}
+  .integrantes input{flex:1;padding:9px 12px;border:1px solid var(--linha);border-radius:9px;font-size:15px;font-family:inherit;background:var(--papel)}
+  .integrantes input:focus{outline:2px solid var(--teal);outline-offset:1px;background:#fff}
+  .dica{font-size:12.5px;color:var(--ink-suave);margin-top:6px}
+
+  /* Como dividir */
+  .divisao{background:linear-gradient(180deg,#fff, var(--papel));border-left:4px solid var(--ocre)}
+  .divisao p{margin:0 0 10px;font-size:14.5px}
+  .divisao p:last-child{margin-bottom:0}
+  .divisao b{color:var(--petroleo)}
+
+  /* Acordeão base conceitual */
+  details.base{border:1px solid var(--linha);border-radius:12px;background:var(--branco);margin-top:10px;overflow:hidden}
+  details.base+details.base{margin-top:10px}
+  details.base summary{list-style:none;cursor:pointer;padding:14px 18px;font-weight:700;font-size:15px;color:var(--petroleo);display:flex;align-items:center;gap:10px}
+  details.base summary::-webkit-details-marker{display:none}
+  details.base summary .chip{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#fff;padding:3px 8px;border-radius:6px}
+  details.base summary::after{content:"+";margin-left:auto;font-weight:700;color:var(--ink-suave);font-size:18px}
+  details.base[open] summary::after{content:"–"}
+  details.base .corpo{padding:0 18px 16px;font-size:14.5px;color:var(--ink)}
+  details.base .corpo p{margin:.4em 0}
+  details.base .corpo em{color:var(--ink-suave);font-style:normal;font-weight:600}
+
+  /* Cenário empresa */
+  .empresa{border-top:3px solid var(--petroleo)}
+  .empresa .corpo{font-size:15.5px}
+  .empresa .corpo p{margin:.2em 0 .8em}
+  .fatos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .fato{background:var(--papel);border:1px solid var(--linha);border-radius:11px;padding:12px 14px}
+  .fato b{display:block;font-size:22px;color:var(--petroleo);line-height:1}
+  .fato span{font-size:12px;color:var(--ink-suave)}
+
+  /* Casos (dossiê) */
+  .caso{position:relative;overflow:hidden}
+  .caso-topo{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;border-bottom:1px solid var(--linha);background:var(--papel)}
+  .idx{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:.9;color:var(--petroleo);flex:none;font-variant-numeric:tabular-nums}
+  .caso-h{min-width:0}
+  .caso-h .setor{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink-suave);font-weight:700}
+  .caso-h h3{margin:3px 0 8px;font-size:19px;color:var(--ink);letter-spacing:-.01em}
+  .foco{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#fff;padding:4px 10px;border-radius:7px}
+  .resp{margin-left:auto;flex:none;min-width:190px}
+  .resp label{display:block;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-suave);margin-bottom:5px}
+  .resp input{width:100%;padding:8px 11px;border:1px dashed var(--ink-suave);border-radius:9px;font-size:14px;font-family:inherit;background:#fff}
+  .resp input:focus{outline:2px solid var(--teal);outline-offset:1px;border-style:solid}
+
+  .caso-corpo{padding:18px 24px 22px}
+  .cenario{font-size:15px;background:var(--papel);border:1px solid var(--linha);border-radius:11px;padding:14px 16px;margin-bottom:20px}
+  .cenario p{margin:.1em 0 .7em}
+  .cenario p:last-child{margin-bottom:0}
+
+  .q{margin-bottom:20px}
+  .q:last-child{margin-bottom:0}
+  .q .tag{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--teal)}
+  .q .tag.diss{color:var(--ocre)}
+  .q .enun{font-size:15px;font-weight:600;margin:4px 0 10px;color:var(--ink)}
+  fieldset{border:0;margin:0;padding:0}
+  .alt{display:flex;align-items:flex-start;gap:11px;padding:9px 12px;border:1px solid var(--linha);border-radius:10px;margin-bottom:8px;cursor:pointer;background:var(--papel);transition:border-color .12s, background .12s}
+  .alt:hover{background:#fff;border-color:var(--teal)}
+  .alt input{margin-top:3px;accent-color:var(--teal);width:17px;height:17px;flex:none}
+  .alt span{font-size:14.5px}
+  .alt .letra{font-weight:700;color:var(--petroleo);margin-right:2px}
+  textarea{width:100%;min-height:110px;padding:12px 14px;border:1px solid var(--linha);border-radius:10px;font-size:14.5px;font-family:inherit;line-height:1.5;background:var(--papel);color:var(--ink);resize:vertical}
+  textarea:focus{outline:2px solid var(--ocre);outline-offset:1px;background:#fff}
+
+  /* Rodapé de ações */
+  .rodape{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center}
+  .rodape .btn{padding:12px 20px;font-size:15px}
+  .nota-final{text-align:center;font-size:13px;color:var(--ink-suave);margin-top:14px}
+  footer{margin-top:36px;text-align:center;font-size:12px;color:var(--ink-suave);border-top:1px solid var(--linha);padding-top:18px}
+
+  @media (max-width:720px){
+    .grid,.grid-3,.fatos{grid-template-columns:1fr}
+    .caso-topo{flex-wrap:wrap}
+    .resp{margin-left:0;width:100%;min-width:0}
+    .idx{font-size:28px}
+    .topo .btn span.lbl{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+  @media print{.topo,.rodape,.divisao{display:none}}
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div class="topo-in">
+    <div class="marca">
+      <div class="selo">NL</div>
+      <div><b>NovaLar</b><span>Gestão de Pessoas 360°</span></div>
+    </div>
+    <div class="acoes">
+      <div class="salvo" id="statusSalvo"><i></i><span>Salvo</span></div>
+      <button class="btn btn-pdf" onclick="exportarPDF()"><span class="lbl">Exportar </span>PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="heroi">
+    <div class="eyebrow">Curso Técnico em Administração · Gestão de Pessoas</div>
+    <h1>Estudo de Caso: liderança, feedback e desempenho na NovaLar</h1>
+    <p class="sub">Uma empresa, cinco situações. O grupo assume o papel do RH da NovaLar e resolve casos reais de gestão de pessoas — analisando estilos de liderança, praticando o feedback assertivo e revendo a avaliação de desempenho.</p>
+    <div class="tri">
+      <span class="t1">Estilos de liderança</span>
+      <span class="t2">Feedback assertivo</span>
+      <span class="t3">Avaliação de desempenho</span>
+    </div>
+  </header>
+
+  <!-- Identificação -->
+  <section class="card card-pad">
+    <h2 class="sec">Identificação do grupo</h2>
+    <div class="grid-3">
+      <div class="field"><label for="turma">Turma</label><input id="turma" data-k="turma" autocomplete="off"></div>
+      <div class="field"><label for="disciplina">Disciplina</label><input id="disciplina" data-k="disciplina" autocomplete="off"></div>
+      <div class="field"><label for="professor">Professor(a)</label><input id="professor" data-k="professor" autocomplete="off"></div>
+    </div>
+    <div class="grid" style="margin-top:14px">
+      <div class="field"><label for="grupo">Nome / número do grupo</label><input id="grupo" data-k="grupo" autocomplete="off"></div>
+      <div class="field"><label for="data">Data de entrega</label><input id="data" data-k="data" type="date"></div>
+    </div>
+
+    <div class="integrantes">
+      <label style="font-size:12.5px;font-weight:600;color:var(--ink-suave)">Integrantes (até 5)</label>
+      <div class="lin"><span class="num">1</span><input data-k="int1" placeholder="Nome completo — Integrante 1" autocomplete="off"></div>
+      <div class="lin"><span class="num">2</span><input data-k="int2" placeholder="Nome completo — Integrante 2" autocomplete="off"></div>
+      <div class="lin"><span class="num">3</span><input data-k="int3" placeholder="Nome completo — Integrante 3" autocomplete="off"></div>
+      <div class="lin"><span class="num">4</span><input data-k="int4" placeholder="Nome completo — Integrante 4 (se houver)" autocomplete="off"></div>
+      <div class="lin"><span class="num">5</span><input data-k="int5" placeholder="Nome completo — Integrante 5 (se houver)" autocomplete="off"></div>
+    </div>
+  </section>
+
+  <!-- Como dividir -->
+  <section class="card card-pad divisao">
+    <h2 class="sec">Como o grupo se divide</h2>
+    <p>São <b>5 situações</b> e cada integrante deve ficar responsável por, no mínimo, <b>uma</b> delas — escreva seu nome no campo <b>“Responsável”</b> de cada caso.</p>
+    <p>Se o grupo tem <b>5 integrantes</b>, cada pessoa assume uma situação. Se tem <b>menos de 5</b>, distribuam entre vocês os casos que sobraram: <b>as cinco situações precisam ser respondidas</b>, independentemente do tamanho do grupo.</p>
+    <p>A nota é do grupo, mas cada caso precisa ter um responsável identificado. Discutam as respostas juntos — o responsável apenas coordena e redige aquele caso.</p>
+  </section>
+
+  <!-- Base conceitual -->
+  <section class="card card-pad">
+    <h2 class="sec">Base conceitual (consulte antes de responder)</h2>
+    <details class="base">
+      <summary><span class="chip" style="background:var(--teal)">Liderança</span> Estilos de liderança</summary>
+      <div class="corpo">
+        <p><em>Kurt Lewin (1939)</em> descreve três estilos clássicos: <b>autocrático</b> (o líder centraliza e decide sozinho), <b>democrático</b> (decide com a participação da equipe) e <b>liberal / laissez-faire</b> (dá total autonomia e pouco direcionamento).</p>
+        <p><em>Hersey &amp; Blanchard — Liderança Situacional</em>: não existe um único estilo certo; o líder ajusta o grau de <b>direção</b> e de <b>apoio</b> conforme a <b>prontidão (maturidade)</b> do liderado — mais direção para quem tem pouca experiência, mais autonomia para quem já domina a tarefa.</p>
+      </div>
+    </details>
+    <details class="base">
+      <summary><span class="chip" style="background:var(--ocre)">Feedback</span> Feedback assertivo</summary>
+      <div class="corpo">
+        <p><b>Comunicação assertiva</b> é o meio-termo entre a <b>passiva</b> (não fala, evita o problema) e a <b>agressiva</b> (ataca a pessoa). O feedback assertivo é claro, respeitoso, dado <b>em particular</b> e focado no <b>comportamento</b>, não na pessoa.</p>
+        <p><em>Modelo SBI</em> (Center for Creative Leadership): descreva a <b>Situação</b>, o <b>Comportamento</b> observável e o <b>Impacto</b> gerado. <em>Rosenberg — Comunicação Não Violenta (CNV)</em>: observar sem julgar, expressar necessidades e fazer um pedido claro.</p>
+      </div>
+    </details>
+    <details class="base">
+      <summary><span class="chip" style="background:var(--plum)">Desempenho</span> Avaliação de desempenho</summary>
+      <div class="corpo">
+        <p><em>Chiavenato</em> apresenta métodos como <b>escalas gráficas</b>, <b>incidentes críticos</b>, <b>avaliação 360°</b> e <b>avaliação participativa por objetivos (APPO)</b>.</p>
+        <p>Principais <b>vieses</b> a evitar: <b>efeito halo</b> (uma qualidade contamina toda a nota), <b>tendência central</b> (dar nota mediana a todos), <b>recência</b> (avaliar só pelo fato mais recente) e <b>leniência / severidade</b> (ser bonzinho ou duro demais). A avaliação deve ligar-se ao <b>desenvolvimento (PDI)</b>, e não apenas à punição.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Cenário da empresa -->
+  <section class="card card-pad empresa">
+    <h2 class="sec">A empresa — NovaLar Móveis &amp; Decorações Ltda.</h2>
+    <div class="corpo">
+      <p>A <b>NovaLar</b> é uma rede de varejo de móveis e decoração com sede em Londrina (PR). Nos últimos 18 meses cresceu rápido: abriu duas novas lojas e um centro de distribuição, e hoje conta com cerca de 130 colaboradores.</p>
+      <p>Com o crescimento, vieram os problemas de gente: líderes despreparados, conversas difíceis que ninguém tem, e uma avaliação de desempenho em que quase ninguém acredita. Para resolver isso, o RH lançou o programa <b>“Gestão de Pessoas 360°”</b>. Cada caso a seguir é uma situação enfrentada por um setor da empresa.</p>
+      <div class="fatos">
+        <div class="fato"><b>130</b><span>colaboradores</span></div>
+        <div class="fato"><b>3</b><span>lojas + 1 centro de distribuição</span></div>
+        <div class="fato"><b>5</b><span>situações para o RH resolver</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="casos"></div>
+
+  <div class="rodape">
+    <button class="btn btn-pdf" onclick="exportarPDF()">Exportar respostas em PDF</button>
+    <button class="btn btn-ghost" onclick="salvarAgora(true)">Salvar agora</button>
+    <button class="btn btn-alerta" onclick="limparTudo()">Limpar respostas</button>
+  </div>
+  <p class="nota-final">Suas respostas são salvas automaticamente neste navegador. Ao final, gere o PDF e entregue pelo Google Classroom.</p>
+
+  <footer>
+    NovaLar Móveis &amp; Decorações é uma empresa fictícia, criada para fins didáticos.<br>
+    Base teórica: Lewin (1939) · Hersey &amp; Blanchard · Chiavenato · Rosenberg (CNV) · Modelo SBI (CCL).
+  </footer>
+
+</div>
+
+<script>
+/* ====================== CONTEÚDO DA ATIVIDADE ====================== */
+const CASOS = [
+  {
+    n:1, setor:"Loja Centro — Equipe de Vendas", foco:"Estilos de liderança", cor:"#0E7C86",
+    cenario:[
+      "Marcos é gerente da loja do Centro. Ele centraliza todas as decisões, define as metas sozinho, sem ouvir a equipe, cobra resultados de forma dura e quase nunca delega. A loja bate as metas, mas a rotatividade é alta e o clima anda pesado.",
+      "Na loja do Shopping, a gerente Aline age de outro jeito: envolve a equipe nas decisões e ajusta seu estilo conforme cada pessoa — dá mais orientação e acompanhamento aos vendedores recém-chegados e mais autonomia aos experientes, que já dominam a rotina."
+    ],
+    obj:[
+      { id:"q1_1", enun:"Segundo a classificação de Kurt Lewin, o estilo de liderança predominante em Marcos é:",
+        alt:["Democrático","Liberal (laissez-faire)","Autocrático","Situacional","Afiliativo"] },
+      { id:"q1_2", enun:"A postura de Aline — ajustar direção e autonomia conforme a experiência de cada vendedor — corresponde principalmente ao modelo de:",
+        alt:["Liderança Situacional de Hersey e Blanchard","Liderança autocrática de Lewin","Administração por Objetivos (APO)","Avaliação de desempenho 360°","Comunicação Não Violenta (CNV)"] }
+    ],
+    diss:[
+      { id:"q1_3", enun:"Com base em Lewin, aponte uma vantagem e uma desvantagem do estilo adotado por Marcos, considerando tanto os resultados quanto o clima da equipe." },
+      { id:"q1_4", enun:"Aplicando a Liderança Situacional (Hersey & Blanchard), descreva como Aline deveria conduzir um vendedor recém-contratado e, depois, um vendedor experiente de alta performance. O que muda no grau de direção e de autonomia em cada caso?" }
+    ]
+  },
+  {
+    n:2, setor:"Centro de Distribuição — Logística/Estoque", foco:"Feedback assertivo", cor:"#C98A2B",
+    cenario:[
+      "Rafael, supervisor do centro de distribuição, percebeu que João, conferente experiente, vem errando a separação de pedidos há três semanas, gerando devoluções de clientes.",
+      "Rafael está irritado e pensa em duas saídas: (a) chamar João na frente de todos e dizer “você está fazendo tudo errado, assim não dá”; ou (b) não falar nada e torcer para melhorar sozinho. O RH orienta um terceiro caminho: um feedback assertivo, específico e em particular."
+    ],
+    obj:[
+      { id:"q2_1", enun:"A opção (a) de Rafael — expor João na frente de todos dizendo que ele “faz tudo errado” — caracteriza uma comunicação:",
+        alt:["Assertiva","Passiva","Agressiva","Não violenta","Situacional"] },
+      { id:"q2_2", enun:"No modelo SBI (Situação–Comportamento–Impacto), um feedback assertivo bem estruturado deve:",
+        alt:["Julgar a personalidade do colaborador","Descrever a situação, o comportamento observável e o impacto gerado","Ser dado publicamente para servir de exemplo","Destacar apenas os pontos positivos","Adiar a conversa por tempo indeterminado"] }
+    ],
+    diss:[
+      { id:"q2_3", enun:"Reescreva a fala agressiva de Rafael, transformando-a em um feedback assertivo. Use a estrutura SBI: descreva a Situação, o Comportamento observado e o Impacto gerado." },
+      { id:"q2_4", enun:"Explique por que dar esse feedback em particular e focado no comportamento (e não na pessoa) tende a ser mais eficaz. Relacione sua resposta com o conceito de comunicação assertiva." }
+    ]
+  },
+  {
+    n:3, setor:"Setor Administrativo / Financeiro", foco:"Avaliação de desempenho", cor:"#7A4A78",
+    cenario:[
+      "Chegou o ciclo anual de avaliação de desempenho. A coordenadora Patrícia avalia sua equipe, mas tem alguns hábitos: dá notas altas para quem é mais simpático com ela e notas medianas — “em cima do 5” — para quase todos os outros, para “não se comprometer”.",
+      "Um analista que foi excelente o ano inteiro acabou mal avaliado porque cometeu um erro na última semana, que ficou fresco na memória de Patrícia na hora de preencher a ficha."
+    ],
+    obj:[
+      { id:"q3_1", enun:"Dar nota mediana a quase todos os colaboradores para “não se comprometer” é um exemplo do viés de avaliação chamado:",
+        alt:["Efeito halo","Tendência central","Efeito recência","Leniência","Severidade"] },
+      { id:"q3_2", enun:"Avaliar mal um analista que foi excelente o ano todo por causa de um erro na última semana caracteriza o viés de:",
+        alt:["Recência","Efeito halo","Tendência central","Similaridade","Complacência"] }
+    ],
+    diss:[
+      { id:"q3_3", enun:"Explique, com suas palavras, o que é o “efeito halo” na avaliação de desempenho e como ele aparece na conduta de Patrícia ao avaliar quem é mais simpático com ela." },
+      { id:"q3_4", enun:"Sugira duas práticas que a NovaLar poderia adotar para reduzir esses vieses e tornar a avaliação mais justa. Cite ao menos um método de avaliação estudado (ex.: incidentes críticos, 360°, APPO)." }
+    ]
+  },
+  {
+    n:4, setor:"Central de Atendimento — SAC", foco:"Liderança + Feedback", cor:"#3F5E8C",
+    cenario:[
+      "Bruna lidera o SAC e é muito “de boa”: deixa a equipe totalmente à vontade, não acompanha indicadores e não dá retorno sobre o trabalho — nem elogio quando vai bem, nem correção quando vai mal.",
+      "Resultado: os atendentes não sabem se estão indo bem ou mal, o tempo de resposta ao cliente piorou e ninguém se sente responsável pelos números do setor."
+    ],
+    obj:[
+      { id:"q4_1", enun:"O estilo de Bruna — ausência de acompanhamento e de direcionamento — corresponde, na classificação de Lewin, à liderança:",
+        alt:["Autocrática","Democrática","Liberal (laissez-faire)","Situacional","Coercitiva"] },
+      { id:"q4_2", enun:"A principal falha de gestão de pessoas descrita no SAC é:",
+        alt:["Excesso de cobrança e controle","Ausência de feedback e de acompanhamento do desempenho","Uso da avaliação 360°","Aplicação rígida de metas individuais","Comunicação agressiva com a equipe"] }
+    ],
+    diss:[
+      { id:"q4_3", enun:"Explique como a falta de feedback contínuo afeta o desempenho e o engajamento da equipe do SAC." },
+      { id:"q4_4", enun:"Proponha um estilo de liderança mais adequado para Bruna e descreva duas atitudes práticas de feedback que ela poderia adotar no dia a dia — e não apenas na avaliação anual." }
+    ]
+  },
+  {
+    n:5, setor:"RH — Programa “Gestão de Pessoas 360°”", foco:"Integrador (os três temas)", cor:"#3C6E47",
+    cenario:[
+      "O grupo agora faz parte do RH da NovaLar. A diretoria pediu uma proposta que conecte os três pilares do programa: (1) preparar os líderes para adaptar seu estilo; (2) criar uma cultura de feedback assertivo e contínuo; e (3) reformular a avaliação de desempenho para ser mais justa e ligada ao desenvolvimento das pessoas (PDI).",
+      "A tarefa deste caso é fechar o raciocínio do grupo, reunindo o que foi aprendido nos casos 1 a 4."
+    ],
+    obj:[
+      { id:"q5_1", enun:"Ligar a avaliação de desempenho a um Plano de Desenvolvimento Individual (PDI) tem como principal objetivo:",
+        alt:["Punir os colaboradores de baixo desempenho","Substituir o feedback do dia a dia","Transformar a avaliação em ferramenta de desenvolvimento e crescimento","Centralizar as decisões no líder","Eliminar a necessidade de líderes"] },
+      { id:"q5_2", enun:"Uma cultura de feedback assertivo e contínuo, integrada à liderança e à avaliação, tende a produzir:",
+        alt:["Mais rotatividade e insegurança","Equipes que só recebem retorno uma vez por ano","Colaboradores que sabem o que se espera deles e como evoluir","Redução do papel do RH","Avaliações baseadas apenas em simpatia"] }
+    ],
+    diss:[
+      { id:"q5_3", enun:"Com base nos casos 1 a 4, elabore três recomendações para a NovaLar — uma para liderança, uma para feedback e uma para avaliação de desempenho — justificando cada uma." },
+      { id:"q5_4", enun:"Explique, em um parágrafo, por que os três temas (liderança, feedback e avaliação de desempenho) precisam funcionar de forma integrada, e não isolada, na gestão de pessoas." }
+    ]
+  }
+];
+
+/* ====================== RENDERIZAÇÃO ====================== */
+const letras = ["A","B","C","D","E","F"];
+function el(html){ const t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstChild; }
+
+function montarCasos(){
+  const alvo = document.getElementById("casos");
+  CASOS.forEach(c=>{
+    const idx = String(c.n).padStart(2,"0");
+    let objHTML = c.obj.map((q,qi)=>{
+      const alts = q.alt.map((a,ai)=>`
+        <label class="alt">
+          <input type="radio" name="${q.id}" value="${letras[ai]}">
+          <span><span class="letra">${letras[ai]})</span> ${a}</span>
+        </label>`).join("");
+      return `<div class="q">
+        <div class="tag">Objetiva ${c.n}.${qi+1}</div>
+        <p class="enun">${q.enun}</p>
+        <fieldset>${alts}</fieldset>
+      </div>`;
+    }).join("");
+
+    let dissHTML = c.diss.map((q,qi)=>`
+      <div class="q">
+        <div class="tag diss">Dissertativa ${c.n}.${c.obj.length+qi+1}</div>
+        <p class="enun">${q.enun}</p>
+        <textarea id="${q.id}" data-k="${q.id}" placeholder="Escreva a resposta do grupo aqui…"></textarea>
+      </div>`).join("");
+
+    const card = el(`
+      <section class="card caso">
+        <div class="caso-topo">
+          <div class="idx">${idx}</div>
+          <div class="caso-h">
+            <div class="setor">${c.setor}</div>
+            <h3>Caso ${c.n}</h3>
+            <span class="foco" style="background:${c.cor}">Foco: ${c.foco}</span>
+          </div>
+          <div class="resp">
+            <label for="resp${c.n}">Responsável</label>
+            <input id="resp${c.n}" data-k="resp${c.n}" placeholder="Nome do integrante" autocomplete="off">
+          </div>
+        </div>
+        <div class="caso-corpo">
+          <div class="cenario">${c.cenario.map(p=>`<p>${p}</p>`).join("")}</div>
+          ${objHTML}
+          ${dissHTML}
+        </div>
+      </section>`);
+    alvo.appendChild(card);
+  });
+}
+
+/* ====================== AUTOSAVE (localStorage) ====================== */
+const CHAVE = "novalar_rh_v1";
+let timer=null;
+
+function coletar(){
+  const dados={};
+  document.querySelectorAll("[data-k]").forEach(inp=>{ dados[inp.dataset.k]=inp.value; });
+  document.querySelectorAll('input[type="radio"]:checked').forEach(r=>{ dados[r.name]=r.value; });
+  return dados;
+}
+function statusSalvo(ok){
+  const s=document.getElementById("statusSalvo");
+  if(ok){ s.classList.remove("off"); s.querySelector("span").textContent="Salvo"; }
+  else { s.classList.add("off"); s.querySelector("span").textContent="Salvando…"; }
+}
+function salvarAgora(feedback){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(coletar()));
+    statusSalvo(true);
+    if(feedback){ const s=document.getElementById("statusSalvo"); s.querySelector("span").textContent="Salvo ✓"; }
+  }catch(e){ console.warn("Não foi possível salvar:", e); }
+}
+function agendarSalvar(){
+  statusSalvo(false);
+  clearTimeout(timer);
+  timer=setTimeout(()=>salvarAgora(false), 500);
+}
+function restaurar(){
+  let dados;
+  try{ dados=JSON.parse(localStorage.getItem(CHAVE)||"{}"); }catch(e){ dados={}; }
+  Object.keys(dados).forEach(k=>{
+    const campo=document.querySelector(`[data-k="${k}"]`);
+    if(campo){ campo.value=dados[k]; return; }
+    const radio=document.querySelector(`input[name="${k}"][value="${dados[k]}"]`);
+    if(radio){ radio.checked=true; }
+  });
+}
+function limparTudo(){
+  if(!confirm("Isso vai apagar TODAS as respostas deste navegador. Deseja continuar?")) return;
+  localStorage.removeItem(CHAVE);
+  document.querySelectorAll("[data-k]").forEach(i=>i.value="");
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  statusSalvo(true);
+}
+
+/* ====================== EXPORTAR PDF (jsPDF) ====================== */
+function exportarPDF(){
+  salvarAgora(false);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:"pt", format:"a4"});
+  const M=48, W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight();
+  const maxW=W-M*2;
+  const INK=[28,43,51], SUAVE=[74,92,102], PET=[18,69,90], TEAL=[14,124,134], OCRE=[201,138,43];
+  let y=M;
+
+  function novaPagina(){ doc.addPage(); y=M; }
+  function precisa(h){ if(y+h>H-M) novaPagina(); }
+  function txt(s, o={}){
+    const size=o.size||10.5, style=o.style||"normal", color=o.color||INK, indent=o.indent||0, lh=o.lh||(size*1.38);
+    doc.setFont("helvetica",style); doc.setFontSize(size); doc.setTextColor(color[0],color[1],color[2]);
+    const linhas=doc.splitTextToSize(s, maxW-indent);
+    linhas.forEach(l=>{ precisa(lh); doc.text(l, M+indent, y); y+=lh; });
+  }
+  function esp(h){ y+=h; if(y>H-M) novaPagina(); }
+  function regua(){ precisa(10); doc.setDrawColor(227,219,203); doc.setLineWidth(.7); doc.line(M,y,W-M,y); y+=10; }
+  function val(k){ const v=(coletar()[k]||"").trim(); return v||"—"; }
+  function radioTexto(caso,q){
+    const marc=coletar()[q.id];
+    if(!marc) return "(não respondida)";
+    const i=letras.indexOf(marc);
+    return marc+") "+(q.alt[i]||"");
+  }
+
+  // Cabeçalho do documento
+  doc.setFillColor(18,69,90); doc.rect(0,0,W,70,"F");
+  doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(15);
+  doc.text("NovaLar Móveis & Decorações — Estudo de Caso de RH", M, 32);
+  doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(210,225,230);
+  doc.text("Liderança · Feedback assertivo · Avaliação de desempenho", M, 50);
+  y=92;
+
+  const d=coletar();
+  txt("Turma: "+val("turma")+"     Disciplina: "+val("disciplina"), {size:10.5, color:SUAVE});
+  txt("Professor(a): "+val("professor")+"     Grupo: "+val("grupo")+"     Entrega: "+val("data"), {size:10.5, color:SUAVE});
+  const ints=["int1","int2","int3","int4","int5"].map(k=>(d[k]||"").trim()).filter(Boolean);
+  txt("Integrantes: "+(ints.length?ints.join(" · "):"—"), {size:10.5, color:SUAVE});
+  esp(6); regua();
+
+  CASOS.forEach(c=>{
+    precisa(60);
+    esp(4);
+    txt("CASO "+c.n+" — "+c.setor, {size:12.5, style:"bold", color:PET});
+    txt("Foco: "+c.foco+"     |     Responsável: "+val("resp"+c.n), {size:9.5, color:SUAVE});
+    esp(6);
+    c.obj.forEach((q,qi)=>{
+      txt("Objetiva "+c.n+"."+(qi+1), {size:9, style:"bold", color:TEAL});
+      txt(q.enun, {size:10, style:"normal"});
+      txt("Resposta: "+radioTexto(c,q), {size:10, style:"bold", indent:8});
+      esp(5);
+    });
+    c.diss.forEach((q,qi)=>{
+      txt("Dissertativa "+c.n+"."+(c.obj.length+qi+1), {size:9, style:"bold", color:OCRE});
+      txt(q.enun, {size:10, style:"normal"});
+      const resp=(coletar()[q.id]||"").trim() || "(não respondida)";
+      txt(resp, {size:10, style:"normal", indent:8});
+      esp(5);
+    });
+    regua();
+  });
+
+  // Rodapé com numeração
+  const total=doc.internal.getNumberOfPages();
+  for(let p=1;p<=total;p++){
+    doc.setPage(p);
+    doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(150,150,150);
+    doc.text("NovaLar — Estudo de Caso de RH", M, H-20);
+    doc.text("Página "+p+" de "+total, W-M, H-20, {align:"right"});
+  }
+
+  const nomeGrupo=(coletar().grupo||"grupo").replace(/[^\w\-]+/g,"_");
+  doc.save("RH_NovaLar_"+nomeGrupo+".pdf");
+}
+
+/* ====================== INICIALIZAÇÃO ====================== */
+montarCasos();
+restaurar();
+document.addEventListener("input", (e)=>{ if(e.target.closest("[data-k], input[type=radio]")) agendarSalvar(); });
+document.addEventListener("change", (e)=>{ if(e.target.type==="radio") agendarSalvar(); });
+window.addEventListener("beforeunload", ()=>salvarAgora(false));
+</script>
+</body>
+</html>
