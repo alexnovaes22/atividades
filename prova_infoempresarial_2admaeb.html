@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prova — Informática Empresarial (2º Ano · Técnico em Administração)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --crosta:#5a3921;      /* marrom crosta */
+    --trigo:#e8a53d;       /* âmbar trigo */
+    --creme:#f7f0e4;       /* creme */
+    --creme-2:#efe4cf;
+    --tinta:#2c2118;       /* texto */
+    --tinta-2:#6b5c4a;
+    --acao:#0f766e;        /* teal ação */
+    --acao-esc:#0b5b54;
+    --borda:#d9c7a8;
+    --ok:#0f766e;
+    --erro:#b4463a;
+    --branco:#fffdf8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -200px, #fbf4e6 0%, var(--creme) 55%);
+    color:var(--tinta);
+    line-height:1.55;
+    min-height:100vh;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+
+  /* Cabeçalho */
+  .topo{
+    background:var(--crosta);
+    color:var(--creme);
+    border-radius:16px 16px 0 0;
+    padding:20px 24px;
+    border:1px solid var(--crosta);
+  }
+  .topo .selo{
+    display:inline-block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--trigo);color:#3a2410;font-weight:700;
+    padding:4px 10px;border-radius:999px;margin-bottom:10px;
+  }
+  .topo h1{margin:0;font-size:1.35rem;line-height:1.25}
+  .topo p{margin:6px 0 0;color:#f0dcbb;font-size:.92rem}
+
+  .painel{
+    background:var(--branco);
+    border:1px solid var(--borda);
+    border-top:none;
+    border-radius:0 0 16px 16px;
+    padding:24px;
+    box-shadow:0 18px 40px -28px rgba(90,57,33,.55);
+  }
+
+  /* Barra de progresso */
+  .progresso-linha{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px}
+  .progresso-txt{font-size:.85rem;color:var(--tinta-2);font-weight:600;white-space:nowrap}
+  .barra{flex:1;height:9px;background:var(--creme-2);border-radius:999px;overflow:hidden}
+  .barra > span{display:block;height:100%;background:linear-gradient(90deg,var(--trigo),var(--crosta));width:0;transition:width .25s ease}
+
+  /* Campos de identificação */
+  .campo{margin-bottom:16px}
+  label.rot{display:block;font-weight:700;margin-bottom:6px;font-size:.95rem}
+  input[type=text]{
+    width:100%;padding:12px 14px;border:1.5px solid var(--borda);border-radius:10px;
+    font-size:1rem;background:var(--creme);color:var(--tinta);
+  }
+  input[type=text]:focus{outline:3px solid rgba(15,118,110,.28);border-color:var(--acao)}
+
+  .contexto{
+    background:var(--creme);
+    border-left:5px solid var(--trigo);
+    border-radius:8px;
+    padding:12px 14px;
+    font-size:.95rem;
+    color:var(--tinta-2);
+    margin-bottom:16px;
+  }
+  .enunciado{font-size:1.12rem;font-weight:700;margin:0 0 16px}
+
+  /* Alternativas */
+  .alts{display:flex;flex-direction:column;gap:10px}
+  .alt{
+    display:flex;gap:12px;align-items:flex-start;
+    border:1.5px solid var(--borda);border-radius:12px;
+    padding:12px 14px;cursor:pointer;background:var(--branco);
+    transition:border-color .15s,background .15s,box-shadow .15s;
+  }
+  .alt:hover{border-color:var(--trigo);background:#fffaf0}
+  .alt input{margin-top:3px;width:18px;height:18px;accent-color:var(--acao);flex:none}
+  .alt.marcada{border-color:var(--acao);background:#eef7f5;box-shadow:0 0 0 2px rgba(15,118,110,.14)}
+  .alt .letra{font-weight:700;margin-right:2px}
+
+  /* Botões */
+  .rodape-nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px;flex-wrap:wrap}
+  button{
+    font:inherit;font-weight:700;cursor:pointer;border-radius:10px;padding:12px 20px;border:1.5px solid transparent;
+  }
+  .btn-prim{background:var(--acao);color:#fff}
+  .btn-prim:hover{background:var(--acao-esc)}
+  .btn-sec{background:var(--branco);color:var(--crosta);border-color:var(--borda)}
+  .btn-sec:hover{border-color:var(--crosta)}
+  .btn-fim{background:var(--crosta);color:var(--creme)}
+  .btn-fim:hover{background:#452a18}
+  button:disabled{opacity:.45;cursor:not-allowed}
+
+  .aviso{background:#fdf6e6;border:1px solid var(--trigo);border-radius:10px;padding:12px 14px;font-size:.9rem;color:#7a5514;margin-top:14px}
+
+  /* Revisão */
+  .grid-rev{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  .pill{
+    min-width:44px;text-align:center;padding:8px 10px;border-radius:9px;font-weight:700;font-size:.9rem;
+    border:1.5px solid var(--borda);background:var(--creme);
+  }
+  .pill.ok{background:#eef7f5;border-color:var(--acao);color:var(--acao)}
+  .pill.falta{background:#fdeeea;border-color:var(--erro);color:var(--erro)}
+
+  /* Tela final */
+  .final{text-align:center;padding:8px 0}
+  .final .marca{font-size:2.4rem}
+  .final h2{margin:6px 0 6px}
+  .final p{color:var(--tinta-2)}
+  .cod-box{
+    font-family:ui-monospace,"Courier New",monospace;font-size:.7rem;word-break:break-all;
+    background:var(--creme);border:1px dashed var(--borda);border-radius:10px;padding:12px;margin-top:14px;color:var(--tinta-2);max-height:120px;overflow:auto;text-align:left
+  }
+  .rodape-inst{text-align:center;color:var(--tinta-2);font-size:.8rem;margin-top:22px}
+  .oculto{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topo">
+    <span class="selo">CEEP Castaldi · 2026</span>
+    <h1>Prova — Informática Empresarial (2º Ano · Técnico em Administração)</h1>
+    <p>Informática Empresarial · Networking, reputação digital e mercado de trabalho · 10 questões · responda e gere o PDF ao final.</p>
+  </header>
+
+  <main class="painel">
+
+    <!-- ETAPA 1: identificação -->
+    <section id="tela-inicio">
+      <p style="margin-top:0">Antes de começar, preencha seus dados. Depois responda uma questão por vez. Suas respostas ficam <strong>salvas automaticamente</strong> neste computador enquanto você faz a prova.</p>
+      <div class="campo">
+        <label class="rot" for="in-nome">Nome completo</label>
+        <input type="text" id="in-nome" placeholder="Ex.: Maria Aparecida da Silva" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label class="rot" for="in-turma">Turma</label>
+        <input type="text" id="in-turma" placeholder="Ex.: 2º Ano - Técnico em Administração" autocomplete="off">
+      </div>
+      <div id="aviso-continuar" class="aviso oculto"></div>
+      <div class="rodape-nav">
+        <button class="btn-sec oculto" id="btn-recomecar-inicio" type="button">Começar nova tentativa</button>
+        <button class="btn-prim" id="btn-iniciar" type="button" style="margin-left:auto">Iniciar prova</button>
+      </div>
+    </section>
+
+    <!-- ETAPA 2: questão a questão -->
+    <section id="tela-questao" class="oculto">
+      <div class="progresso-linha">
+        <div class="barra"><span id="barra-fill"></span></div>
+        <div class="progresso-txt" id="prog-txt">Questão 1 de 10</div>
+      </div>
+      <div class="contexto" id="q-contexto"></div>
+      <p class="enunciado" id="q-enunciado"></p>
+      <div class="alts" id="q-alts"></div>
+      <div class="rodape-nav">
+        <button class="btn-sec" id="btn-anterior" type="button">← Anterior</button>
+        <button class="btn-prim" id="btn-proxima" type="button">Próxima →</button>
+      </div>
+      <p class="rodape-inst">Você pode voltar e revisar antes de finalizar.</p>
+    </section>
+
+    <!-- ETAPA 3: revisão -->
+    <section id="tela-revisao" class="oculto">
+      <h2 style="margin-top:0">Revisão antes de entregar</h2>
+      <p style="color:var(--tinta-2)">Confira se todas as questões foram respondidas. As questões que ainda faltam aparecem em vermelho — clique para voltar até elas.</p>
+      <div class="grid-rev" id="grid-rev"></div>
+      <div id="aviso-falta" class="aviso oculto">Ainda há questões sem resposta. Responda todas antes de gerar o PDF.</div>
+      <div class="rodape-nav">
+        <button class="btn-sec" id="btn-voltar-questoes" type="button">← Voltar às questões</button>
+        <button class="btn-fim" id="btn-gerar" type="button" style="margin-left:auto">Finalizar e gerar PDF</button>
+      </div>
+    </section>
+
+    <!-- ETAPA 4: final -->
+    <section id="tela-final" class="oculto">
+      <div class="final">
+        <div class="marca">📄✅</div>
+        <h2>Prova registrada!</h2>
+        <p id="final-msg"></p>
+        <p style="font-size:.9rem"><strong>Envie o PDF baixado no Google Classroom.</strong><br>
+        O código abaixo guarda suas respostas para correção do(a) professor(a). Não altere o arquivo.</p>
+        <div class="cod-box" id="cod-preview"></div>
+        <div class="rodape-nav" style="justify-content:center">
+          <button class="btn-prim" id="btn-baixar-novamente" type="button">Baixar o PDF novamente</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <p class="rodape-inst">Atividade desenvolvida para os estudantes do CEEP Castaldi · Londrina/PR</p>
+</div>
+
+<script>
+/* =========================================================================
+   PROVA — Informática Empresarial (2º Ano · Técnico em Administração)
+   - 10 questões, nível fácil, contextualizadas
+   - ordem das questões e das alternativas embaralhadas por aluno
+   - 1 questão por tela, autosave em localStorage
+   - ao final: PDF com CÓDIGO embaralhado só das respostas MARCADAS
+     (o GABARITO NÃO fica no arquivo do aluno — a correção é feita pelo professor)
+   ========================================================================= */
+
+/* ---- ID interno das opções: a/b/c/d fixos (não muda com o embaralhamento) ---- */
+const QUESTOES = [
+  {
+    id:"q1",
+    contexto:"Na aula sobre carreira, o professor fala em \"fazer networking\".",
+    enunciado:"O que significa \"networking\" no contexto profissional?",
+    opcoes:[
+      {id:"a", txt:"Construir e manter uma rede de contatos profissionais para trocar informações e oportunidades."},
+      {id:"b", txt:"Trocar a rede de internet de casa por uma mais rápida."},
+      {id:"c", txt:"Assistir a vídeos sobre tecnologia."},
+      {id:"d", txt:"Formatar um computador para o trabalho."}
+    ]
+  },
+  {
+    id:"q2",
+    contexto:"Muitos profissionais mantêm um perfil no LinkedIn.",
+    enunciado:"Para que serve principalmente uma plataforma como o LinkedIn?",
+    opcoes:[
+      {id:"a", txt:"Apenas para publicar fotos de viagens e momentos pessoais."},
+      {id:"b", txt:"Para apresentar a trajetória profissional, fazer contatos e buscar oportunidades de trabalho."},
+      {id:"c", txt:"Para jogar online com colegas."},
+      {id:"d", txt:"Para armazenar arquivos pessoais na nuvem."}
+    ]
+  },
+  {
+    id:"q3",
+    contexto:"Você quer ampliar seus contatos profissionais em uma plataforma como o LinkedIn.",
+    enunciado:"Qual é uma boa prática de networking?",
+    opcoes:[
+      {id:"a", txt:"Enviar convites com uma mensagem breve e personalizada, mostrando interesse real na conexão."},
+      {id:"b", txt:"Adicionar o máximo de pessoas possível, sem interagir com nenhuma."},
+      {id:"c", txt:"Pedir emprego diretamente a todos os contatos no primeiro dia."},
+      {id:"d", txt:"Copiar e colar a mesma mensagem genérica para centenas de pessoas."}
+    ]
+  },
+  {
+    id:"q4",
+    contexto:"Antes de uma entrevista, recrutadores costumam pesquisar o nome do candidato na internet.",
+    enunciado:"Por que é importante cuidar do que se publica nas redes sociais?",
+    opcoes:[
+      {id:"a", txt:"Porque publicações públicas podem influenciar a imagem profissional e a decisão de um recrutador."},
+      {id:"b", txt:"Porque quanto mais se publica, maior o salário."},
+      {id:"c", txt:"Porque as redes apagam sozinhas o que é antigo."},
+      {id:"d", txt:"Porque recrutadores nunca olham redes sociais."}
+    ]
+  },
+  {
+    id:"q5",
+    contexto:"Para conseguir um estágio, um colega se cadastrou em uma agência de estágio (como o CIEE) e em sites de recrutamento.",
+    enunciado:"Qual é o papel desses serviços?",
+    opcoes:[
+      {id:"a", txt:"Garantir emprego imediato a qualquer pessoa cadastrada."},
+      {id:"b", txt:"Substituir a necessidade de currículo e de entrevista."},
+      {id:"c", txt:"Aproximar candidatos e empresas, divulgando vagas e recebendo candidaturas."},
+      {id:"d", txt:"Vender cursos obrigatórios para poder trabalhar."}
+    ]
+  },
+  {
+    id:"q6",
+    contexto:"Dois candidatos têm formação parecida; um tem um perfil profissional completo e atualizado, o outro tem o perfil vazio.",
+    enunciado:"Como um perfil bem elaborado pode ajudar?",
+    opcoes:[
+      {id:"a", txt:"Não faz diferença nenhuma para o recrutador."},
+      {id:"b", txt:"Serve apenas para deixar a página bonita."},
+      {id:"c", txt:"Substitui completamente a experiência profissional."},
+      {id:"d", txt:"Ajuda o recrutador a conhecer experiências e habilidades, aumentando as chances de ser encontrado e contatado."}
+    ]
+  },
+  {
+    id:"q7",
+    contexto:"Um estudante afirma: \"Tenho 2000 contatos que aceitei aleatoriamente, então meu networking é excelente\".",
+    enunciado:"Qual análise é mais coerente sobre a qualidade desse networking?",
+    opcoes:[
+      {id:"a", txt:"Está correto: quanto mais contatos, melhor, independentemente de relacionamento."},
+      {id:"b", txt:"O networking só é bom se todos os contatos forem da mesma empresa."},
+      {id:"c", txt:"O número de contatos, sozinho, não garante bom networking; o que conta é a relação de troca e confiança construída."},
+      {id:"d", txt:"Ter muitos contatos torna desnecessário manter qualquer relacionamento."}
+    ]
+  },
+  {
+    id:"q8",
+    contexto:"Um funcionário publicou, em seu perfil pessoal e público, comentários ofensivos sobre clientes da empresa onde trabalha. O caso repercutiu e ele foi demitido.",
+    enunciado:"Que aprendizado esse caso melhor ilustra?",
+    opcoes:[
+      {id:"a", txt:"O que publicamos, mesmo em perfil pessoal e público, pode afetar a vida profissional e a imagem da empresa."},
+      {id:"b", txt:"Conteúdo em perfil \"pessoal\" nunca tem consequências no trabalho."},
+      {id:"c", txt:"Basta apagar o post depois para eliminar qualquer consequência."},
+      {id:"d", txt:"A responsabilidade é apenas de quem viu a publicação."}
+    ]
+  },
+  {
+    id:"q9",
+    contexto:"No horário de trabalho, um colega fotografa informações confidenciais de clientes e publica prints \"de brincadeira\" em grupos.",
+    enunciado:"Qual é a conduta mais adequada e o porquê?",
+    opcoes:[
+      {id:"a", txt:"Participar também, já que é \"só brincadeira\"."},
+      {id:"b", txt:"Ignorar, pois não é problema seu."},
+      {id:"c", txt:"Não compartilhar e orientar/comunicar, pois expor dados confidenciais fere a ética e pode prejudicar clientes e a empresa."},
+      {id:"d", txt:"Publicar em um grupo menor, para menos gente ver."}
+    ]
+  },
+  {
+    id:"q10",
+    contexto:"Você está buscando o primeiro estágio na área de Administração.",
+    enunciado:"Qual estratégia tende a ser mais eficaz?",
+    opcoes:[
+      {id:"a", txt:"Esperar que as vagas cheguem até você, sem se cadastrar em nada."},
+      {id:"b", txt:"Enviar o mesmo currículo, sem adaptação, para todas as vagas."},
+      {id:"c", txt:"Combinar frentes: manter um perfil profissional atualizado, cadastrar-se em agências/sites de vagas e cultivar contatos (networking)."},
+      {id:"d", txt:"Focar somente em pedir indicação a familiares, ignorando plataformas e perfil."}
+    ]
+  }
+];
+
+const QUIZ_ID = "CEEP_INFOEMP2_2026";
+const CHAVE_XOR = "PAOECIA-2026-CEEP"; // usada para embaralhar o código do PDF
+const LS_KEY = "prova_" + QUIZ_ID;
+
+/* ---------- utilidades ---------- */
+function embaralhar(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function xorB64(str){
+  const bytes = new TextEncoder().encode(str);
+  const key = new TextEncoder().encode(CHAVE_XOR);
+  let bin = "";
+  for(let i=0;i<bytes.length;i++){
+    bin += String.fromCharCode(bytes[i] ^ key[i % key.length]);
+  }
+  return btoa(bin);
+}
+
+/* ---------- estado ---------- */
+let estado = null; // {nome,turma,ordemQ:[ids],ordemOpc:{qid:[ids]},respostas:{qid:optId},idx}
+
+function novoEstado(nome,turma){
+  const ordemQ = embaralhar(QUESTOES.map(q=>q.id));
+  const ordemOpc = {};
+  QUESTOES.forEach(q=>{ ordemOpc[q.id] = embaralhar(q.opcoes.map(o=>o.id)); });
+  return {nome,turma,ordemQ,ordemOpc,respostas:{},idx:0};
+}
+function salvar(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(estado)); }catch(e){} }
+function carregar(){ try{ const s = localStorage.getItem(LS_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function limpar(){ try{ localStorage.removeItem(LS_KEY); }catch(e){} }
+
+/* ---------- elementos ---------- */
+const el = id => document.getElementById(id);
+const telas = ["tela-inicio","tela-questao","tela-revisao","tela-final"];
+function mostrar(t){ telas.forEach(x=>el(x).classList.toggle("oculto", x!==t)); window.scrollTo({top:0,behavior:"smooth"}); }
+function qPorId(id){ return QUESTOES.find(q=>q.id===id); }
+
+/* ---------- início ---------- */
+window.addEventListener("DOMContentLoaded", ()=>{
+  const salvo = carregar();
+  if(salvo && salvo.nome){
+    el("in-nome").value = salvo.nome;
+    el("in-turma").value = salvo.turma || "";
+    const av = el("aviso-continuar");
+    av.classList.remove("oculto");
+    av.innerHTML = "Há uma tentativa em andamento de <strong>"+escapar(salvo.nome)+"</strong>. Clique em <em>Iniciar prova</em> para continuar de onde parou, ou comece uma nova tentativa.";
+    el("btn-recomecar-inicio").classList.remove("oculto");
+  }
+});
+
+el("btn-recomecar-inicio").addEventListener("click", ()=>{
+  limpar();
+  el("aviso-continuar").classList.add("oculto");
+  el("btn-recomecar-inicio").classList.add("oculto");
+  el("in-nome").value=""; el("in-turma").value="";
+  el("in-nome").focus();
+});
+
+el("btn-iniciar").addEventListener("click", ()=>{
+  const nome = el("in-nome").value.trim();
+  const turma = el("in-turma").value.trim();
+  if(!nome){ el("in-nome").focus(); el("in-nome").style.borderColor="var(--erro)"; return; }
+  const salvo = carregar();
+  if(salvo && salvo.nome === nome){
+    estado = salvo; // continua tentativa do mesmo aluno
+  } else {
+    estado = novoEstado(nome,turma);
+    salvar();
+  }
+  irParaQuestao(estado.idx || 0);
+});
+
+/* ---------- render questão ---------- */
+function irParaQuestao(i){
+  estado.idx = Math.max(0, Math.min(i, estado.ordemQ.length-1));
+  salvar();
+  const qid = estado.ordemQ[estado.idx];
+  const q = qPorId(qid);
+  const total = estado.ordemQ.length;
+
+  el("prog-txt").textContent = "Questão " + (estado.idx+1) + " de " + total;
+  el("barra-fill").style.width = (((estado.idx+1)/total)*100) + "%";
+  el("q-contexto").textContent = q.contexto;
+  el("q-enunciado").textContent = q.enunciado;
+
+  const cont = el("q-alts");
+  cont.innerHTML = "";
+  const ordem = estado.ordemOpc[qid];
+  ordem.forEach((optId, pos)=>{
+    const opt = q.opcoes.find(o=>o.id===optId);
+    const letra = String.fromCharCode(65+pos); // A,B,C,D visual
+    const marcada = estado.respostas[qid] === optId;
+    const lab = document.createElement("label");
+    lab.className = "alt" + (marcada ? " marcada" : "");
+    lab.innerHTML =
+      '<input type="radio" name="'+qid+'" value="'+optId+'" '+(marcada?"checked":"")+'>' +
+      '<span><span class="letra">'+letra+')</span> '+escapar(opt.txt)+'</span>';
+    lab.querySelector("input").addEventListener("change", ()=>{
+      estado.respostas[qid] = optId;
+      salvar();
+      cont.querySelectorAll(".alt").forEach(a=>a.classList.remove("marcada"));
+      lab.classList.add("marcada");
+    });
+    cont.appendChild(lab);
+  });
+
+  el("btn-anterior").disabled = (estado.idx === 0);
+  el("btn-proxima").textContent = (estado.idx === total-1) ? "Revisar e finalizar →" : "Próxima →";
+  mostrar("tela-questao");
+}
+
+el("btn-anterior").addEventListener("click", ()=> irParaQuestao(estado.idx-1));
+el("btn-proxima").addEventListener("click", ()=>{
+  if(estado.idx === estado.ordemQ.length-1){ abrirRevisao(); }
+  else { irParaQuestao(estado.idx+1); }
+});
+
+/* ---------- revisão ---------- */
+function abrirRevisao(){
+  const grid = el("grid-rev");
+  grid.innerHTML = "";
+  let faltam = 0;
+  estado.ordemQ.forEach((qid, pos)=>{
+    const respondida = !!estado.respostas[qid];
+    if(!respondida) faltam++;
+    const p = document.createElement("button");
+    p.type = "button";
+    p.className = "pill " + (respondida ? "ok" : "falta");
+    p.textContent = (pos+1);
+    p.title = respondida ? "Respondida" : "Sem resposta — clique para ir";
+    p.addEventListener("click", ()=> irParaQuestao(pos));
+    grid.appendChild(p);
+  });
+  el("aviso-falta").classList.toggle("oculto", faltam===0);
+  el("btn-gerar").disabled = (faltam>0);
+  mostrar("tela-revisao");
+}
+el("btn-voltar-questoes").addEventListener("click", ()=> irParaQuestao(estado.idx));
+
+/* ---------- gerar código + PDF ---------- */
+function montarPayload(){
+  const respostas = estado.ordemQ.map(qid=>{
+    const sel = estado.respostas[qid] || "";
+    return { q: qid, s: sel }; // s = alternativa marcada. O GABARITO NÃO fica no arquivo.
+  });
+  return {
+    v:1,
+    quiz: QUIZ_ID,
+    nome: estado.nome,
+    turma: estado.turma,
+    ts: new Date().toISOString(),
+    ans: respostas
+  };
+}
+
+function gerarPDF(){
+  const payload = montarPayload();
+  const codigo = xorB64(JSON.stringify(payload));
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:"mm", format:"a4"});
+  const M = 18, W = 210, maxW = W - M*2;
+  let y = 20;
+
+  doc.setFillColor(90,57,33); doc.rect(0,0,W,16,"F");
+  doc.setTextColor(247,240,228); doc.setFont("helvetica","bold"); doc.setFontSize(13);
+  doc.text("Comprovante de Entrega — Prova de Informática Empresarial", M, 10.5);
+
+  doc.setTextColor(44,33,24); y = 28;
+  doc.setFont("helvetica","bold"); doc.setFontSize(12);
+  doc.text("Informática Empresarial · 2º Ano Técnico em Administração · CEEP Castaldi — Londrina/PR", M, y); y+=8;
+
+  doc.setFont("helvetica","normal"); doc.setFontSize(11);
+  const d = new Date();
+  const dataStr = d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR").slice(0,5);
+  doc.text("Nome: " + payload.nome, M, y); y+=7;
+  doc.text("Turma: " + (payload.turma || "—"), M, y); y+=7;
+  doc.text("Data de entrega: " + dataStr, M, y); y+=7;
+  doc.text("Questões respondidas: " + payload.ans.filter(a=>a.s).length + " de " + payload.ans.length, M, y); y+=10;
+
+  doc.setFont("helvetica","bold"); doc.setFontSize(11);
+  doc.text("Prova respondida e registrada.", M, y); y+=6;
+  doc.setFont("helvetica","normal"); doc.setFontSize(10);
+  const info = "As respostas foram registradas no código de correção abaixo. Este documento NÃO mostra acertos ou erros. Envie este PDF no Google Classroom sem alterá-lo.";
+  doc.text(doc.splitTextToSize(info, maxW), M, y); y+= 14;
+
+  doc.setDrawColor(217,199,168); doc.line(M, y, W-M, y); y+=7;
+  doc.setFont("helvetica","bold"); doc.setFontSize(9);
+  doc.text("CÓDIGO DE CORREÇÃO (não alterar):", M, y); y+=5;
+
+  // marcadores + código em linhas
+  doc.setFont("courier","normal"); doc.setFontSize(8);
+  doc.setTextColor(90,80,66);
+  const linhas = [];
+  linhas.push(">>>CORRECAO_INICIO<<<");
+  for(let i=0;i<codigo.length;i+=66){ linhas.push(codigo.slice(i,i+66)); }
+  linhas.push(">>>CORRECAO_FIM<<<");
+  linhas.forEach(ln=>{
+    if(y > 285){ doc.addPage(); y = 20; }
+    doc.text(ln, M, y); y+=4;
+  });
+
+  const nomeArq = "Prova_InfoEmpresarial_" + sanitizar(payload.nome) + "_" + sanitizar(payload.turma || "Turma") + ".pdf";
+  doc.save(nomeArq);
+
+  // preview do código na tela (opaco) + msg
+  el("cod-preview").textContent = codigo;
+  el("final-msg").textContent = "Arquivo gerado: " + nomeArq;
+  mostrar("tela-final");
+}
+
+el("btn-gerar").addEventListener("click", gerarPDF);
+el("btn-baixar-novamente").addEventListener("click", gerarPDF);
+
+/* ---------- helpers de texto ---------- */
+function escapar(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function sanitizar(s){
+  return (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-zA-Z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,40) || "Aluno";
+}
+</script>
+</body>
+</html>
