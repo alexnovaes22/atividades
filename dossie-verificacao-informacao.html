@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossiê de Verificação — Informática Empresarial</title>
+<style>
+  :root{
+    --ink:#14243f;
+    --ink-soft:#33415c;
+    --body:#1f2733;
+    --teal:#0d7377;
+    --teal-deep:#0a5a5d;
+    --amber:#b26a00;
+    --paper:#ffffff;
+    --tint:#f5f7f9;
+    --tint-teal:#edf6f6;
+    --line:#cdd5df;
+    --line-soft:#e2e8ef;
+    --true:#1d7a3f;
+    --false:#b3261e;
+  }
+
+  *{box-sizing:border-box;}
+
+  html{-webkit-text-size-adjust:100%;}
+
+  body{
+    margin:0;
+    background:#e9edf1;
+    color:var(--body);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14.5px;
+    line-height:1.55;
+  }
+
+  .sheet{
+    max-width:820px;
+    margin:24px auto;
+    background:var(--paper);
+    padding:46px 52px 60px;
+    box-shadow:0 2px 18px rgba(20,36,63,.12);
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    border-bottom:3px solid var(--ink);
+    padding-bottom:16px;
+    margin-bottom:6px;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--teal-deep);
+    font-weight:700;
+    margin:0 0 8px;
+  }
+  .masthead-row{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:20px;
+  }
+  h1{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:31px;
+    line-height:1.1;
+    color:var(--ink);
+    margin:0;
+    font-weight:700;
+    letter-spacing:-.01em;
+  }
+  h1 span{color:var(--teal-deep);}
+  .lede{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin:10px 0 0;
+    max-width:52ch;
+  }
+  .stamp{
+    flex:none;
+    width:118px;
+    text-align:center;
+    border:2px solid var(--teal);
+    color:var(--teal-deep);
+    border-radius:8px;
+    padding:9px 6px;
+    transform:rotate(3deg);
+    font-family:Georgia,serif;
+  }
+  .stamp .big{
+    display:block;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:.04em;
+  }
+  .stamp .small{
+    display:block;
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    margin-top:3px;
+    font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+
+  /* ---------- Meta strip ---------- */
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 22px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-soft);
+    margin:14px 0 22px;
+    padding:10px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .meta b{color:var(--ink);}
+
+  /* ---------- Student header ---------- */
+  .id-fields{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:14px;
+    margin-bottom:26px;
+  }
+  .id-fields .fld{
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:8px 12px 14px;
+    background:var(--tint);
+  }
+  .id-fields label{
+    font-size:9.5px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--teal-deep);
+    font-weight:700;
+  }
+  .id-fields .rule{
+    height:20px;
+  }
+
+  /* ---------- Callout boxes ---------- */
+  .callout{
+    border:1px solid var(--line);
+    border-left:5px solid var(--teal);
+    background:var(--tint-teal);
+    border-radius:0 8px 8px 0;
+    padding:16px 20px;
+    margin:0 0 26px;
+  }
+  .callout h3{
+    margin:0 0 8px;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    color:var(--teal-deep);
+  }
+  .callout ol,.callout ul{margin:0;padding-left:20px;}
+  .callout li{margin:5px 0;}
+
+  .callout.amber{
+    border-left-color:var(--amber);
+    background:#fbf4ea;
+  }
+  .callout.amber h3{color:var(--amber);}
+
+  /* ---------- Mission blocks ---------- */
+  .mission{
+    margin:0 0 30px;
+    padding-top:22px;
+    border-top:1px solid var(--line-soft);
+    page-break-inside:avoid;
+  }
+  .mission-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:6px;
+  }
+  .m-num{
+    font-family:Georgia,serif;
+    font-size:13px;
+    font-weight:700;
+    color:#fff;
+    background:var(--teal);
+    letter-spacing:.05em;
+    padding:3px 10px;
+    border-radius:4px;
+    white-space:nowrap;
+  }
+  .m-title{
+    font-family:Georgia,serif;
+    font-size:19px;
+    color:var(--ink);
+    margin:0;
+    font-weight:700;
+    line-height:1.15;
+  }
+  .m-tags{
+    margin:4px 0 12px;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+  }
+  .m-tags span{
+    display:inline-block;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:2px 10px;
+    margin-right:6px;
+  }
+  .mission p{margin:8px 0;}
+  .mission ol.steps{margin:8px 0 4px;padding-left:22px;}
+  .mission ol.steps li{margin:6px 0;}
+
+  .copy-tag{
+    display:inline-block;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--teal-deep);
+    background:var(--tint-teal);
+    border:1px solid #bfe0e0;
+    border-radius:4px;
+    padding:2px 8px;
+    margin:2px 0 6px;
+  }
+
+  /* ---------- Tables ---------- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:10px 0 6px;
+    font-size:12.5px;
+  }
+  caption{
+    caption-side:top;
+    text-align:left;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-soft);
+    padding-bottom:6px;
+    font-weight:700;
+  }
+  th,td{
+    border:1px solid var(--line);
+    padding:7px 9px;
+    text-align:left;
+    vertical-align:top;
+  }
+  thead th{
+    background:var(--ink);
+    color:#fff;
+    font-size:11px;
+    letter-spacing:.03em;
+    font-weight:600;
+  }
+  tbody tr:nth-child(even) td{background:var(--tint);}
+  td.blank{height:30px;}
+  .rownum{
+    width:26px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-weight:700;
+    background:var(--tint)!important;
+  }
+
+  /* ---------- Legend chips ---------- */
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:10px 0 4px;
+  }
+  .chip{
+    font-size:11px;
+    border-radius:20px;
+    padding:3px 12px;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+  }
+  .chip.t{border-color:var(--true);color:var(--true);}
+  .chip.f{border-color:var(--false);color:var(--false);}
+
+  /* ---------- Reference model ---------- */
+  .model{
+    font-family:"Courier New",monospace;
+    font-size:12px;
+    background:#0f2233;
+    color:#e8eef4;
+    border-radius:8px;
+    padding:14px 16px;
+    line-height:1.5;
+    margin:10px 0;
+    overflow-wrap:anywhere;
+  }
+  .model .hl{color:#7fd4d6;}
+
+  /* ---------- Points chip ---------- */
+  .pts{
+    float:right;
+    font-size:10.5px;
+    font-weight:700;
+    color:var(--amber);
+    border:1px solid #e0c69b;
+    background:#fbf4ea;
+    border-radius:4px;
+    padding:2px 9px;
+    letter-spacing:.04em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist{list-style:none;padding:0;margin:8px 0;}
+  .checklist li{
+    padding:5px 0 5px 30px;
+    position:relative;
+    border-bottom:1px dashed var(--line-soft);
+  }
+  .checklist li::before{
+    content:"";
+    position:absolute;
+    left:0;top:6px;
+    width:16px;height:16px;
+    border:2px solid var(--teal);
+    border-radius:4px;
+  }
+
+  .footer{
+    margin-top:34px;
+    padding-top:14px;
+    border-top:3px solid var(--ink);
+    font-size:11px;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  /* ---------- Print ---------- */
+  @page{ size:A4; margin:14mm 15mm; }
+  @media print{
+    body{background:#fff;font-size:11pt;}
+    .sheet{box-shadow:none;margin:0;max-width:none;padding:0;}
+    .mission{border-top-color:var(--line);}
+    thead th{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    tbody tr:nth-child(even) td,.rownum,.callout,.id-fields .fld,.model,.pts,.copy-tag,.m-num,.stamp{
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    }
+    .no-print{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- ============ MASTHEAD ============ -->
+  <header class="masthead">
+    <p class="eyebrow">Informática Empresarial · Gestão e Negócios</p>
+    <div class="masthead-row">
+      <div>
+        <h1>Dossiê de <span>Verificação</span>:<br>investigando a informação na era digital</h1>
+        <p class="lede">Nesta missão você vai atuar como um <b>checador profissional</b>: comparar fontes, testar ferramentas de checagem, desmontar uma fake news e citar tudo corretamente.</p>
+      </div>
+      <div class="stamp">
+        <span class="big">CHECADO?</span>
+        <span class="small">Prove com fatos</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="meta">
+    <span><b>Atividade avaliativa</b></span>
+    <span>Registro individual · <b>no caderno</b></span>
+    <span>Valor: <b>10,0 pontos</b></span>
+    <span>Entrega: <b>foto → PDF/imagem no Classroom</b></span>
+  </div>
+
+  <!-- ============ STUDENT ID ============ -->
+  <div class="id-fields">
+    <div class="fld"><label>Nome completo</label><div class="rule"></div></div>
+    <div class="fld"><label>Turma</label><div class="rule"></div></div>
+    <div class="fld"><label>Data</label><div class="rule"></div></div>
+  </div>
+
+  <!-- ============ INSTRUCTIONS ============ -->
+  <div class="callout">
+    <h3>Como fazer e entregar</h3>
+    <ol>
+      <li>Faça <b>tudo à mão, no caderno</b>, à caneta. Reproduza cada tabela do jeito que ela aparece aqui (mesmas colunas) e preencha.</li>
+      <li>Capriche na organização e na letra — a foto precisa estar <b>legível</b>.</li>
+      <li>Ao terminar, <b>fotografe todas as páginas</b> com boa iluminação, junte em um único arquivo <b>PDF ou imagem</b> e envie na tarefa do <b>Google Classroom</b>.</li>
+      <li>Copie o cabeçalho (nome, turma, data) na primeira página do caderno.</li>
+    </ol>
+  </div>
+
+  <!-- ============ THEME ============ -->
+  <div class="callout amber">
+    <h3>Passo 0 · Escolha o tema da sua investigação</h3>
+    <p style="margin-top:0;">Escolha <b>UMA</b> afirmação abaixo (ou traga uma que você viu circular no WhatsApp/redes). Ela será investigada em todas as missões. Copie no caderno a que você escolheu.</p>
+    <ul>
+      <li>“O governo vai liberar um <b>saque extra do FGTS</b> para todos os trabalhadores.”</li>
+      <li>“Foi criado um <b>novo benefício de R$ 1.200</b> para quem tem CNPJ de MEI.”</li>
+      <li>“A partir do próximo mês o <b>Pix vai ser taxado</b> em toda transferência.”</li>
+      <li>“A empresa [nome de uma grande marca] está <b>contratando pelo WhatsApp</b> com salário de R$ 4.000 sem experiência.”</li>
+    </ul>
+  </div>
+
+  <!-- ============ MISSION 1 ============ -->
+  <section class="mission">
+    <div class="mission-head">
+      <span class="m-num">MISSÃO 01</span>
+      <h2 class="m-title">Comparando as fontes</h2>
+    </div>
+    <div class="m-tags"><span>Portais · Blogs · Institucionais · Acadêmicos</span></div>
+    <span class="pts">1,5 ponto</span>
+    <p>Pesquise o seu tema no buscador. Encontre <b>4 resultados de tipos diferentes</b> e analise cada um.</p>
+    <ol class="steps">
+      <li><b>Portal de notícias</b> (ex.: G1, UOL, CNN Brasil…)</li>
+      <li><b>Blog ou site pessoal</b> (opinião, sem redação profissional)</li>
+      <li><b>Site institucional/governamental</b> (endereço terminado em <b>.gov.br</b> ou de um órgão oficial)</li>
+      <li><b>Site acadêmico</b> (ex.: SciELO, Google Acadêmico, repositório de universidade)</li>
+    </ol>
+    <span class="copy-tag">✍ Copie e preencha no caderno</span>
+    <table>
+      <caption>Tabela 1 — Comparação de fontes</caption>
+      <thead>
+        <tr>
+          <th class="rownum">#</th>
+          <th>Tipo de fonte</th>
+          <th>Nome do site</th>
+          <th>Endereço (URL)</th>
+          <th>Autor / responsável</th>
+          <th>Data de publicação</th>
+          <th>Cita fontes? (S/N)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="rownum">1</td><td>Portal de notícias</td><td class="blank"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="rownum">2</td><td>Blog / site pessoal</td><td class="blank"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="rownum">3</td><td>Institucional / .gov.br</td><td class="blank"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="rownum">4</td><td>Acadêmico</td><td class="blank"></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <p><b>Conclusão (2 a 3 linhas):</b> qual das 4 fontes você considera a <b>mais confiável</b> e por quê?</p>
+  </section>
+
+  <!-- ============ MISSION 2 ============ -->
+  <section class="mission">
+    <div class="mission-head">
+      <span class="m-num">MISSÃO 02</span>
+      <h2 class="m-title">Checando os fatos</h2>
+    </div>
+    <div class="m-tags"><span>Google Fact Check · Agência Lupa · Aos Fatos</span></div>
+    <span class="pts">2,0 pontos</span>
+    <p>Agora use <b>ferramentas de checagem</b> para descobrir se o seu tema já foi verificado por profissionais. Pesquise palavras-chave da afirmação em cada uma:</p>
+    <ol class="steps">
+      <li><b>Google Fact Check Explorer</b> — toolbox.google.com/factcheck/explorer</li>
+      <li><b>Agência Lupa</b> — lupa.uol.com.br</li>
+      <li><b>Aos Fatos</b> — aosfatos.org</li>
+    </ol>
+    <div class="legend">
+      <span class="chip t">✓ Verdadeiro</span>
+      <span class="chip f">✕ Falso</span>
+      <span class="chip">Enganoso</span>
+      <span class="chip">Fora de contexto</span>
+      <span class="chip">Sem checagem encontrada</span>
+    </div>
+    <span class="copy-tag">✍ Copie e preencha no caderno</span>
+    <table>
+      <caption>Tabela 2 — Resultado das ferramentas de verificação</caption>
+      <thead>
+        <tr>
+          <th class="rownum">#</th>
+          <th>Ferramenta</th>
+          <th>Achou checagem? (S/N)</th>
+          <th>Veredito (use a legenda)</th>
+          <th>Título / resumo da checagem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="rownum">1</td><td>Google Fact Check</td><td class="blank"></td><td></td><td></td></tr>
+        <tr><td class="rownum">2</td><td>Agência Lupa</td><td class="blank"></td><td></td><td></td></tr>
+        <tr><td class="rownum">3</td><td>Aos Fatos</td><td class="blank"></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <p><b>Responda:</b> se alguma ferramenta <b>não</b> encontrou nada, escreva quais <b>palavras-chave</b> você digitou na busca. Ao final, sua afirmação é <b>verdadeira, falsa ou enganosa</b>? Justifique em 2 linhas.</p>
+  </section>
+
+  <!-- ============ MISSION 3 ============ -->
+  <section class="mission">
+    <div class="mission-head">
+      <span class="m-num">MISSÃO 03</span>
+      <h2 class="m-title">Radar de fake news</h2>
+    </div>
+    <div class="m-tags"><span>Identificar · Denunciar</span></div>
+    <span class="pts">2,0 pontos</span>
+    <p>Escolha o resultado <b>mais suspeito</b> que você encontrou na Missão 01. Aplique o radar abaixo: marque <b>Sim ou Não</b> para cada sinal e escreva uma justificativa curta.</p>
+    <span class="copy-tag">✍ Copie e preencha no caderno</span>
+    <table>
+      <caption>Tabela 3 — 7 sinais de alerta de desinformação</caption>
+      <thead>
+        <tr><th class="rownum">#</th><th>Sinal de alerta</th><th>Presente? (S/N)</th><th>Justificativa</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="rownum">1</td><td>Título sensacionalista, em CAIXA ALTA ou com muitos “!!!”</td><td class="blank"></td><td></td></tr>
+        <tr><td class="rownum">2</td><td>Não mostra autor nem data</td><td></td><td></td></tr>
+        <tr><td class="rownum">3</td><td>Erros de português ou de digitação</td><td></td><td></td></tr>
+        <tr><td class="rownum">4</td><td>Pede para “compartilhar urgente / antes que apaguem”</td><td></td><td></td></tr>
+        <tr><td class="rownum">5</td><td>Não cita nenhuma fonte oficial</td><td></td><td></td></tr>
+        <tr><td class="rownum">6</td><td>Provoca medo, raiva ou euforia forte</td><td></td><td></td></tr>
+        <tr><td class="rownum">7</td><td>O endereço do site imita um site famoso (ex.: “g1noticias-br.com”)</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <p><b>Denúncia:</b> imagine que essa informação chegou até você numa rede social. Descreva em <b>3 passos</b> como você faria para <b>denunciar</b> essa publicação (ex.: onde clicar, qual motivo escolher) e para quem <b>avisar</b>.</p>
+  </section>
+
+  <!-- ============ MISSION 4 ============ -->
+  <section class="mission">
+    <div class="mission-head">
+      <span class="m-num">MISSÃO 04</span>
+      <h2 class="m-title">Dentro da bolha</h2>
+    </div>
+    <div class="m-tags"><span>Bolhas informacionais · Algoritmo</span></div>
+    <span class="pts">1,5 ponto</span>
+    <p>Abra uma rede social que você usa (Instagram, TikTok, YouTube, X…). Observe os <b>10 primeiros conteúdos</b> que aparecem no seu feed e registre-os na tabela, classificando cada um por tema.</p>
+    <span class="copy-tag">✍ Copie e preencha no caderno</span>
+    <table>
+      <caption>Tabela 4 — Raio-X do meu feed</caption>
+      <thead>
+        <tr><th class="rownum">#</th><th>Do que era o conteúdo (resumo curto)</th><th>Tema (ex.: humor, notícia, esporte, moda…)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="rownum">1</td><td class="blank"></td><td></td></tr>
+        <tr><td class="rownum">2</td><td></td><td></td></tr>
+        <tr><td class="rownum">3</td><td></td><td></td></tr>
+        <tr><td class="rownum">4</td><td></td><td></td></tr>
+        <tr><td class="rownum">5</td><td></td><td></td></tr>
+        <tr><td class="rownum">6</td><td></td><td></td></tr>
+        <tr><td class="rownum">7</td><td></td><td></td></tr>
+        <tr><td class="rownum">8</td><td></td><td></td></tr>
+        <tr><td class="rownum">9</td><td></td><td></td></tr>
+        <tr><td class="rownum">10</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <p><b>Reflexão (responda as 3):</b></p>
+    <ol class="steps">
+      <li>Qual foi o <b>tema que mais se repetiu</b>? Quantas vezes?</li>
+      <li>Por que o algoritmo mostra <b>tanto conteúdo parecido</b> para você?</li>
+      <li>Que <b>opinião ou informação diferente</b> dificilmente aparece no seu feed?</li>
+    </ol>
+  </section>
+
+  <!-- ============ MISSION 5 ============ -->
+  <section class="mission">
+    <div class="mission-head">
+      <span class="m-num">MISSÃO 05</span>
+      <h2 class="m-title">As redes e a “verdade”</h2>
+    </div>
+    <div class="m-tags"><span>Redes sociais · Formação de opinião</span></div>
+    <span class="pts">1,5 ponto</span>
+    <p><b>Parte A — Reflexão (mínimo 5 linhas):</b> por que uma informação falsa se espalha <b>mais rápido</b> que a verdadeira nas redes sociais, e por que ela às vezes <b>parece</b> verdade?</p>
+    <p><b>Parte B — Reescreva a manchete.</b> Copie a manchete falsa abaixo e reescreva-a de forma <b>honesta e responsável</b>, sem exagero:</p>
+    <div class="callout amber" style="margin:8px 0 4px;">
+      <p style="margin:0;">🚨 <b>URGENTE!!! ESPALHE ANTES QUE APAGUEM:</b> banco vai BLOQUEAR sua conta HOJE se você não clicar neste link agora!!!</p>
+    </div>
+    <p style="margin-top:8px;">✍ Escreva no caderno a sua versão corrigida da manchete.</p>
+  </section>
+
+  <!-- ============ MISSION 6 ============ -->
+  <section class="mission">
+    <div class="mission-head">
+      <span class="m-num">MISSÃO 06</span>
+      <h2 class="m-title">Direitos autorais e referências</h2>
+    </div>
+    <div class="m-tags"><span>Autoria · Citação correta</span></div>
+    <span class="pts">1,5 ponto</span>
+    <p>Todo conteúdo tem um autor. Agora você vai <b>dar os créditos</b> das fontes que usou. Escreva a <b>referência</b> das 4 fontes da Missão 01 seguindo o modelo ABNT para páginas da internet:</p>
+    <div class="model">
+      SOBRENOME, Nome. <span class="hl">Título da página</span>. Nome do site, ano.<br>
+      Disponível em: &lt;endereço do site&gt;. Acesso em: <span class="hl">dia mês ano</span>.
+    </div>
+    <p style="font-size:12px;color:var(--ink-soft);margin-top:4px;"><b>Exemplo:</b> SILVA, João. <i>Entenda as regras do FGTS</i>. Portal G1, 2026. Disponível em: &lt;www.g1.com.br/...&gt;. Acesso em: 25 ago. 2026.</p>
+    <span class="copy-tag">✍ Escreva as 4 referências no caderno (uma por linha)</span>
+    <p style="margin-top:14px;"><b>Para finalizar, responda:</b></p>
+    <ol class="steps">
+      <li>Por que é importante <b>citar o autor</b> de uma informação que usamos?</li>
+      <li>O que é <b>plágio</b> e por que ele é considerado errado?</li>
+    </ol>
+  </section>
+
+  <!-- ============ SELF-CHECK ============ -->
+  <div class="callout">
+    <h3>Antes de enviar · confira</h3>
+    <ul class="checklist">
+      <li>Copiei o cabeçalho e o tema escolhido.</li>
+      <li>Reproduzi e preenchi as <b>4 tabelas</b> (Missões 1, 2, 3 e 4).</li>
+      <li>Respondi todas as reflexões e escrevi as <b>4 referências</b>.</li>
+      <li>As fotos estão <b>nítidas e legíveis</b>, juntei tudo em um único arquivo e enviei no Classroom.</li>
+    </ul>
+  </div>
+
+  <footer class="footer">
+    <span>Informática Empresarial · Gestão e Negócios</span>
+    <span>Mobilizar práticas éticas e críticas no ambiente digital</span>
+  </footer>
+
+</div>
+</body>
+</html>
