@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cruzadinha — Projeto de Vida</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --plum:#5B2A42; --plum2:#7A3B57; --rose:#C97B84; --amber:#E8A33D;
+    --ink:#3A2A31; --muted:#8A7A80; --tint:#F6ECEF; --border:#E4D3D9;
+    --bg:#F3EEF0; --white:#fff; --ok:#2E7D32; --no:#C0392B;
+    --cell:40px; --radius:14px; --shadow:0 6px 22px rgba(91,42,66,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.5}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 16px 60px}
+  header.hero{background:linear-gradient(135deg,var(--plum),var(--plum2));color:#fff;
+    border-radius:0 0 var(--radius) var(--radius);padding:28px 28px 24px;box-shadow:var(--shadow)}
+  .hwrap{max-width:1000px;margin:0 auto;padding:0 16px}
+  .eyebrow{color:var(--amber);font-weight:700;letter-spacing:.14em;font-size:.72rem;text-transform:uppercase;margin:0 0 8px}
+  header.hero h1{margin:0;font-size:1.8rem;font-weight:800}
+  header.hero p.sub{margin:8px 0 0;color:#E9D6DB;font-style:italic}
+
+  .note{background:var(--tint);border:1px solid var(--border);border-radius:12px;
+    padding:13px 16px;margin:20px 0 8px;font-size:.92rem}
+  .note b{color:var(--plum)}
+  .idrow{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin:16px 0}
+  .field label{display:block;font-size:.8rem;font-weight:700;color:var(--plum);margin:0 0 5px}
+  .field input{width:100%;font:inherit;border:1.5px solid var(--border);border-radius:10px;padding:10px 12px}
+  .field input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(232,163,61,.22)}
+
+  .layout{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start}
+  @media (max-width:820px){.layout{grid-template-columns:1fr}}
+
+  .gridcard{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;overflow:auto}
+  .grid{display:grid;gap:2px;background:transparent}
+  .cell{width:var(--cell);height:var(--cell);position:relative}
+  .cell.blank{background:transparent}
+  .cell.filled input{width:100%;height:100%;border:1.5px solid var(--plum2);border-radius:6px;
+    background:#fff;text-align:center;font-size:1.15rem;font-weight:700;color:var(--ink);
+    text-transform:uppercase;padding:0;caret-color:var(--amber)}
+  .cell.filled input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(232,163,61,.30);background:#FFFBF3}
+  .cell.filled input.hl{background:#FBEFDD;border-color:var(--amber)}
+  .cell.filled input.ok{background:#E6F4E6;border-color:var(--ok);color:var(--ok)}
+  .cell.filled input.no{background:#FBE7E4;border-color:var(--no)}
+  .cell .num{position:absolute;top:1px;left:3px;font-size:.55rem;font-weight:700;color:var(--plum);pointer-events:none;z-index:2}
+
+  .clues{display:grid;grid-template-columns:1fr;gap:18px}
+  @media (min-width:520px){.cluescols{display:grid;grid-template-columns:1fr;gap:18px}}
+  .cluebox h3{margin:0 0 8px;color:var(--plum);font-size:1.05rem;display:flex;align-items:center;gap:8px}
+  .cluebox h3 .tag{background:var(--amber);color:#fff;font-size:.7rem;padding:3px 9px;border-radius:20px;letter-spacing:.05em}
+  .clue{display:flex;gap:8px;padding:7px 9px;border-radius:8px;cursor:pointer;font-size:.93rem}
+  .clue:hover{background:var(--tint)}
+  .clue.active{background:#FBEFDD}
+  .clue .n{font-weight:800;color:var(--plum);min-width:22px}
+  .clue .done{color:var(--ok);margin-left:auto;font-weight:700;opacity:0;transition:opacity .15s}
+  .clue.solved .done{opacity:1}
+
+  .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:22px 0 6px}
+  button{font:inherit;font-weight:700;border:none;border-radius:12px;padding:13px 20px;cursor:pointer;transition:filter .15s,background .15s}
+  .btn-primary{background:var(--plum);color:#fff}.btn-primary:hover{filter:brightness(1.08)}
+  .btn-amber{background:var(--amber);color:#3a1e2b}.btn-amber:hover{filter:brightness(1.05)}
+  .btn-ghost{background:transparent;color:var(--plum);border:1.5px solid var(--border)}.btn-ghost:hover{background:var(--tint)}
+  .status{margin-left:auto;font-size:.9rem;color:var(--muted)}
+  .status b{color:var(--ok)}
+
+  footer{color:var(--muted);font-size:.82rem;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid var(--border)}
+  footer .ver{color:var(--plum);font-weight:700}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hwrap">
+      <p class="eyebrow">Projeto de Vida • Atividade</p>
+      <h1>Cruzadinha: Valores, Sonhos e Propósito</h1>
+      <p class="sub">Complete a cruzadinha com as palavras do nosso projeto de vida — EJA Módulo 2 (Manhã, Turma A)</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="note">
+      <b>Como fazer:</b> leia as dicas, escreva as palavras nas casinhas (sem acento) e clique em <b>“Conferir”</b>.
+      Ao terminar, use <b>“Baixar PDF para o Classroom”</b> e anexe o arquivo na tarefa.
+    </div>
+
+    <div class="idrow">
+      <div class="field"><label for="nome">Nome completo</label><input id="nome" type="text" placeholder="Seu nome" /></div>
+      <div class="field"><label for="turma">Turma</label><input id="turma" type="text" placeholder="Ex.: 2 A" /></div>
+      <div class="field"><label for="data">Data</label><input id="data" type="text" placeholder="dd/mm/aaaa" /></div>
+    </div>
+
+    <div class="layout">
+      <div class="gridcard"><div class="grid" id="grid" aria-label="Grade da cruzadinha"></div></div>
+      <div class="clues">
+        <div class="cluebox">
+          <h3><span class="tag">Horizontais</span></h3>
+          <div id="across"></div>
+        </div>
+        <div class="cluebox">
+          <h3><span class="tag">Verticais</span></h3>
+          <div id="down"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-amber" id="btnCheck" type="button">Conferir</button>
+      <button class="btn-primary" id="btnPdf" type="button">Baixar PDF para o Classroom</button>
+      <button class="btn-ghost" id="btnClear" type="button">Limpar</button>
+      <span class="status" id="status" aria-live="polite"></span>
+    </div>
+
+    <footer>
+      Prof. Alex Ferreira Novaes • Projeto de Vida • CEEBJA de Londrina<br />
+      <span class="ver">Cruzadinha • Valores, Sonhos e Propósito • v1.0</span>
+    </footer>
+  </div>
+
+<script>
+const DATA = {"H": 14, "W": 13, "cells": [{"r": 0, "c": 9, "ch": "M", "num": 1}, {"r": 1, "c": 0, "ch": "E", "num": 2}, {"r": 1, "c": 1, "ch": "T", "num": 0}, {"r": 1, "c": 2, "ch": "I", "num": 0}, {"r": 1, "c": 3, "ch": "C", "num": 3}, {"r": 1, "c": 4, "ch": "A", "num": 0}, {"r": 1, "c": 9, "ch": "E", "num": 0}, {"r": 2, "c": 0, "ch": "S", "num": 0}, {"r": 2, "c": 3, "ch": "I", "num": 0}, {"r": 2, "c": 5, "ch": "I", "num": 4}, {"r": 2, "c": 7, "ch": "F", "num": 5}, {"r": 2, "c": 8, "ch": "U", "num": 0}, {"r": 2, "c": 9, "ch": "T", "num": 0}, {"r": 2, "c": 10, "ch": "U", "num": 0}, {"r": 2, "c": 11, "ch": "R", "num": 0}, {"r": 2, "c": 12, "ch": "O", "num": 0}, {"r": 3, "c": 0, "ch": "C", "num": 0}, {"r": 3, "c": 3, "ch": "D", "num": 0}, {"r": 3, "c": 5, "ch": "D", "num": 0}, {"r": 3, "c": 9, "ch": "A", "num": 0}, {"r": 4, "c": 0, "ch": "O", "num": 0}, {"r": 4, "c": 2, "ch": "T", "num": 6}, {"r": 4, "c": 3, "ch": "A", "num": 0}, {"r": 4, "c": 4, "ch": "L", "num": 0}, {"r": 4, "c": 5, "ch": "E", "num": 0}, {"r": 4, "c": 6, "ch": "N", "num": 0}, {"r": 4, "c": 7, "ch": "T", "num": 0}, {"r": 4, "c": 8, "ch": "O", "num": 0}, {"r": 4, "c": 9, "ch": "S", "num": 0}, {"r": 5, "c": 0, "ch": "L", "num": 0}, {"r": 5, "c": 3, "ch": "D", "num": 0}, {"r": 5, "c": 5, "ch": "N", "num": 0}, {"r": 6, "c": 0, "ch": "H", "num": 0}, {"r": 6, "c": 3, "ch": "A", "num": 7}, {"r": 6, "c": 4, "ch": "U", "num": 0}, {"r": 6, "c": 5, "ch": "T", "num": 0}, {"r": 6, "c": 6, "ch": "O", "num": 0}, {"r": 6, "c": 7, "ch": "N", "num": 0}, {"r": 6, "c": 8, "ch": "O", "num": 0}, {"r": 6, "c": 9, "ch": "M", "num": 0}, {"r": 6, "c": 10, "ch": "I", "num": 0}, {"r": 6, "c": 11, "ch": "A", "num": 0}, {"r": 7, "c": 0, "ch": "A", "num": 0}, {"r": 7, "c": 3, "ch": "N", "num": 0}, {"r": 7, "c": 5, "ch": "I", "num": 0}, {"r": 8, "c": 0, "ch": "S", "num": 0}, {"r": 8, "c": 3, "ch": "I", "num": 0}, {"r": 8, "c": 5, "ch": "D", "num": 0}, {"r": 8, "c": 8, "ch": "S", "num": 8}, {"r": 9, "c": 1, "ch": "T", "num": 9}, {"r": 9, "c": 2, "ch": "R", "num": 0}, {"r": 9, "c": 3, "ch": "A", "num": 0}, {"r": 9, "c": 4, "ch": "B", "num": 0}, {"r": 9, "c": 5, "ch": "A", "num": 0}, {"r": 9, "c": 6, "ch": "L", "num": 0}, {"r": 9, "c": 7, "ch": "H", "num": 0}, {"r": 9, "c": 8, "ch": "O", "num": 0}, {"r": 10, "c": 5, "ch": "D", "num": 0}, {"r": 10, "c": 8, "ch": "N", "num": 0}, {"r": 11, "c": 0, "ch": "V", "num": 10}, {"r": 11, "c": 1, "ch": "A", "num": 0}, {"r": 11, "c": 2, "ch": "L", "num": 0}, {"r": 11, "c": 3, "ch": "O", "num": 0}, {"r": 11, "c": 4, "ch": "R", "num": 0}, {"r": 11, "c": 5, "ch": "E", "num": 0}, {"r": 11, "c": 6, "ch": "S", "num": 0}, {"r": 11, "c": 8, "ch": "H", "num": 0}, {"r": 12, "c": 8, "ch": "O", "num": 0}, {"r": 13, "c": 3, "ch": "P", "num": 11}, {"r": 13, "c": 4, "ch": "R", "num": 0}, {"r": 13, "c": 5, "ch": "O", "num": 0}, {"r": 13, "c": 6, "ch": "P", "num": 0}, {"r": 13, "c": 7, "ch": "O", "num": 0}, {"r": 13, "c": 8, "ch": "S", "num": 0}, {"r": 13, "c": 9, "ch": "I", "num": 0}, {"r": 13, "c": 10, "ch": "T", "num": 0}, {"r": 13, "c": 11, "ch": "O", "num": 0}], "across": [{"num": 2, "row": 1, "col": 0, "len": 5, "answer": "ETICA", "display": "ETICA", "clue": "Agir com honestidade e respeito.", "dir": "A"}, {"num": 5, "row": 2, "col": 7, "len": 6, "answer": "FUTURO", "display": "FUTURO", "clue": "O tempo que está por vir.", "dir": "A"}, {"num": 6, "row": 4, "col": 2, "len": 8, "answer": "TALENTOS", "display": "TALENTOS", "clue": "Habilidades naturais que cada pessoa tem.", "dir": "A"}, {"num": 7, "row": 6, "col": 3, "len": 9, "answer": "AUTONOMIA", "display": "AUTONOMIA", "clue": "Capacidade de decidir por si mesmo.", "dir": "A"}, {"num": 9, "row": 9, "col": 1, "len": 8, "answer": "TRABALHO", "display": "TRABALHO", "clue": "Esforço e dedicação ligados à carreira.", "dir": "A"}, {"num": 10, "row": 11, "col": 0, "len": 7, "answer": "VALORES", "display": "VALORES", "clue": "Princípios que guiam as nossas escolhas.", "dir": "A"}, {"num": 11, "row": 13, "col": 3, "len": 9, "answer": "PROPOSITO", "display": "PROPOSITO", "clue": "O sentido da vida; o nosso “para quê”.", "dir": "A"}], "down": [{"num": 1, "row": 0, "col": 9, "len": 5, "answer": "METAS", "display": "METAS", "clue": "Objetivos que queremos alcançar.", "dir": "D"}, {"num": 2, "row": 1, "col": 0, "len": 8, "answer": "ESCOLHAS", "display": "ESCOLHAS", "clue": "Decisões que fazemos no caminho da vida.", "dir": "D"}, {"num": 3, "row": 1, "col": 3, "len": 9, "answer": "CIDADANIA", "display": "CIDADANIA", "clue": "Participação e responsabilidade na comunidade.", "dir": "D"}, {"num": 4, "row": 2, "col": 5, "len": 10, "answer": "IDENTIDADE", "display": "IDENTIDADE", "clue": "O conjunto de traços que nos torna únicos.", "dir": "D"}, {"num": 8, "row": 8, "col": 8, "len": 6, "answer": "SONHOS", "display": "SONHOS", "clue": "Aquilo que desejamos e que nos dá energia para seguir.", "dir": "D"}]};
+</script>
+<script>
+(function(){
+  "use strict";
+  var STORE = "ptd_cruzadinha_v1";
+  var H = DATA.H, W = DATA.W;
+  var sol = {};           // "r,c" -> letra correta
+  var numAt = {};         // "r,c" -> número
+  DATA.cells.forEach(function(c){ sol[c.r+","+c.c] = c.ch; if(c.num) numAt[c.r+","+c.c]=c.num; });
+  var words = DATA.across.concat(DATA.down); // {num,row,col,len,dir,answer,clue,display}
+  var inputs = {};        // "r,c" -> input element
+  var activeDir = "A";
+  var activeWord = null;
+
+  // ---- build grid ----
+  var grid = document.getElementById("grid");
+  grid.style.gridTemplateColumns = "repeat("+W+", var(--cell))";
+  grid.style.gridTemplateRows = "repeat("+H+", var(--cell))";
+  for(var r=0;r<H;r++){
+    for(var c=0;c<W;c++){
+      var key = r+","+c;
+      var div = document.createElement("div");
+      if(sol[key]){
+        div.className = "cell filled";
+        if(numAt[key]){ var s=document.createElement("span"); s.className="num"; s.textContent=numAt[key]; div.appendChild(s); }
+        var inp = document.createElement("input");
+        inp.type="text"; inp.maxLength=1; inp.dataset.r=r; inp.dataset.c=c;
+        inp.setAttribute("inputmode","text");
+        div.appendChild(inp);
+        inputs[key]=inp;
+      } else {
+        div.className = "cell blank";
+      }
+      grid.appendChild(div);
+    }
+  }
+
+  function cellsOfWord(w){
+    var arr=[]; var dr=w.dir==="D"?1:0, dc=w.dir==="A"?1:0;
+    for(var i=0;i<w.len;i++) arr.push((w.row+dr*i)+","+(w.col+dc*i));
+    return arr;
+  }
+  function wordsAt(r,c){
+    return words.filter(function(w){ return cellsOfWord(w).indexOf(r+","+c)>=0; });
+  }
+  function highlight(w){
+    document.querySelectorAll(".cell.filled input").forEach(function(i){ i.classList.remove("hl"); });
+    document.querySelectorAll(".clue").forEach(function(c){ c.classList.remove("active"); });
+    if(!w) return;
+    cellsOfWord(w).forEach(function(k){ if(inputs[k]) inputs[k].classList.add("hl"); });
+    var el = document.querySelector('.clue[data-key="'+w.dir+w.num+'"]');
+    if(el) el.classList.add("active");
+    activeWord = w;
+  }
+  function focusFirstEmpty(w){
+    var ks = cellsOfWord(w);
+    for(var i=0;i<ks.length;i++){ if(inputs[ks[i]] && !inputs[ks[i]].value){ inputs[ks[i]].focus(); return; } }
+    if(inputs[ks[0]]) inputs[ks[0]].focus();
+  }
+  function nextCell(r,c){
+    var dr=activeDir==="D"?1:0, dc=activeDir==="A"?1:0;
+    var k=(r+dr)+","+(c+dc); return inputs[k]||null;
+  }
+  function prevCell(r,c){
+    var dr=activeDir==="D"?1:0, dc=activeDir==="A"?1:0;
+    var k=(r-dr)+","+(c-dc); return inputs[k]||null;
+  }
+
+  Object.keys(inputs).forEach(function(key){
+    var inp = inputs[key];
+    inp.addEventListener("focus", function(){
+      var r=+inp.dataset.r, c=+inp.dataset.c;
+      var ws = wordsAt(r,c);
+      var w = ws.find(function(x){return x.dir===activeDir;}) || ws[0];
+      if(w){ activeDir=w.dir; highlight(w); }
+    });
+    inp.addEventListener("click", function(){
+      var r=+inp.dataset.r, c=+inp.dataset.c;
+      var ws = wordsAt(r,c);
+      if(ws.length>1 && activeWord){ // toggle direction
+        activeDir = activeDir==="A" ? "D" : "A";
+        var w = ws.find(function(x){return x.dir===activeDir;}) || ws[0];
+        activeDir=w.dir; highlight(w);
+      }
+    });
+    inp.addEventListener("input", function(){
+      inp.value = (inp.value||"").toUpperCase().replace(/[^A-ZÇÃÕÁÂÉÊÍÓÔÚÀ]/g,"").slice(0,1);
+      inp.classList.remove("ok","no");
+      var r=+inp.dataset.r, c=+inp.dataset.c;
+      if(inp.value){ var nx=nextCell(r,c); if(nx) nx.focus(); }
+      save();
+    });
+    inp.addEventListener("keydown", function(e){
+      var r=+inp.dataset.r, c=+inp.dataset.c;
+      if(e.key==="Backspace" && !inp.value){ var pv=prevCell(r,c); if(pv){ pv.focus(); pv.value=""; save(); } }
+      else if(e.key==="ArrowRight"){ activeDir="A"; var n=inputs[r+","+(c+1)]; if(n)n.focus(); }
+      else if(e.key==="ArrowLeft"){ activeDir="A"; var n=inputs[r+","+(c-1)]; if(n)n.focus(); }
+      else if(e.key==="ArrowDown"){ activeDir="D"; var n=inputs[(r+1)+","+c]; if(n)n.focus(); }
+      else if(e.key==="ArrowUp"){ activeDir="D"; var n=inputs[(r-1)+","+c]; if(n)n.focus(); }
+    });
+  });
+
+  // ---- clues ----
+  function renderClues(list, elId){
+    var box=document.getElementById(elId);
+    list.forEach(function(w){
+      var d=document.createElement("div");
+      d.className="clue"; d.dataset.key=w.dir+w.num;
+      d.innerHTML='<span class="n">'+w.num+'</span><span class="c">'+w.clue+' ('+w.len+' letras)</span><span class="done">✔</span>';
+      d.addEventListener("click", function(){ activeDir=w.dir; highlight(w); focusFirstEmpty(w); });
+      box.appendChild(d);
+    });
+  }
+  renderClues(DATA.across, "across");
+  renderClues(DATA.down, "down");
+
+  // ---- persistence ----
+  var ids=["nome","turma","data"];
+  function save(){
+    try{
+      var data={grid:{},id:{}};
+      Object.keys(inputs).forEach(function(k){ if(inputs[k].value) data.grid[k]=inputs[k].value; });
+      ids.forEach(function(i){ data.id[i]=document.getElementById(i).value; });
+      localStorage.setItem(STORE, JSON.stringify(data));
+    }catch(e){}
+  }
+  function load(){
+    try{
+      var raw=localStorage.getItem(STORE); if(!raw)return; var data=JSON.parse(raw);
+      Object.keys(data.grid||{}).forEach(function(k){ if(inputs[k]) inputs[k].value=data.grid[k]; });
+      ids.forEach(function(i){ if(data.id&&data.id[i]!=null) document.getElementById(i).value=data.id[i]; });
+    }catch(e){}
+  }
+  ids.forEach(function(i){ document.getElementById(i).addEventListener("input", save); });
+  (function(){ var dt=document.getElementById("data"); if(!dt.value){ var t=new Date(); dt.value=String(t.getDate()).padStart(2,"0")+"/"+String(t.getMonth()+1).padStart(2,"0")+"/"+t.getFullYear(); }})();
+  load();
+
+  // ---- check ----
+  function markSolvedClues(){
+    words.forEach(function(w){
+      var ok = cellsOfWord(w).every(function(k){ return (inputs[k].value||"") === sol[k]; });
+      var el=document.querySelector('.clue[data-key="'+w.dir+w.num+'"]');
+      if(el) el.classList.toggle("solved", ok);
+    });
+  }
+  document.getElementById("btnCheck").addEventListener("click", function(){
+    var total=0, right=0;
+    Object.keys(inputs).forEach(function(k){
+      var inp=inputs[k]; total++;
+      inp.classList.remove("ok","no");
+      if(!inp.value) return;
+      if(inp.value===sol[k]){ inp.classList.add("ok"); right++; }
+      else inp.classList.add("no");
+    });
+    markSolvedClues();
+    var st=document.getElementById("status");
+    st.innerHTML = right===total ? "<b>Parabéns! Tudo certo! ✔</b>" : (right+" de "+total+" casinhas corretas.");
+  });
+
+  document.getElementById("btnClear").addEventListener("click", function(){
+    if(!confirm("Apagar todas as letras?")) return;
+    Object.keys(inputs).forEach(function(k){ inputs[k].value=""; inputs[k].classList.remove("ok","no"); });
+    document.querySelectorAll(".clue").forEach(function(c){ c.classList.remove("solved"); });
+    document.getElementById("status").textContent="";
+    try{ localStorage.removeItem(STORE); }catch(e){}
+    save();
+  });
+
+  // ---- PDF ----
+  function fileName(){
+    var n=(document.getElementById("nome").value||"aluno").replace(/[^\p{L}\p{N} ]/gu,"").trim().replace(/\s+/g,"_");
+    return "Cruzadinha_"+(n||"aluno")+".pdf";
+  }
+  document.getElementById("btnPdf").addEventListener("click", function(){
+    if(!window.jspdf||!window.jspdf.jsPDF){ alert("Não foi possível carregar o PDF. Use Ctrl+P e salve como PDF."); window.print(); return; }
+    var jsPDF=window.jspdf.jsPDF; var doc=new jsPDF({unit:"pt",format:"a4"});
+    var PW=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight(); var M=42;
+    // header
+    doc.setFillColor(91,42,66); doc.rect(0,0,PW,74,"F");
+    doc.setTextColor(232,163,61); doc.setFont("helvetica","bold"); doc.setFontSize(9);
+    doc.text("PROJETO DE VIDA  •  CRUZADINHA", M, 26);
+    doc.setTextColor(255,255,255); doc.setFontSize(17);
+    doc.text("Valores, Sonhos e Propósito", M, 48);
+    doc.setTextColor(233,214,219); doc.setFont("helvetica","italic"); doc.setFontSize(10);
+    doc.text("EJA - Módulo 2 (Manhã, Turma A)", M, 64);
+    // id
+    doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(91,42,66);
+    doc.text("Nome: "+(document.getElementById("nome").value||"____________")+"     Turma: "+(document.getElementById("turma").value||"____")+"     Data: "+(document.getElementById("data").value||"______"), M, 98);
+    // grid
+    var avail=PW-2*M; var cs=Math.min(30, Math.floor(avail/W)); var gw=cs*W, gh=cs*H;
+    var ox=(PW-gw)/2, oy=120;
+    doc.setLineWidth(0.8);
+    for(var r=0;r<H;r++){ for(var c=0;c<W;c++){ var k=r+","+c; if(!sol[k]) continue;
+      var x=ox+c*cs, y=oy+r*cs;
+      doc.setDrawColor(122,59,87); doc.setFillColor(255,255,255); doc.rect(x,y,cs,cs,"FD");
+      if(numAt[k]){ doc.setFont("helvetica","bold"); doc.setFontSize(5.5); doc.setTextColor(91,42,66); doc.text(String(numAt[k]), x+1.5, y+5); }
+      var v=inputs[k].value; if(v){ doc.setFont("helvetica","bold"); doc.setFontSize(cs*0.5); doc.setTextColor(30,30,30); doc.text(v, x+cs/2, y+cs*0.68, {align:"center"}); }
+    }}
+    // clues page
+    doc.addPage(); var y=54;
+    function clueList(titulo, arr){
+      doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.setTextColor(91,42,66); doc.text(titulo, M, y); y+=18;
+      doc.setFontSize(10.5);
+      arr.forEach(function(w){
+        doc.setFont("helvetica","bold"); doc.setTextColor(58,42,49);
+        var head=w.num+". ";
+        doc.text(head, M, y);
+        doc.setFont("helvetica","normal"); doc.setTextColor(40,40,40);
+        var lines=doc.splitTextToSize(w.clue+" ("+w.len+" letras)", PW-2*M-18);
+        doc.text(lines, M+16, y); y+=lines.length*14+4;
+        if(y>PH-50){ doc.addPage(); y=54; }
+      });
+      y+=8;
+    }
+    clueList("Horizontais", DATA.across);
+    clueList("Verticais", DATA.down);
+    // footer all pages
+    var pages=doc.internal.getNumberOfPages();
+    for(var p=1;p<=pages;p++){ doc.setPage(p);
+      doc.setDrawColor(228,211,217); doc.line(M,PH-40,PW-M,PH-40);
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(138,122,128);
+      doc.text("Prof. Alex Ferreira Novaes  •  Projeto de Vida  •  CEEBJA de Londrina", M, PH-28);
+      doc.setTextColor(91,42,66); doc.setFont("helvetica","bold"); doc.text("Página "+p+"/"+pages, PW-M, PH-28, {align:"right"});
+    }
+    save(); doc.save(fileName());
+  });
+})();
+</script>
+</body>
+</html>
