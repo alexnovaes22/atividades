@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mão na Massa — Decomposição de Problemas</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#0F2A43; --navy2:#1C3A57; --teal:#0E9594; --cyan:#24B6A8;
+    --accent:#F4A521; --ink:#1E2A38; --muted:#6B7A88; --tint:#E9F5F4;
+    --border:#D3E3E2; --bg:#EEF4F4; --white:#fff;
+    --radius:14px; --shadow:0 6px 22px rgba(15,42,67,.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.5}
+  .wrap{max-width:820px;margin:0 auto;padding:0 16px 56px}
+  header.hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+    border-radius:0 0 var(--radius) var(--radius);padding:26px 26px 22px;box-shadow:var(--shadow)}
+  .hwrap{max-width:820px;margin:0 auto;padding:0 16px}
+  .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.13em;font-size:.72rem;text-transform:uppercase;margin:0 0 8px}
+  header.hero h1{margin:0;font-size:1.7rem;font-weight:800}
+  header.hero p.sub{margin:7px 0 0;color:#C7D6E2;font-style:italic;font-size:.98rem}
+
+  .note{background:var(--tint);border:1px solid var(--border);border-radius:12px;padding:13px 16px;margin:18px 0;font-size:.92rem}
+  .note b{color:var(--navy)}
+
+  section.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 20px 22px;margin:16px 0}
+  .shead{display:flex;align-items:center;gap:11px;margin:0 0 12px}
+  .snum{width:28px;height:28px;border-radius:8px;background:var(--teal);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+  .shead h2{margin:0;font-size:1.12rem;color:var(--navy)}
+
+  label.fl{display:block;font-size:.82rem;font-weight:700;color:var(--navy);margin:0 0 5px}
+  input,textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:1.5px solid var(--border);
+    border-radius:10px;padding:10px 12px;transition:border-color .15s,box-shadow .15s}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(244,165,33,.22)}
+  textarea{resize:vertical;min-height:80px}
+  .idrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .idrow2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  @media (max-width:560px){.idrow,.idrow2{grid-template-columns:1fr}}
+
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:560px){.opts{grid-template-columns:1fr}}
+  .opt{display:flex;align-items:center;gap:10px;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s}
+  .opt:hover{background:var(--tint)}
+  .opt input{width:auto;accent-color:var(--teal)}
+  .opt.sel{border-color:var(--teal);background:var(--tint)}
+  .opt span{font-size:.98rem;font-weight:600}
+  .outro{margin-top:10px;display:flex;gap:10px;align-items:center}
+  .outro label{font-weight:700;color:var(--navy);white-space:nowrap}
+
+  .parts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.parts{grid-template-columns:1fr}}
+  .part{display:flex;align-items:center;gap:10px}
+  .part .pnum{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+  .hint{color:var(--muted);font-size:.85rem;margin:2px 0 12px}
+
+  .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:20px 0 6px}
+  button{font:inherit;font-weight:700;border:none;border-radius:12px;padding:13px 20px;cursor:pointer;transition:filter .15s,background .15s}
+  .btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{filter:brightness(1.15)}
+  .btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--border)}.btn-ghost:hover{background:var(--tint)}
+  .saved{color:var(--muted);font-size:.84rem;margin-left:auto}.saved b{color:#2E7D32}
+  footer{color:var(--muted);font-size:.82rem;text-align:center;margin-top:24px;padding-top:14px;border-top:1px solid var(--border)}
+  footer .ver{color:var(--navy);font-weight:700}
+  @media (max-width:560px){.actions{flex-direction:column;align-items:stretch}button{width:100%}.saved{margin:4px 0 0;text-align:center}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hwrap">
+      <p class="eyebrow">Educação Digital • Mão na Massa</p>
+      <h1>Decomposição de Problemas</h1>
+      <p class="sub">Em dupla, escolham um problema e dividam em partes menores — EJA Módulo 2 (Manhã, Turma A)</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="note"><b>Como fazer:</b> preencham em dupla, cliquem em <b>“Baixar PDF para o Classroom”</b> e anexem o arquivo na tarefa.</div>
+
+    <section class="card">
+      <div class="idrow">
+        <div><label class="fl" for="aluno1">Aluno(a) 1</label><input id="aluno1" type="text" placeholder="Nome" /></div>
+        <div><label class="fl" for="aluno2">Aluno(a) 2</label><input id="aluno2" type="text" placeholder="Nome" /></div>
+      </div>
+      <div class="idrow2">
+        <div><label class="fl" for="turma">Turma</label><input id="turma" type="text" placeholder="Ex.: 2 A" /></div>
+        <div><label class="fl" for="data">Data</label><input id="data" type="text" placeholder="dd/mm/aaaa" /></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="shead"><span class="snum">1</span><h2>Escolham um problema</h2></div>
+      <div class="opts" id="opts">
+        <label class="opt"><input type="radio" name="prob" value="Organizar uma festa de aniversário" /><span>Organizar uma festa de aniversário</span></label>
+        <label class="opt"><input type="radio" name="prob" value="Planejar uma viagem" /><span>Planejar uma viagem</span></label>
+        <label class="opt"><input type="radio" name="prob" value="Abrir um pequeno negócio" /><span>Abrir um pequeno negócio</span></label>
+        <label class="opt"><input type="radio" name="prob" value="__outro__" /><span>Outro (escrevam ao lado)</span></label>
+      </div>
+      <div class="outro"><label for="outro">Outro problema:</label><input id="outro" type="text" placeholder="Escrevam o problema de vocês" /></div>
+    </section>
+
+    <section class="card">
+      <div class="shead"><span class="snum">2</span><h2>Dividam em partes menores</h2></div>
+      <p class="hint">Escrevam as partes em que o problema pode ser dividido. Usem de 3 a 6 partes.</p>
+      <div class="parts">
+        <div class="part"><span class="pnum">1</span><input id="p1" type="text" placeholder="Primeira parte" /></div>
+        <div class="part"><span class="pnum">2</span><input id="p2" type="text" placeholder="Segunda parte" /></div>
+        <div class="part"><span class="pnum">3</span><input id="p3" type="text" placeholder="Terceira parte" /></div>
+        <div class="part"><span class="pnum">4</span><input id="p4" type="text" placeholder="Quarta parte" /></div>
+        <div class="part"><span class="pnum">5</span><input id="p5" type="text" placeholder="Quinta parte (se precisar)" /></div>
+        <div class="part"><span class="pnum">6</span><input id="p6" type="text" placeholder="Sexta parte (se precisar)" /></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="shead"><span class="snum">3</span><h2>Pensem um pouco</h2></div>
+      <label class="fl" for="reflexao">Qual parte parece mais difícil? Por quê?</label>
+      <textarea id="reflexao" placeholder="Escrevam aqui..."></textarea>
+    </section>
+
+    <div class="actions">
+      <button class="btn-primary" id="btnPdf" type="button">Baixar PDF para o Classroom</button>
+      <button class="btn-ghost" id="btnClear" type="button">Limpar</button>
+      <span class="saved" id="savedMsg" aria-live="polite"></span>
+    </div>
+
+    <footer>
+      Prof. Alex Ferreira Novaes • Aula de 26/08/2026 • CEEBJA de Londrina<br />
+      <span class="ver">Educação Digital • Decomposição de Problemas • v1.0</span>
+    </footer>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var STORE="ed_decomposicao_v1";
+  var ids=["aluno1","aluno2","turma","data","outro","p1","p2","p3","p4","p5","p6","reflexao"];
+  var savedMsg=document.getElementById("savedMsg"), tmr=null;
+  function val(id){var e=document.getElementById(id);return e?e.value.trim():"";}
+  function chosen(){var r=document.querySelector('input[name="prob"]:checked');return r?r.value:"";}
+
+  // option card styling
+  document.querySelectorAll('.opt input').forEach(function(r){
+    r.addEventListener("change", function(){
+      document.querySelectorAll('.opt').forEach(function(o){o.classList.remove("sel");});
+      if(r.checked) r.closest('.opt').classList.add("sel");
+      save();
+    });
+  });
+
+  function flash(t){savedMsg.innerHTML="<b>✔</b> "+t;clearTimeout(tmr);tmr=setTimeout(function(){savedMsg.textContent="";},1500);}
+  function save(){try{
+    var d={f:{},prob:chosen()};
+    ids.forEach(function(i){d.f[i]=val(i);});
+    localStorage.setItem(STORE,JSON.stringify(d));flash("Salvo automaticamente");
+  }catch(e){}}
+  function load(){try{
+    var raw=localStorage.getItem(STORE);if(!raw)return;var d=JSON.parse(raw);
+    ids.forEach(function(i){if(d.f&&d.f[i]!=null){var e=document.getElementById(i);if(e)e.value=d.f[i];}});
+    if(d.prob){var r=document.querySelector('input[name="prob"][value="'+d.prob.replace(/"/g,'\\"')+'"]');if(r){r.checked=true;r.closest('.opt').classList.add("sel");}}
+  }catch(e){}}
+  ids.forEach(function(i){var e=document.getElementById(i);if(e)e.addEventListener("input",function(){clearTimeout(tmr);tmr=setTimeout(save,500);});});
+  (function(){var dt=document.getElementById("data");if(!dt.value){var t=new Date();dt.value=String(t.getDate()).padStart(2,"0")+"/"+String(t.getMonth()+1).padStart(2,"0")+"/"+t.getFullYear();}})();
+  load();
+
+  document.getElementById("btnClear").addEventListener("click",function(){
+    if(!confirm("Apagar tudo?"))return;
+    ids.forEach(function(i){var e=document.getElementById(i);if(e)e.value="";});
+    document.querySelectorAll('.opt').forEach(function(o){o.classList.remove("sel");});
+    var c=document.querySelector('input[name="prob"]:checked');if(c)c.checked=false;
+    try{localStorage.removeItem(STORE);}catch(e){}
+    flash("Formulário limpo");document.getElementById("aluno1").focus();
+  });
+
+  function problema(){var ch=chosen();return ch==="__outro__"?(val("outro")||"(outro)"):(ch||"(não escolhido)");}
+  function fileName(){var n=(val("aluno1")||"dupla").replace(/[^\p{L}\p{N} ]/gu,"").trim().replace(/\s+/g,"_");return "Decomposicao_"+(n||"dupla")+".pdf";}
+
+  document.getElementById("btnPdf").addEventListener("click",function(){
+    if(!window.jspdf||!window.jspdf.jsPDF){alert("Não foi possível carregar o PDF. Use Ctrl+P e salve como PDF.");window.print();return;}
+    var jsPDF=window.jspdf.jsPDF;var doc=new jsPDF({unit:"pt",format:"a4"});
+    var W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();var M=42,y=0;
+    function ensure(s){if(y+s>H-46){doc.addPage();y=50;}}
+    function heading(n,t){ensure(42);y+=8;doc.setFillColor(14,149,148);doc.roundedRect(M,y-13,18,18,3,3,"F");
+      doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(11);doc.text(String(n),M+9,y-0.5,{align:"center"});
+      doc.setTextColor(15,42,67);doc.setFontSize(13);doc.text(t,M+28,y);y+=16;}
+    function qa(q,a){doc.setFont("helvetica","bold");doc.setFontSize(10.5);doc.setTextColor(30,42,56);
+      var ql=doc.splitTextToSize(q,W-2*M);ensure(ql.length*14+6);doc.text(ql,M,y);y+=ql.length*14+2;
+      doc.setFont("helvetica","normal");doc.setTextColor(30,30,30);doc.setFontSize(11);
+      var al=doc.splitTextToSize(a&&a.length?a:"—",W-2*M);ensure(al.length*15+8);doc.text(al,M,y);y+=al.length*15+10;}
+    // header
+    doc.setFillColor(15,42,67);doc.rect(0,0,W,74,"F");
+    doc.setTextColor(244,165,33);doc.setFont("helvetica","bold");doc.setFontSize(9);doc.text("EDUCAÇÃO DIGITAL  •  MÃO NA MASSA",M,26);
+    doc.setTextColor(255,255,255);doc.setFontSize(18);doc.text("Decomposição de Problemas",M,48);
+    doc.setTextColor(199,214,226);doc.setFont("helvetica","italic");doc.setFontSize(10);doc.text("EJA - Módulo 2 (Manhã, Turma A)",M,64);
+    y=100;
+    doc.setFont("helvetica","bold");doc.setFontSize(10.5);doc.setTextColor(15,42,67);
+    var idl=doc.splitTextToSize("Dupla: "+(val("aluno1")||"____")+" e "+(val("aluno2")||"____")+"     Turma: "+(val("turma")||"__")+"     Data: "+(val("data")||"__"),W-2*M);
+    doc.text(idl,M,y);y+=idl.length*15+6;
+    doc.setDrawColor(211,227,226);doc.setLineWidth(1);doc.line(M,y,W-M,y);y+=16;
+    heading(1,"Problema escolhido");
+    qa("Problema:",problema());
+    heading(2,"Partes menores");
+    for(var i=1;i<=6;i++){var v=val("p"+i);if(v)qa("Parte "+i+":",v);}
+    // if none filled, still show placeholders 1-4
+    if(!val("p1")&&!val("p2")&&!val("p3")&&!val("p4")){for(var j=1;j<=4;j++)qa("Parte "+j+":","");}
+    heading(3,"Pensem um pouco");
+    qa("Qual parte parece mais difícil? Por quê?",val("reflexao"));
+    // footer
+    var pages=doc.internal.getNumberOfPages();
+    for(var p=1;p<=pages;p++){doc.setPage(p);doc.setDrawColor(211,227,226);doc.line(M,H-40,W-M,H-40);
+      doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(107,122,136);
+      doc.text("Prof. Alex Ferreira Novaes  •  Aula de 26/08/2026  •  CEEBJA de Londrina",M,H-28);
+      doc.setTextColor(15,42,67);doc.setFont("helvetica","bold");doc.text("Página "+p+"/"+pages,W-M,H-28,{align:"right"});}
+    save();doc.save(fileName());
+  });
+})();
+</script>
+</body>
+</html>
