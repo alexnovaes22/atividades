@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Prof. Alex Ferreira Novaes">
+<title>Palavras Cruzadas — Educação Digital</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --azul:#1f4e79;--azul2:#2e6db4;--teal:#0f9d8f;--bg:#eef2f7;--card:#fff;
+    --texto:#1c2733;--suave:#5a6b7b;--borda:#d9e1ea;--ok:#1a9c5b;--okbg:#e4f6ec;
+    --amber:#b9770a;--amberbg:#fdf3e2;--sombra:0 2px 10px rgba(20,40,70,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg);color:var(--texto);line-height:1.5;padding-bottom:112px;}
+  header.topo{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;
+    padding:20px 18px 22px;box-shadow:var(--sombra);}
+  .topo .tag{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;font-weight:600;}
+  .topo h1{margin:4px 0 2px;font-size:1.3rem;line-height:1.25;}
+  .topo .sub{font-size:.9rem;opacity:.92;}
+  .topo .valor{display:inline-block;margin-top:10px;background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.35);padding:3px 12px;border-radius:20px;font-size:.82rem;font-weight:600;}
+  main{max-width:900px;margin:0 auto;padding:16px 14px;}
+  .bloco{background:var(--card);border:1px solid var(--borda);border-radius:14px;
+    padding:16px;margin-bottom:16px;box-shadow:var(--sombra);}
+  .bloco h2{font-size:1rem;margin:0 0 10px;color:var(--azul);}
+  .instr{font-size:.9rem;color:var(--suave);}
+  .instr ol{margin:8px 0 0;padding-left:20px;} .instr li{margin-bottom:4px;}
+  .grid-dados{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .campo{display:flex;flex-direction:column;gap:4px;} .campo.full{grid-column:1/-1;}
+  .campo label{font-size:.78rem;font-weight:600;color:var(--suave);}
+  .campo input{padding:10px 12px;border:1px solid var(--borda);border-radius:9px;font-size:.95rem;
+    font-family:inherit;color:var(--texto);background:#fbfcfe;}
+  .campo input:focus{outline:none;border-color:var(--azul2);box-shadow:0 0 0 3px rgba(46,109,180,.15);}
+
+  .placar-wrap{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0 6px;}
+  .placar{background:var(--card);border:1px solid var(--borda);border-radius:12px;padding:10px 14px;
+    box-shadow:var(--sombra);display:flex;align-items:center;gap:12px;justify-content:space-between;}
+  .placar .n{font-weight:700;color:var(--azul);font-size:1rem;}
+  .placar .barra{flex:1;height:9px;background:#e4ebf3;border-radius:20px;overflow:hidden;margin:0 4px;}
+  .placar .barra span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--azul2));transition:width .3s;}
+
+  .grade-legenda{font-size:.82rem;color:var(--suave);margin:0 0 10px;}
+  .grade-scroll{overflow-x:auto;padding:8px;background:#f6f9fc;border:1px solid var(--borda);border-radius:10px;}
+  table.grade{border-collapse:collapse;margin:0 auto;}
+  table.grade td{width:34px;height:34px;padding:0;position:relative;border:none;}
+  td.blk{background:transparent;}
+  td.cel{border:1.5px solid #6f879c;background:#fff;}
+  td.cel input{width:100%;height:100%;border:none;background:transparent;text-align:center;
+    font-size:1.05rem;font-weight:700;text-transform:uppercase;color:var(--texto);padding:0;caret-color:var(--azul2);}
+  td.cel input:focus{outline:none;}
+  td.cel .num{position:absolute;top:1px;left:2px;font-size:.52rem;color:var(--suave);font-weight:700;line-height:1;}
+  td.cel.sel-word{background:#dbe9fb;}
+  td.cel.sel{background:#bcd7f5;}
+  td.cel.ok{background:var(--okbg);}
+  td.cel.ok input{color:var(--ok);}
+  @media(max-width:560px){ table.grade td{width:27px;height:27px;} td.cel input{font-size:.9rem;} }
+
+  .dicas{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:640px){ .dicas{grid-template-columns:1fr;} }
+  .dicas h3{font-size:.9rem;color:var(--azul);margin:0 0 6px;border-bottom:2px solid var(--borda);padding-bottom:4px;}
+  ul.lista{list-style:none;margin:0;padding:0;}
+  ul.lista li{display:flex;gap:8px;align-items:flex-start;padding:7px 8px;border-radius:8px;cursor:pointer;
+    font-size:.86rem;transition:background .15s;}
+  ul.lista li:hover{background:#f2f6fb;}
+  ul.lista li.on{background:#e8f0fa;}
+  .cnum{flex-shrink:0;font-weight:700;color:var(--azul);min-width:20px;}
+  .cpill{flex-shrink:0;margin-left:auto;font-size:.66rem;font-weight:700;padding:2px 7px;border-radius:20px;
+    border:1px solid var(--borda);color:var(--suave);background:#fff;white-space:nowrap;align-self:center;}
+  .cpill.ok{color:var(--ok);background:var(--okbg);border-color:#bfe6cf;}
+  .cpill.rev{color:var(--amber);background:var(--amberbg);border-color:#f0dcb5;}
+
+  .rodape-fixo{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--borda);
+    padding:12px 14px;box-shadow:0 -3px 14px rgba(20,40,70,.1);z-index:30;}
+  .rodape-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px;}
+  .status-auto{font-size:.76rem;color:var(--suave);flex:1;}
+  .btn-pdf{background:linear-gradient(135deg,var(--teal),#0c8377);color:#fff;border:none;
+    padding:14px 22px;border-radius:11px;font-size:1rem;font-weight:700;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;box-shadow:0 3px 10px rgba(15,157,143,.35);}
+  .btn-pdf:active{transform:translateY(1px);} .btn-pdf:disabled{opacity:.55;cursor:default;}
+  .btn-limpar{background:none;border:none;color:#c9450f;font-size:.78rem;text-decoration:underline;cursor:pointer;}
+  @media(max-width:520px){ .grid-dados{grid-template-columns:1fr;}
+    .rodape-inner{flex-wrap:wrap;} .status-auto{order:3;flex-basis:100%;text-align:center;} }
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="tag">Educação Digital • Atividade avaliativa</div>
+  <h1>Palavras Cruzadas — Desenvolvimento Web</h1>
+  <div class="sub">Complete a grade com os termos estudados no trimestre.</div>
+  <div class="valor">Valor: 15,0 pontos • 15 palavras (1,0 cada)</div>
+</header>
+
+<main>
+  <div class="bloco instr">
+    <h2>📋 Como fazer</h2>
+    <ol>
+      <li>Preencha seus dados (nome e turma são obrigatórios).</li>
+      <li>Leia as dicas e escreva as palavras na grade. Só entram <strong>letras</strong>.</li>
+      <li>Cada palavra <strong>correta</strong> é confirmada automaticamente e conta 1,0 ponto. Palavras erradas não são aceitas — reveja e tente de novo.</li>
+      <li>Ao terminar, toque em <strong>“Gerar PDF”</strong> e envie o arquivo no <strong>Google Classroom</strong>.</li>
+    </ol>
+  </div>
+
+  <div class="bloco">
+    <h2>👤 Identificação do aluno</h2>
+    <div class="grid-dados">
+      <div class="campo full"><label for="nome">Nome completo *</label>
+        <input type="text" id="nome" placeholder="Digite seu nome completo" autocomplete="name"></div>
+      <div class="campo"><label for="turma">Turma *</label>
+        <input type="text" id="turma" placeholder="Ex.: 3º Info B"></div>
+      <div class="campo"><label for="data">Data</label><input type="date" id="data"></div>
+    </div>
+  </div>
+
+  <div class="placar-wrap">
+    <div class="placar">
+      <span class="n" id="placarN">0 de 15</span>
+      <div class="barra"><span id="placarFill"></span></div>
+      <span class="n" id="placarPts">0,0 pts</span>
+    </div>
+  </div>
+
+  <div class="bloco">
+    <p class="grade-legenda">Toque em uma dica para ir direto à palavra na grade. Cada quadrinho recebe uma letra.</p>
+    <div class="grade-scroll"><div id="grade"><table class="grade"><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-0-3"><span class="num">1</span><input maxlength="1" id="i-0-3" data-r="0" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-1-3"><input maxlength="1" id="i-1-3" data-r="1" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-2-3"><input maxlength="1" id="i-2-3" data-r="2" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-2-12"><span class="num">2</span><input maxlength="1" id="i-2-12" data-r="2" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-3-3"><input maxlength="1" id="i-3-3" data-r="3" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-3-6"><span class="num">3</span><input maxlength="1" id="i-3-6" data-r="3" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-3-7"><input maxlength="1" id="i-3-7" data-r="3" data-c="7" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-3-8"><span class="num">4</span><input maxlength="1" id="i-3-8" data-r="3" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-3-9"><input maxlength="1" id="i-3-9" data-r="3" data-c="9" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-3-10"><span class="num">5</span><input maxlength="1" id="i-3-10" data-r="3" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-3-11"><input maxlength="1" id="i-3-11" data-r="3" data-c="11" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-3-12"><input maxlength="1" id="i-3-12" data-r="3" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-4-3"><input maxlength="1" id="i-4-3" data-r="4" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-4-6"><input maxlength="1" id="i-4-6" data-r="4" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-4-8"><input maxlength="1" id="i-4-8" data-r="4" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-4-10"><input maxlength="1" id="i-4-10" data-r="4" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-4-12"><input maxlength="1" id="i-4-12" data-r="4" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="blk"></td><td class="cel" id="td-5-1"><span class="num">6</span><input maxlength="1" id="i-5-1" data-r="5" data-c="1" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-5-2"><input maxlength="1" id="i-5-2" data-r="5" data-c="2" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-5-3"><input maxlength="1" id="i-5-3" data-r="5" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-5-4"><input maxlength="1" id="i-5-4" data-r="5" data-c="4" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-5-5"><input maxlength="1" id="i-5-5" data-r="5" data-c="5" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-5-6"><input maxlength="1" id="i-5-6" data-r="5" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-5-8"><input maxlength="1" id="i-5-8" data-r="5" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-5-10"><input maxlength="1" id="i-5-10" data-r="5" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-5-12"><input maxlength="1" id="i-5-12" data-r="5" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-6-3"><input maxlength="1" id="i-6-3" data-r="6" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-6-6"><input maxlength="1" id="i-6-6" data-r="6" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-6-8"><input maxlength="1" id="i-6-8" data-r="6" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-6-10"><input maxlength="1" id="i-6-10" data-r="6" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-6-12"><input maxlength="1" id="i-6-12" data-r="6" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="blk"></td><td class="cel" id="td-7-1"><span class="num">7</span><input maxlength="1" id="i-7-1" data-r="7" data-c="1" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-7-3"><input maxlength="1" id="i-7-3" data-r="7" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-7-6"><input maxlength="1" id="i-7-6" data-r="7" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-7-8"><input maxlength="1" id="i-7-8" data-r="7" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-7-10"><input maxlength="1" id="i-7-10" data-r="7" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-7-12"><input maxlength="1" id="i-7-12" data-r="7" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="blk"></td><td class="cel" id="td-8-1"><input maxlength="1" id="i-8-1" data-r="8" data-c="1" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-8-3"><input maxlength="1" id="i-8-3" data-r="8" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-8-6"><input maxlength="1" id="i-8-6" data-r="8" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-8-8"><input maxlength="1" id="i-8-8" data-r="8" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-8-10"><input maxlength="1" id="i-8-10" data-r="8" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-8-12"><input maxlength="1" id="i-8-12" data-r="8" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="blk"></td><td class="cel" id="td-9-1"><span class="num">8</span><input maxlength="1" id="i-9-1" data-r="9" data-c="1" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-9-2"><input maxlength="1" id="i-9-2" data-r="9" data-c="2" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-9-3"><input maxlength="1" id="i-9-3" data-r="9" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-9-4"><input maxlength="1" id="i-9-4" data-r="9" data-c="4" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-9-5"><input maxlength="1" id="i-9-5" data-r="9" data-c="5" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-9-6"><input maxlength="1" id="i-9-6" data-r="9" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-9-8"><input maxlength="1" id="i-9-8" data-r="9" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-9-10"><input maxlength="1" id="i-9-10" data-r="9" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-9-12"><input maxlength="1" id="i-9-12" data-r="9" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-10-6"><input maxlength="1" id="i-10-6" data-r="10" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-10-8"><input maxlength="1" id="i-10-8" data-r="10" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-10-10"><input maxlength="1" id="i-10-10" data-r="10" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-10-12"><input maxlength="1" id="i-10-12" data-r="10" data-c="12" inputmode="latin" autocomplete="off" spellcheck="false"></td></tr><tr><td class="cel" id="td-11-0"><span class="num">9</span><input maxlength="1" id="i-11-0" data-r="11" data-c="0" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-11-3"><span class="num">10</span><input maxlength="1" id="i-11-3" data-r="11" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-11-6"><input maxlength="1" id="i-11-6" data-r="11" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-11-8"><input maxlength="1" id="i-11-8" data-r="11" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-11-10"><input maxlength="1" id="i-11-10" data-r="11" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td></tr><tr><td class="cel" id="td-12-0"><span class="num">11</span><input maxlength="1" id="i-12-0" data-r="12" data-c="0" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-12-1"><input maxlength="1" id="i-12-1" data-r="12" data-c="1" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-12-2"><input maxlength="1" id="i-12-2" data-r="12" data-c="2" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-12-3"><input maxlength="1" id="i-12-3" data-r="12" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-12-4"><input maxlength="1" id="i-12-4" data-r="12" data-c="4" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-12-5"><input maxlength="1" id="i-12-5" data-r="12" data-c="5" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-12-6"><input maxlength="1" id="i-12-6" data-r="12" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-12-7"><input maxlength="1" id="i-12-7" data-r="12" data-c="7" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-12-8"><input maxlength="1" id="i-12-8" data-r="12" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="cel" id="td-12-10"><input maxlength="1" id="i-12-10" data-r="12" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td></tr><tr><td class="cel" id="td-13-0"><input maxlength="1" id="i-13-0" data-r="13" data-c="0" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-13-3"><input maxlength="1" id="i-13-3" data-r="13" data-c="3" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-13-6"><input maxlength="1" id="i-13-6" data-r="13" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-14-4"><span class="num">12</span><input maxlength="1" id="i-14-4" data-r="14" data-c="4" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-14-5"><input maxlength="1" id="i-14-5" data-r="14" data-c="5" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-14-6"><input maxlength="1" id="i-14-6" data-r="14" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-14-7"><input maxlength="1" id="i-14-7" data-r="14" data-c="7" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-14-8"><input maxlength="1" id="i-14-8" data-r="14" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-14-9"><input maxlength="1" id="i-14-9" data-r="14" data-c="9" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-15-6"><input maxlength="1" id="i-15-6" data-r="15" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-15-11"><span class="num">13</span><input maxlength="1" id="i-15-11" data-r="15" data-c="11" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-16-4"><span class="num">14</span><input maxlength="1" id="i-16-4" data-r="16" data-c="4" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-16-5"><input maxlength="1" id="i-16-5" data-r="16" data-c="5" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-16-6"><input maxlength="1" id="i-16-6" data-r="16" data-c="6" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-16-7"><input maxlength="1" id="i-16-7" data-r="16" data-c="7" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-16-8"><input maxlength="1" id="i-16-8" data-r="16" data-c="8" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-16-9"><input maxlength="1" id="i-16-9" data-r="16" data-c="9" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-16-10"><input maxlength="1" id="i-16-10" data-r="16" data-c="10" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="cel" id="td-16-11"><input maxlength="1" id="i-16-11" data-r="16" data-c="11" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-17-11"><input maxlength="1" id="i-17-11" data-r="17" data-c="11" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td></tr><tr><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="blk"></td><td class="cel" id="td-18-11"><input maxlength="1" id="i-18-11" data-r="18" data-c="11" inputmode="latin" autocomplete="off" spellcheck="false"></td><td class="blk"></td></tr></table></div></div>
+  </div>
+
+  <div class="bloco">
+    <h2>🔎 Dicas</h2>
+    <div class="dicas">
+      <div><h3>➡ Horizontais</h3><ul class="lista" id="listaH"><li id="li-3H" data-id="3H"><span class="cnum">3</span><span class="ctxt">Indicação de quem criou ou é responsável por um conteúdo. <em style="color:#8a97a5">(7 letras)</em></span><span class="cpill" id="pill-3H">—</span></li><li id="li-6H" data-id="6H"><span class="cnum">6</span><span class="ctxt">Editor de código muito usado para escrever HTML e CSS. <em style="color:#8a97a5">(6 letras)</em></span><span class="cpill" id="pill-6H">—</span></li><li id="li-8H" data-id="8H"><span class="cnum">8</span><span class="ctxt">Plataforma para hospedar código e publicar projetos (Pages). <em style="color:#8a97a5">(6 letras)</em></span><span class="cpill" id="pill-8H">—</span></li><li id="li-11H" data-id="11H"><span class="cnum">11</span><span class="ctxt">Estrutura do HTML que dá significado ao conteúdo (header, main). <em style="color:#8a97a5">(9 letras)</em></span><span class="cpill" id="pill-11H">—</span></li><li id="li-12H" data-id="12H"><span class="cnum">12</span><span class="ctxt">Arquivo .md que documenta e explica um projeto. <em style="color:#8a97a5">(6 letras)</em></span><span class="cpill" id="pill-12H">—</span></li><li id="li-14H" data-id="14H"><span class="cnum">14</span><span class="ctxt">Meta tag que controla a exibição em telas de celulares. <em style="color:#8a97a5">(8 letras)</em></span><span class="cpill" id="pill-14H">—</span></li></ul></div>
+      <div><h3>⬇ Verticais</h3><ul class="lista" id="listaV"><li id="li-1V" data-id="1V"><span class="cnum">1</span><span class="ctxt">Linguagem de programação que adiciona interatividade às páginas. <em style="color:#8a97a5">(10 letras)</em></span><span class="cpill" id="pill-1V">—</span></li><li id="li-2V" data-id="2V"><span class="cnum">2</span><span class="ctxt">Programa usado para abrir e visualizar sites (ex.: Chrome). <em style="color:#8a97a5">(9 letras)</em></span><span class="cpill" id="pill-2V">—</span></li><li id="li-3V" data-id="3V"><span class="cnum">3</span><span class="ctxt">Recurso que torna o site utilizável por pessoas com deficiência. <em style="color:#8a97a5">(14 letras)</em></span><span class="cpill" id="pill-3V">—</span></li><li id="li-4V" data-id="4V"><span class="cnum">4</span><span class="ctxt">Escolha das fontes e do estilo do texto para dar legibilidade. <em style="color:#8a97a5">(10 letras)</em></span><span class="cpill" id="pill-4V">—</span></li><li id="li-5V" data-id="5V"><span class="cnum">5</span><span class="ctxt">Tipo de layout que se adapta a diferentes tamanhos de tela. <em style="color:#8a97a5">(10 letras)</em></span><span class="cpill" id="pill-5V">—</span></li><li id="li-7V" data-id="7V"><span class="cnum">7</span><span class="ctxt">Erro ou falha em um código de programação. <em style="color:#8a97a5">(3 letras)</em></span><span class="cpill" id="pill-7V">—</span></li><li id="li-9V" data-id="9V"><span class="cnum">9</span><span class="ctxt">Linguagem que define a aparência e o estilo das páginas (sigla). <em style="color:#8a97a5">(3 letras)</em></span><span class="cpill" id="pill-9V">—</span></li><li id="li-10V" data-id="10V"><span class="cnum">10</span><span class="ctxt">Elemento do HTML escrito entre os sinais &lt; e &gt;. <em style="color:#8a97a5">(3 letras)</em></span><span class="cpill" id="pill-10V">—</span></li><li id="li-13V" data-id="13V"><span class="cnum">13</span><span class="ctxt">Linguagem de marcação usada para estruturar páginas web (sigla). <em style="color:#8a97a5">(4 letras)</em></span><span class="cpill" id="pill-13V">—</span></li></ul></div>
+    </div>
+  </div>
+</main>
+
+<div class="rodape-fixo"><div class="rodape-inner">
+  <button class="btn-limpar" id="btnLimpar">Limpar tudo</button>
+  <div class="status-auto" id="statusAuto">Salvamento automático ativo</div>
+  <button class="btn-pdf" id="btnPdf">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Gerar PDF
+  </button>
+</div></div>
+
+<script>
+(function(){
+const DATA = {"rows": 19, "cols": 13, "active": [[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1], [0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1], [0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1], [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1], [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1], [0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1], [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]], "numbers": {"0,3": 1, "2,12": 2, "3,6": 3, "3,8": 4, "3,10": 5, "5,1": 6, "7,1": 7, "9,1": 8, "11,0": 9, "11,3": 10, "12,0": 11, "14,4": 12, "15,11": 13, "16,4": 14}, "entries": [{"id": "1V", "num": 1, "dir": "V", "row": 0, "col": 3, "len": 10, "clue": "Linguagem de programação que adiciona interatividade às páginas.", "cells": [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3], [5, 3], [6, 3], [7, 3], [8, 3], [9, 3]]}, {"id": "2V", "num": 2, "dir": "V", "row": 2, "col": 12, "len": 9, "clue": "Programa usado para abrir e visualizar sites (ex.: Chrome).", "cells": [[2, 12], [3, 12], [4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12]]}, {"id": "3H", "num": 3, "dir": "H", "row": 3, "col": 6, "len": 7, "clue": "Indicação de quem criou ou é responsável por um conteúdo.", "cells": [[3, 6], [3, 7], [3, 8], [3, 9], [3, 10], [3, 11], [3, 12]]}, {"id": "3V", "num": 3, "dir": "V", "row": 3, "col": 6, "len": 14, "clue": "Recurso que torna o site utilizável por pessoas com deficiência.", "cells": [[3, 6], [4, 6], [5, 6], [6, 6], [7, 6], [8, 6], [9, 6], [10, 6], [11, 6], [12, 6], [13, 6], [14, 6], [15, 6], [16, 6]]}, {"id": "4V", "num": 4, "dir": "V", "row": 3, "col": 8, "len": 10, "clue": "Escolha das fontes e do estilo do texto para dar legibilidade.", "cells": [[3, 8], [4, 8], [5, 8], [6, 8], [7, 8], [8, 8], [9, 8], [10, 8], [11, 8], [12, 8]]}, {"id": "5V", "num": 5, "dir": "V", "row": 3, "col": 10, "len": 10, "clue": "Tipo de layout que se adapta a diferentes tamanhos de tela.", "cells": [[3, 10], [4, 10], [5, 10], [6, 10], [7, 10], [8, 10], [9, 10], [10, 10], [11, 10], [12, 10]]}, {"id": "6H", "num": 6, "dir": "H", "row": 5, "col": 1, "len": 6, "clue": "Editor de código muito usado para escrever HTML e CSS.", "cells": [[5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6]]}, {"id": "7V", "num": 7, "dir": "V", "row": 7, "col": 1, "len": 3, "clue": "Erro ou falha em um código de programação.", "cells": [[7, 1], [8, 1], [9, 1]]}, {"id": "8H", "num": 8, "dir": "H", "row": 9, "col": 1, "len": 6, "clue": "Plataforma para hospedar código e publicar projetos (Pages).", "cells": [[9, 1], [9, 2], [9, 3], [9, 4], [9, 5], [9, 6]]}, {"id": "9V", "num": 9, "dir": "V", "row": 11, "col": 0, "len": 3, "clue": "Linguagem que define a aparência e o estilo das páginas (sigla).", "cells": [[11, 0], [12, 0], [13, 0]]}, {"id": "10V", "num": 10, "dir": "V", "row": 11, "col": 3, "len": 3, "clue": "Elemento do HTML escrito entre os sinais < e >.", "cells": [[11, 3], [12, 3], [13, 3]]}, {"id": "11H", "num": 11, "dir": "H", "row": 12, "col": 0, "len": 9, "clue": "Estrutura do HTML que dá significado ao conteúdo (header, main).", "cells": [[12, 0], [12, 1], [12, 2], [12, 3], [12, 4], [12, 5], [12, 6], [12, 7], [12, 8]]}, {"id": "12H", "num": 12, "dir": "H", "row": 14, "col": 4, "len": 6, "clue": "Arquivo .md que documenta e explica um projeto.", "cells": [[14, 4], [14, 5], [14, 6], [14, 7], [14, 8], [14, 9]]}, {"id": "13V", "num": 13, "dir": "V", "row": 15, "col": 11, "len": 4, "clue": "Linguagem de marcação usada para estruturar páginas web (sigla).", "cells": [[15, 11], [16, 11], [17, 11], [18, 11]]}, {"id": "14H", "num": 14, "dir": "H", "row": 16, "col": 4, "len": 8, "clue": "Meta tag que controla a exibição em telas de celulares.", "cells": [[16, 4], [16, 5], [16, 6], [16, 7], [16, 8], [16, 9], [16, 10], [16, 11]]}], "enc": {"1V": "LyUjBTokOz0xOA==", "2V": "KyUjAS4mLTsz", "3H": "JDEhCzsuKA==", "3V": "JCcwFzouKz0tJXZxdnM=", "4V": "MS0lCy41KDIoLQ==", "5V": "NyEmFCYpOj03Iw==", "6H": "Mzc2Cy0i", "7V": "JzEy", "8H": "Ii0hDDwl", "9V": "Jjcm", "10V": "MSUy", "11H": "NiE4BSczIDcg", "12H": "NyE0ACQi", "13V": "LTA4CA==", "14H": "My0wEzkoOyA="}, "versao": "ED6BB779"};
+const KEY = "eduDigital2026";
+function decode(b64){ const bin=atob(b64); let s=""; for(let i=0;i<bin.length;i++){ s+=String.fromCharCode(bin.charCodeAt(i)^KEY.charCodeAt(i%KEY.length)); } return s; }
+const STORE_KEY = "cruzadas_edu_digital_v1";
+const TOTAL = DATA.entries.length;
+
+const byId={}; DATA.entries.forEach(e=>byId[e.id]=e);
+const cellMap={};
+DATA.entries.forEach(e=>e.cells.forEach(([r,c])=>{ const k=r+","+c; (cellMap[k]=cellMap[k]||{})[e.dir]=e.id; }));
+const solved=new Set();
+let state={dir:"H",r:null,c:null};
+
+const gradeEl=document.getElementById("grade");
+function inp(r,c){ return document.getElementById("i-"+r+"-"+c); }
+function td(r,c){ return document.getElementById("td-"+r+"-"+c); }
+
+gradeEl.addEventListener("input", e=>{
+  const el=e.target; if(el.tagName!=="INPUT") return;
+  const v=el.value.toUpperCase().replace(/[^A-Z]/g,""); el.value=v.slice(-1);
+  const r=+el.dataset.r, c=+el.dataset.c;
+  check(); salvar(); if(el.value) advance(r,c);
+});
+gradeEl.addEventListener("keydown", e=>{
+  const el=e.target; if(el.tagName!=="INPUT") return;
+  const r=+el.dataset.r, c=+el.dataset.c;
+  if(e.key==="Backspace" && !el.value){ e.preventDefault(); retreat(r,c); }
+  else if(e.key==="ArrowRight"){ e.preventDefault(); move(r,c,0,1,"H"); }
+  else if(e.key==="ArrowLeft"){ e.preventDefault(); move(r,c,0,-1,"H"); }
+  else if(e.key==="ArrowDown"){ e.preventDefault(); move(r,c,1,0,"V"); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); move(r,c,-1,0,"V"); }
+});
+gradeEl.addEventListener("focusin", e=>{
+  const el=e.target; if(el.tagName!=="INPUT") return;
+  const r=+el.dataset.r, c=+el.dataset.c, m=cellMap[r+","+c];
+  if(!m[state.dir]) state.dir=m.H?"H":"V";
+  state.r=r; state.c=c; highlight();
+});
+gradeEl.addEventListener("click", e=>{
+  const el=e.target.closest("input"); if(!el) return;
+  const r=+el.dataset.r, c=+el.dataset.c, m=cellMap[r+","+c];
+  if(state.r===r&&state.c===c&&m.H&&m.V) state.dir=state.dir==="H"?"V":"H";
+  state.r=r; state.c=c; highlight();
+});
+["listaH","listaV"].forEach(id=>{
+  document.getElementById(id).addEventListener("click", e=>{
+    const li=e.target.closest("li"); if(!li) return; selectEntry(li.dataset.id);
+  });
+});
+
+function entryAt(r,c,dir){ const id=(cellMap[r+","+c]||{})[dir]; return id?byId[id]:null; }
+function advance(r,c){ const e=entryAt(r,c,state.dir); if(!e) return;
+  const i=e.cells.findIndex(p=>p[0]===r&&p[1]===c);
+  if(i>=0&&i<e.cells.length-1){ const [nr,nc]=e.cells[i+1]; inp(nr,nc).focus(); } }
+function retreat(r,c){ const e=entryAt(r,c,state.dir); if(!e) return;
+  const i=e.cells.findIndex(p=>p[0]===r&&p[1]===c);
+  if(i>0){ const [pr,pc]=e.cells[i-1]; const pe=inp(pr,pc); pe.focus(); pe.value=""; check(); salvar(); } }
+function move(r,c,dr,dc,dir){ let nr=r+dr,nc=c+dc;
+  while(nr>=0&&nr<DATA.rows&&nc>=0&&nc<DATA.cols){ if(DATA.active[nr][nc]){ state.dir=dir; inp(nr,nc).focus(); return; } nr+=dr; nc+=dc; } }
+function selectEntry(id){ const e=byId[id]; if(!e) return; state.dir=e.dir;
+  const [r,c]=e.cells[0]; state.r=r; state.c=c; inp(r,c).focus(); highlight(); }
+
+function highlight(){
+  document.querySelectorAll("td.cel").forEach(t=>t.classList.remove("sel","sel-word"));
+  document.querySelectorAll("ul.lista li").forEach(li=>li.classList.remove("on"));
+  if(state.r===null) return;
+  const e=entryAt(state.r,state.c,state.dir)||entryAt(state.r,state.c,state.dir==="H"?"V":"H");
+  if(e){ e.cells.forEach(([r,c])=>td(r,c).classList.add("sel-word"));
+    const li=document.getElementById("li-"+e.id); if(li) li.classList.add("on"); }
+  const cur=td(state.r,state.c); if(cur) cur.classList.add("sel");
+}
+
+function textOf(e){ let t=""; for(const [r,c] of e.cells){ t+=(inp(r,c).value||"").toUpperCase(); } return t; }
+function filled(e){ return e.cells.every(([r,c])=>inp(r,c).value.trim()!==""); }
+function check(){
+  solved.clear();
+  DATA.entries.forEach(e=>{ if(textOf(e)===decode(DATA.enc[e.id])) solved.add(e.id); });
+  const green=new Set(); solved.forEach(id=>byId[id].cells.forEach(([r,c])=>green.add(r+","+c)));
+  document.querySelectorAll("td.cel").forEach(t=>{ const p=t.id.split("-"); t.classList.toggle("ok", green.has(p[1]+","+p[2])); });
+  DATA.entries.forEach(e=>{ const pill=document.getElementById("pill-"+e.id); if(!pill) return;
+    if(solved.has(e.id)){ pill.className="cpill ok"; pill.textContent="correta"; }
+    else if(filled(e)){ pill.className="cpill rev"; pill.textContent="revisar"; }
+    else{ pill.className="cpill"; pill.textContent="—"; } });
+  const n=solved.size;
+  document.getElementById("placarN").textContent=n+" de "+TOTAL;
+  document.getElementById("placarPts").textContent=n+",0 pts";
+  document.getElementById("placarFill").style.width=(n/TOTAL*100)+"%";
+}
+
+const $nome=document.getElementById("nome"),$turma=document.getElementById("turma"),$data=document.getElementById("data");
+[$nome,$turma,$data].forEach(el=>el.addEventListener("input",salvar));
+let tmr, storeLimit=false;
+function salvar(){ const letters={};
+  document.querySelectorAll("td.cel input").forEach(i=>{ if(i.value) letters[i.dataset.r+","+i.dataset.c]=i.value; });
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({nome:$nome.value,turma:$turma.value,data:$data.value,letters})); marcar(); }
+  catch(_){ storeLimit=true; document.getElementById("statusAuto").textContent="Salvamento limitado — não feche a página"; } }
+function marcar(){ const s=document.getElementById("statusAuto"); s.textContent="Salvando..."; clearTimeout(tmr);
+  tmr=setTimeout(()=>{ if(!storeLimit) s.textContent="Tudo salvo neste dispositivo ✓"; },500); }
+function carregar(){ try{ const raw=localStorage.getItem(STORE_KEY); if(!raw) return; const d=JSON.parse(raw);
+  $nome.value=d.nome||"";$turma.value=d.turma||"";$data.value=d.data||"";
+  if(d.letters) Object.keys(d.letters).forEach(k=>{ const [r,c]=k.split(","); const el=inp(+r,+c); if(el) el.value=d.letters[k]; }); check(); }catch(_){} }
+document.getElementById("btnLimpar").addEventListener("click",()=>{
+  if(confirm("Isso vai apagar seus dados e todas as letras preenchidas. Deseja continuar?")){ localStorage.removeItem(STORE_KEY); location.reload(); } });
+
+document.getElementById("btnPdf").addEventListener("click", gerarPDF);
+function gerarPDF(){
+  if(!$nome.value.trim()||!$turma.value.trim()){ alert("Preencha seu NOME e sua TURMA antes de gerar o PDF.");
+    (!$nome.value.trim()?$nome:$turma).focus(); return; }
+  const btn=document.getElementById("btnPdf"); btn.disabled=true; btn.textContent="Gerando PDF...";
+  setTimeout(()=>{
+    try{
+      const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"});
+      const pageW=210,pageH=297,margin=15,contentW=pageW-margin*2;
+      doc.setFillColor(31,78,121); doc.rect(0,0,pageW,28,"F");
+      doc.setTextColor(255); doc.setFont("helvetica","bold"); doc.setFontSize(14);
+      doc.text("Educação Digital — Palavras Cruzadas", margin, 12);
+      doc.setFont("helvetica","normal"); doc.setFontSize(9.5);
+      doc.text("Desenvolvimento Web   |   Valor: 15,0 pontos", margin, 20);
+      let y=36;
+      doc.setTextColor(28,39,51); doc.setFontSize(11); doc.setFont("helvetica","bold");
+      doc.text("Aluno(a): ",margin,y); doc.setFont("helvetica","normal"); doc.text($nome.value,margin+22,y); y+=7;
+      doc.setFont("helvetica","bold"); doc.text("Turma: ",margin,y); doc.setFont("helvetica","normal"); doc.text($turma.value,margin+16,y);
+      if($data.value){ const [a,m,dia]=$data.value.split("-"); doc.setFont("helvetica","bold");
+        doc.text("Data: ",margin+70,y); doc.setFont("helvetica","normal"); doc.text(dia+"/"+m+"/"+a,margin+84,y); }
+      y+=9;
+      const n=solved.size;
+      doc.setFillColor(228,246,236); doc.setDrawColor(191,230,207); doc.roundedRect(margin,y-5,contentW,12,2,2,"FD");
+      doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.setTextColor(26,120,80);
+      doc.text("Acertos: "+n+" de "+TOTAL+"     Pontuação: "+n+",0 / 15,0", margin+4, y+3); y+=14;
+      const availH=pageH-y-15;
+      const cell=Math.min(contentW/DATA.cols, availH/DATA.rows, 12);
+      const gx=margin+(contentW-cell*DATA.cols)/2, gy=y;
+      doc.setLineWidth(0.2);
+      for(let r=0;r<DATA.rows;r++){ for(let c=0;c<DATA.cols;c++){
+        if(!DATA.active[r][c]) continue;
+        const x=gx+c*cell, yy=gy+r*cell, k=r+","+c; let green=false;
+        solved.forEach(id=>{ if(byId[id].cells.some(p=>p[0]===r&&p[1]===c)) green=true; });
+        if(green){ doc.setFillColor(228,246,236); doc.setDrawColor(120,150,175); doc.rect(x,yy,cell,cell,"FD"); }
+        else{ doc.setDrawColor(120,150,175); doc.rect(x,yy,cell,cell,"S"); }
+        const num=DATA.numbers[k];
+        if(num){ doc.setFont("helvetica","normal"); doc.setFontSize(cell*0.24); doc.setTextColor(110,125,140); doc.text(String(num), x+0.6, yy+cell*0.28); }
+        const letra=(inp(r,c).value||"").toUpperCase();
+        if(letra){ doc.setFont("helvetica","bold"); doc.setFontSize(cell*0.52);
+          doc.setTextColor(green?26:28, green?120:39, green?80:51); doc.text(letra, x+cell/2, yy+cell*0.72, {align:"center"}); }
+      }}
+      doc.addPage(); let yy=margin;
+      doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.setTextColor(31,78,121);
+      doc.text("Dicas e situação de cada palavra", margin, yy); yy+=8;
+      [{t:"HORIZONTAIS",d:"H"},{t:"VERTICAIS",d:"V"}].forEach(col=>{
+        if(yy>pageH-margin-10){ doc.addPage(); yy=margin; }
+        doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(31,78,121); doc.text(col.t, margin, yy); yy+=6;
+        DATA.entries.filter(e=>e.dir===col.d).sort((a,b)=>a.num-b.num).forEach(e=>{
+          const st=solved.has(e.id)?"[correta]":(filled(e)?"[revisar]":"[em branco]");
+          const wrap=doc.splitTextToSize(e.num+". "+e.clue+"  "+st, contentW);
+          if(yy+wrap.length*5>pageH-margin){ doc.addPage(); yy=margin; }
+          doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor(40,50,62); doc.text(wrap, margin, yy); yy+=wrap.length*5+1.5;
+        });
+        yy+=4;
+      });
+      const tp=doc.internal.getNumberOfPages();
+      for(let p=1;p<=tp;p++){ doc.setPage(p); doc.setFontSize(8); doc.setTextColor(150); doc.setFont("helvetica","normal");
+        doc.text("Página "+p+" de "+tp, pageW-margin, pageH-8, {align:"right"});
+        doc.text("Cód. atividade: "+DATA.versao, margin, pageH-8); }
+      doc.save("Cruzadas_EducacaoDigital_"+$nome.value.trim().replace(/\s+/g,"_").replace(/[^\w\-]/g,"")+".pdf");
+    }catch(err){ console.error(err); alert("Erro ao gerar o PDF. Tente novamente."); }
+    finally{ btn.disabled=false;
+      btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Gerar PDF'; }
+  },60);
+}
+
+if(!$data.value){ $data.value=new Date().toISOString().slice(0,10); }
+carregar(); check();
+})();
+</script>
+</body>
+</html>
