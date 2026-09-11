@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atividade – Armazenagem (Cruzadinha e Caça-palavras)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#0F3D5C; --navy2:#16506F; --teal:#13808C; --amber:#F4A100;
+    --bg:#EEF3F6; --card:#FFFFFF; --ink:#18272E; --muted:#5B6B73; --line:#D8E2E8;
+    --amber-soft:#FDEECB; --teal-soft:#DCEFF0;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.5; padding:0 0 90px;}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif; line-height:1.2;}
+  .wrap{max-width:780px; margin:0 auto; padding:14px;}
+  header{background:var(--navy); color:#fff; padding:22px 16px 24px; position:relative; overflow:hidden;}
+  header .kick{font-size:12px; letter-spacing:3px; font-weight:700; color:var(--amber); margin:0 0 6px;}
+  header h1{margin:0; font-size:25px;}
+  header p.sub{margin:8px 0 0; color:#CFE2EC; font-size:15px;}
+  header .dot{position:absolute; border-radius:50%;}
+  header .d1{width:150px;height:150px;background:var(--navy2);top:-60px;right:-40px;}
+  header .d2{width:90px;height:90px;background:var(--teal);opacity:.5;bottom:-40px;right:60px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:14px 0; box-shadow:0 4px 14px rgba(11,39,52,.05);}
+  .id-grid{display:grid; grid-template-columns:1fr; gap:10px;}
+  @media(min-width:560px){.id-grid{grid-template-columns:2fr 1fr 1fr;}}
+  label.fld{font-size:13px; font-weight:700; color:var(--muted); display:block; margin-bottom:4px;}
+  input.txt{width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:9px; font-size:16px; color:var(--ink); background:#fff;}
+  input.txt:focus{outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-soft);}
+  .sec-title{display:flex; align-items:center; gap:10px; margin:26px 0 4px;}
+  .sec-title .tag{background:var(--teal); color:#fff; font-family:Georgia,serif; font-weight:700; width:30px;height:30px; border-radius:8px; display:grid; place-items:center; font-size:15px;}
+  .sec-title h2{margin:0; font-size:21px; color:var(--navy);}
+  .sec-note{color:var(--muted); font-size:14px; margin:2px 0 0;}
+  .scroll{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px;}
+  .hint{font-size:12.5px; color:var(--muted); margin:6px 0 0;}
+  table.grid{border-collapse:collapse; margin:6px auto 0;}
+  table.grid td{padding:0; text-align:center; vertical-align:middle;}
+  .cw td{width:32px;height:32px; border:1px solid #cfd9df; position:relative; background:#0e2a38;}
+  .cw td.act{background:#fff;}
+  .cw td.key{background:var(--amber-soft);}
+  .cw td.act input{width:100%;height:100%; border:0; text-align:center; text-transform:uppercase; font-size:16px; font-weight:700; color:var(--navy); background:transparent; padding:0;}
+  .cw td.key input{color:#8a5b00;}
+  .cw td.act input:focus{outline:2px solid var(--teal); outline-offset:-2px;}
+  .cw td .n{position:absolute; top:1px; left:2px; font-size:8.5px; line-height:1; color:var(--muted); font-weight:700;}
+  .clues{margin-top:12px; display:grid; grid-template-columns:1fr; gap:6px;}
+  @media(min-width:560px){.clues{grid-template-columns:1fr 1fr; column-gap:22px;}}
+  .clue{font-size:14px;} .clue b{color:var(--navy);}
+  .key-tip{margin-top:10px; font-size:13.5px; background:var(--amber-soft); border-radius:9px; padding:9px 11px; color:#6b4a00;}
+  .ws td{width:25px;height:25px; border:1px solid #e2e9ee; font-size:13px; font-weight:600; color:var(--ink); cursor:pointer; user-select:none; background:#fff;}
+  .ws td.mark{background:var(--teal); color:#fff; border-color:var(--teal);}
+  .wlist{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+  .wchip{display:flex; align-items:center; gap:7px; border:1.5px solid var(--line); border-radius:20px; padding:6px 12px; font-size:13.5px; font-weight:600; cursor:pointer; background:#fff;}
+  .wchip input{accent-color:var(--teal); width:16px;height:16px;}
+  .wchip.done{background:var(--teal-soft); border-color:var(--teal); text-decoration:line-through; color:var(--muted);}
+  .bar{position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line); padding:10px 14px; display:flex; gap:10px; align-items:center; z-index:20; box-shadow:0 -4px 14px rgba(11,39,52,.06);}
+  .bar .status{flex:1; font-size:12.5px; color:var(--muted);}
+  button{font-family:inherit; font-size:15px; font-weight:700; border:0; border-radius:10px; padding:12px 16px; cursor:pointer;}
+  .btn-pdf{background:var(--amber); color:#3a2a00;}
+  .btn-clear{background:#fff; color:var(--muted); border:1.5px solid var(--line); padding:11px 14px;}
+  .btn-pdf:active{transform:translateY(1px);}
+  .steps{background:var(--teal-soft); border-radius:10px; padding:11px 13px; font-size:14px; color:#134e56;}
+  .steps b{color:var(--navy);}
+</style>
+</head>
+<body>
+<header>
+  <div class="dot d1"></div><div class="dot d2"></div>
+  <p class="kick">PROCESSOS LOGÍSTICOS · AULA 05</p>
+  <h1>Atividade: Armazenagem</h1>
+  <p class="sub">Cruzadinha e caça-palavras &nbsp;·&nbsp; Prof. Me Alex Ferreira Novaes</p>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="id-grid">
+      <div><label class="fld" for="nome">Nome completo</label><input class="txt" id="nome" placeholder="Seu nome"></div>
+      <div><label class="fld" for="turma">Turma</label><input class="txt" id="turma" placeholder="Ex.: ADM 3A"></div>
+      <div><label class="fld" for="data">Data</label><input class="txt" id="data" placeholder="dd/mm/aaaa"></div>
+    </div>
+    <div class="steps" style="margin-top:14px">
+      <b>Tema:</b> elementos e operações de armazenagem, estruturas de estocagem e distribuição.<br>
+      <b>Como enviar:</b> resolva pelo celular, toque em <b>Salvar em PDF</b> e envie pelo Google Classroom. Suas respostas ficam salvas neste aparelho automaticamente.
+    </div>
+  </div>
+
+  <div class="sec-title"><span class="tag">1</span><h2>Cruzadinha</h2></div>
+  <p class="sec-note">Preencha as 10 palavras usando as dicas. A coluna destacada em amarelo forma a palavra-chave.</p>
+  <div class="card">
+    <div class="scroll"><div id="crossword"></div></div>
+    <p class="hint">Deslize o dedo para o lado se a grade não couber na tela.</p>
+    <div class="key-tip" id="keyTip"></div>
+    <div class="clues" id="cwClues"></div>
+  </div>
+
+  <div class="sec-title"><span class="tag">2</span><h2>Caça-palavras</h2></div>
+  <p class="sec-note">Encontre as 10 palavras (horizontais, verticais ou diagonais). Toque nas letras para marcá-las e toque na palavra ao encontrá-la.</p>
+  <div class="card">
+    <div class="scroll"><div id="wordsearch"></div></div>
+    <p class="hint">Toque de novo em uma letra para desmarcar.</p>
+    <div class="wlist" id="wsList"></div>
+  </div>
+</div>
+
+<div class="bar">
+  <span class="status" id="status">Rascunho salvo automaticamente ✓</span>
+  <button class="btn-clear" id="clearBtn">Limpar</button>
+  <button class="btn-pdf" id="pdfBtn">Salvar em PDF</button>
+</div>
+
+<script>
+const VERSION = "armazenagem-puzzles-v1";
+
+const CW_ROWS = 9, CW_COLS = 12;
+const CW_WORDS = [
+  { n:1, a:"EXPEDICAO",  r:0, c:3, dir:"H", clue:"Etapa final da armazenagem: preparação e saída da carga para o cliente." },
+  { n:2, a:"ESTOQUE",    r:1, c:5, dir:"H", clue:"Quantidade de mercadorias guardadas e disponíveis no armazém." },
+  { n:3, a:"PALETE",     r:2, c:2, dir:"H", clue:"Estrado usado para unitizar e movimentar cargas (com empilhadeira)." },
+  { n:4, a:"DOCA",       r:3, c:5, dir:"H", clue:"Local de encaixe do veículo para carga e descarga." },
+  { n:5, a:"PICKING",    r:4, c:4, dir:"H", clue:"Separação dos itens do armazém conforme o pedido (em inglês)." },
+  { n:6, a:"ARMAZEM",    r:5, c:3, dir:"H", clue:"Local destinado a guardar e conservar mercadorias." },
+  { n:7, a:"EMBALAGEM",  r:6, c:0, dir:"H", clue:"Envolve e protege o produto para estocagem e transporte." },
+  { n:8, a:"ENDERECO",   r:7, c:3, dir:"H", clue:"Código do local onde um item fica guardado no armazém." },
+  { n:9, a:"ITEM",       r:8, c:3, dir:"H", clue:"Cada produto ou SKU controlado no estoque." },
+  { n:10,a:"ESTOCAGEM",  r:0, c:6, dir:"V", clue:"PALAVRA-CHAVE: ato de guardar os produtos em local definido dentro do armazém." }
+];
+
+const WS_WORDS = ["ARMAZENAGEM","CROSSDOCKING","DISTRIBUICAO","RECEBIMENTO","EXPEDICAO","PICKING","PALETE","ESTOQUE","INVENTARIO","SEPARACAO"];
+const WS_N = 14;
+
+const KEY = "atividade_"+VERSION;
+let state = { nome:"", turma:"", data:"", cw:{}, wsMarks:{}, wsFound:{}, wsGrid:null };
+function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s) state=Object.assign(state,s);}catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); flash(); }catch(e){} }
+let flashT; function flash(){ const el=document.getElementById('status'); el.textContent="Rascunho salvo ✓"; clearTimeout(flashT); flashT=setTimeout(()=>el.textContent="Rascunho salvo automaticamente ✓",1200); }
+load();
+
+const cwMap = {};
+(function buildCW(){
+  CW_WORDS.forEach(w=>{
+    for(let i=0;i<w.a.length;i++){
+      const r=w.dir==="V"?w.r+i:w.r, c=w.dir==="H"?w.c+i:w.c, k=r+","+c;
+      if(!cwMap[k]) cwMap[k]={letter:w.a[i], isKey:false};
+      if(w.dir==="V") cwMap[k].isKey=true;
+    }
+    const sk=w.r+","+w.c; cwMap[sk]=cwMap[sk]||{letter:w.a[0]}; cwMap[sk].num=w.n;
+  });
+  const t=document.createElement('table'); t.className='grid cw';
+  for(let r=0;r<CW_ROWS;r++){
+    const tr=document.createElement('tr');
+    for(let c=0;c<CW_COLS;c++){
+      const td=document.createElement('td'); const cell=cwMap[r+","+c];
+      if(cell){
+        td.classList.add('act'); if(cell.isKey) td.classList.add('key');
+        if(cell.num){ const n=document.createElement('span'); n.className='n'; n.textContent=cell.num; td.appendChild(n); }
+        const inp=document.createElement('input'); inp.maxLength=1; inp.dataset.k=r+","+c; inp.setAttribute('inputmode','text');
+        inp.value=state.cw[r+","+c]||"";
+        inp.addEventListener('input',()=>{ inp.value=inp.value.toUpperCase().replace(/[^A-ZÀ-Ú]/g,''); state.cw[r+","+c]=inp.value; save(); });
+        td.appendChild(inp);
+      }
+      tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  }
+  document.getElementById('crossword').appendChild(t);
+  const cl=document.getElementById('cwClues');
+  CW_WORDS.filter(w=>w.dir==="H").forEach(w=>{
+    const p=document.createElement('div'); p.className='clue'; p.innerHTML=`<b>${w.n}.</b> ${w.clue}`; cl.appendChild(p);
+  });
+  const key=CW_WORDS.find(w=>w.dir==="V");
+  document.getElementById('keyTip').innerHTML=`<b>${key.n}. Palavra-chave (vertical, em amarelo):</b> ${key.clue}`;
+})();
+
+const DIRS=[[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
+function genWS(){
+  for(let attempt=0;attempt<200;attempt++){
+    const g=Array.from({length:WS_N},()=>Array(WS_N).fill(""));
+    let ok=true;
+    for(const w of WS_WORDS){
+      let placed=false;
+      for(let tr=0;tr<600 && !placed;tr++){
+        const [dr,dc]=DIRS[(Math.random()*DIRS.length)|0];
+        const r0=(Math.random()*WS_N)|0, c0=(Math.random()*WS_N)|0;
+        const re=r0+dr*(w.length-1), ce=c0+dc*(w.length-1);
+        if(re<0||re>=WS_N||ce<0||ce>=WS_N) continue;
+        let good=true;
+        for(let i=0;i<w.length;i++){ const ch=g[r0+dr*i][c0+dc*i]; if(ch && ch!==w[i]){good=false;break;} }
+        if(!good) continue;
+        for(let i=0;i<w.length;i++){ g[r0+dr*i][c0+dc*i]=w[i]; }
+        placed=true;
+      }
+      if(!placed){ ok=false; break; }
+    }
+    if(ok){
+      const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      for(let r=0;r<WS_N;r++)for(let c=0;c<WS_N;c++) if(!g[r][c]) g[r][c]=A[(Math.random()*26)|0];
+      return g;
+    }
+  }
+  return null;
+}
+(function buildWS(){
+  if(!state.wsGrid){ state.wsGrid=genWS(); save(); }
+  const g=state.wsGrid;
+  const t=document.createElement('table'); t.className='grid ws';
+  for(let r=0;r<WS_N;r++){
+    const tr=document.createElement('tr');
+    for(let c=0;c<WS_N;c++){
+      const td=document.createElement('td'); td.textContent=g[r][c]; const k=r+","+c;
+      if(state.wsMarks[k]) td.classList.add('mark');
+      td.addEventListener('click',()=>{
+        if(state.wsMarks[k]){ delete state.wsMarks[k]; td.classList.remove('mark'); }
+        else { state.wsMarks[k]=1; td.classList.add('mark'); }
+        save();
+      });
+      tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  }
+  document.getElementById('wordsearch').appendChild(t);
+  const list=document.getElementById('wsList');
+  WS_WORDS.forEach((w,i)=>{
+    const chip=document.createElement('label'); chip.className='wchip'+(state.wsFound[i]?' done':'');
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!state.wsFound[i];
+    cb.addEventListener('change',()=>{ state.wsFound[i]=cb.checked?1:0; chip.classList.toggle('done',cb.checked); save(); });
+    chip.appendChild(cb); chip.appendChild(document.createTextNode(w)); list.appendChild(chip);
+  });
+})();
+
+["nome","turma","data"].forEach(id=>{
+  const el=document.getElementById(id); el.value=state[id]||"";
+  el.addEventListener('input',()=>{ state[id]=el.value; save(); });
+});
+
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  if(confirm("Apagar as respostas deste aparelho? A grade do caça-palavras será mantida.")){
+    const grid=state.wsGrid;
+    state={ nome:"",turma:"",data:"",cw:{},wsMarks:{},wsFound:{},wsGrid:grid };
+    save(); location.reload();
+  }
+});
+
+document.getElementById('pdfBtn').addEventListener('click',generatePDF);
+function generatePDF(){
+  if(!window.jspdf){ alert("Não foi possível carregar o gerador de PDF. Conecte-se à internet e tente novamente."); return; }
+  const { jsPDF }=window.jspdf;
+  const doc=new jsPDF({unit:"mm",format:"a4"});
+  const M=14, PW=210, PH=297, RIGHT=PW-M, TW=PW-2*M;
+  let y=M;
+  const C={navy:[15,61,92], teal:[19,128,140], amber:[244,161,0], ink:[24,39,46], muted:[91,107,115], line:[200,214,222], key:[253,238,203], mark:[210,238,240]};
+  function ensure(h){ if(y+h>PH-M){ doc.addPage(); y=M; } }
+  function setF(sz,style,col){ doc.setFont("helvetica",style||"normal"); doc.setFontSize(sz); const c=col||C.ink; doc.setTextColor(c[0],c[1],c[2]); }
+  function para(txt,sz,style,col,gap){ setF(sz,style,col); const lines=doc.splitTextToSize(txt,TW); ensure(lines.length*sz*0.42+(gap||0)); doc.text(lines,M,y); y+=lines.length*sz*0.42+(gap||1.5); }
+  function heading(tag,txt){ ensure(14); doc.setFillColor(C.teal[0],C.teal[1],C.teal[2]); doc.roundedRect(M,y-1,7,7,1.4,1.4,"F"); setF(11,"bold",[255,255,255]); doc.text(tag,M+3.5,y+3.9,{align:"center"}); setF(15,"bold",C.navy); doc.text(txt,M+11,y+4.2); y+=12; }
+
+  doc.setFillColor(C.navy[0],C.navy[1],C.navy[2]); doc.rect(0,0,PW,26,"F");
+  setF(9,"bold",C.amber); doc.text("PROCESSOS LOGÍSTICOS · AULA 05",M,10);
+  setF(15,"bold",[255,255,255]); doc.text("Atividade: Armazenagem",M,18);
+  setF(8.5,"normal",[207,226,236]); doc.text("Cruzadinha e caça-palavras · Prof. Me Alex Ferreira Novaes",M,23);
+  y=34;
+  setF(10.5,"bold",C.navy);
+  doc.text(`Nome: ${state.nome||"__________________________"}`,M,y);
+  y+=6; doc.text(`Turma: ${state.turma||"____________"}      Data: ${state.data||"____________"}`,M,y);
+  y+=4; doc.setDrawColor(C.line[0],C.line[1],C.line[2]); doc.line(M,y,RIGHT,y); y+=8;
+
+  heading("1","Cruzadinha");
+  const cs=8, gx=M+(TW-CW_COLS*cs)/2, gy=y;
+  ensure(CW_ROWS*cs+6);
+  for(let r=0;r<CW_ROWS;r++)for(let c=0;c<CW_COLS;c++){
+    const cell=cwMap[r+","+c]; const x=gx+c*cs, yy=gy+r*cs;
+    if(cell){
+      doc.setFillColor(cell.isKey?C.key[0]:255,cell.isKey?C.key[1]:255,cell.isKey?C.key[2]:255);
+      doc.setDrawColor(120,140,150); doc.rect(x,yy,cs,cs,"FD");
+      if(cell.num){ setF(5.5,"bold",C.muted); doc.text(String(cell.num),x+0.8,yy+2.3); }
+      const ltr=(state.cw[r+","+c]||"").toUpperCase();
+      if(ltr){ setF(10,"bold",cell.isKey?[138,91,0]:C.navy); doc.text(ltr,x+cs/2,yy+cs/2+1.8,{align:"center"}); }
+    }
+  }
+  y=gy+CW_ROWS*cs+6;
+  para("Dicas:",9.5,"bold",C.navy,1);
+  CW_WORDS.filter(w=>w.dir==="H").forEach(w=>para(`${w.n}. ${w.clue}`,9,"normal",C.ink,0.6));
+  const kw=CW_WORDS.find(w=>w.dir==="V"); para(`${kw.n}. ${kw.clue}`,9,"bold",C.teal,3);
+
+  ensure(20); heading("2","Caça-palavras");
+  const ws=6.0, wx=M+(TW-WS_N*ws)/2, wy=y; const g=state.wsGrid;
+  ensure(WS_N*ws+6);
+  doc.setDrawColor(C.line[0],C.line[1],C.line[2]);
+  for(let r=0;r<WS_N;r++)for(let c=0;c<WS_N;c++){
+    const x=wx+c*ws, yy=wy+r*ws;
+    if(state.wsMarks[r+","+c]){ doc.setFillColor(C.mark[0],C.mark[1],C.mark[2]); doc.rect(x,yy,ws,ws,"FD"); }
+    else doc.rect(x,yy,ws,ws,"D");
+    setF(8,state.wsMarks[r+","+c]?"bold":"normal",C.ink); doc.text(g[r][c],x+ws/2,yy+ws/2+1.4,{align:"center"});
+  }
+  y=wy+WS_N*ws+6;
+  para("Palavras: "+WS_WORDS.map((w,i)=>(state.wsFound[i]?"[x] ":"[ ] ")+w).join("   "),9,"normal",C.ink,2);
+
+  const nm=(state.nome||"aluno").normalize("NFD").replace(/[^\w]+/g,"_").replace(/^_+|_+$/g,"") || "aluno";
+  doc.save(`Atividade_Armazenagem_${nm}.pdf`);
+}
+</script>
+</body>
+</html>
