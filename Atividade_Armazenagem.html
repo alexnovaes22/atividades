@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atividade – Logística, Cadeia de Suprimentos e Estratégia (com vídeos)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#0F3D5C; --navy2:#16506F; --teal:#13808C; --amber:#F4A100;
+    --bg:#EEF3F6; --card:#FFFFFF; --ink:#18272E; --muted:#5B6B73; --line:#D8E2E8;
+    --amber-soft:#FDEECB; --teal-soft:#DCEFF0; --green:#1E7A46;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.5; padding:0 0 90px;}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif; line-height:1.2;}
+  .wrap{max-width:780px; margin:0 auto; padding:14px;}
+  header{background:var(--navy); color:#fff; padding:22px 16px 24px; position:relative; overflow:hidden;}
+  header .kick{font-size:12px; letter-spacing:3px; font-weight:700; color:var(--amber); margin:0 0 6px;}
+  header h1{margin:0; font-size:23px;}
+  header p.sub{margin:8px 0 0; color:#CFE2EC; font-size:15px;}
+  header .dot{position:absolute; border-radius:50%;}
+  header .d1{width:150px;height:150px;background:var(--navy2);top:-60px;right:-40px;}
+  header .d2{width:90px;height:90px;background:var(--teal);opacity:.5;bottom:-40px;right:60px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:14px 0; box-shadow:0 4px 14px rgba(11,39,52,.05);}
+  .id-grid{display:grid; grid-template-columns:1fr; gap:10px;}
+  @media(min-width:560px){.id-grid{grid-template-columns:2fr 1fr 1fr;}}
+  label.fld{font-size:13px; font-weight:700; color:var(--muted); display:block; margin-bottom:4px;}
+  input.txt{width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:9px; font-size:16px; color:var(--ink); background:#fff;}
+  input.txt:focus,textarea:focus{outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-soft);}
+  .sec-title{display:flex; align-items:center; gap:10px; margin:26px 0 4px;}
+  .sec-title .tag{background:var(--teal); color:#fff; font-family:Georgia,serif; font-weight:700; width:30px;height:30px; border-radius:8px; display:grid; place-items:center; font-size:15px;}
+  .sec-title h2{margin:0; font-size:21px; color:var(--navy);}
+  .sec-note{color:var(--muted); font-size:14px; margin:2px 0 0;}
+  .q{margin:14px 0;}
+  .q .qhead{display:flex; gap:10px;}
+  .q .num{flex:0 0 auto; width:26px;height:26px; background:var(--navy); color:#fff; border-radius:50%; display:grid;place-items:center; font-size:13px; font-weight:700; margin-top:1px;}
+  .q .qtext{font-weight:600;}
+  .q .qtag{display:inline-block; font-size:11px; font-weight:700; color:var(--teal); background:var(--teal-soft); border-radius:6px; padding:1px 7px; margin-left:6px; vertical-align:1px;}
+  textarea{width:100%; margin-top:10px; min-height:104px; resize:vertical; padding:11px 12px; border:1.5px solid var(--line); border-radius:9px; font-size:15px; font-family:inherit; color:var(--ink); background:#fff;}
+  .opts{margin:10px 0 0 36px; display:flex; flex-direction:column; gap:8px;}
+  .opts.novnum{margin-left:0;}
+  .opt{display:flex; gap:10px; align-items:flex-start; padding:9px 11px; border:1.5px solid var(--line); border-radius:9px; cursor:pointer; background:#fff;}
+  .opt input{margin-top:3px; accent-color:var(--teal); width:18px;height:18px; flex:0 0 auto;}
+  .opt.sel{border-color:var(--teal); background:var(--teal-soft);}
+  .opt .lt{font-weight:700; color:var(--navy);}
+  /* videos */
+  .vhead{display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;}
+  .vhead b{font-size:16px; color:var(--navy);}
+  .vtag{font-size:11px; font-weight:700; color:#fff; background:var(--navy); border-radius:6px; padding:2px 8px;}
+  .vbadge{font-size:12px; font-weight:700; color:#fff; background:var(--green); border-radius:20px; padding:3px 10px; display:none;}
+  .vbadge.show{display:inline-block;}
+  .ytwrap{position:relative; padding-bottom:56.25%; height:0; border-radius:10px; overflow:hidden; background:#0e2a38;}
+  .ytwrap iframe{position:absolute; top:0; left:0; width:100%; height:100%; border:0;}
+  .vnotice{margin-top:12px; font-size:14px; font-weight:600; color:#6b4a00; background:var(--amber-soft); border-radius:9px; padding:11px 13px;}
+  .vfallback{display:block; margin-top:8px; font-size:13px; color:var(--teal); background:none; border:1px solid var(--teal); border-radius:8px; padding:8px 12px; cursor:pointer; font-weight:700;}
+  .vpanel{margin-top:12px; border-top:1px dashed var(--line); padding-top:12px;}
+  .vpanel .vq-lead{font-size:13px; font-weight:700; color:var(--green); margin:0 0 4px;}
+  .scroll{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px;}
+  .hint{font-size:12.5px; color:var(--muted); margin:6px 0 0;}
+  table.grid{border-collapse:collapse; margin:6px auto 0;}
+  table.grid td{padding:0; text-align:center; vertical-align:middle;}
+  .cw td{width:30px;height:30px; border:1px solid #cfd9df; position:relative; background:#0e2a38;}
+  .cw td.act{background:#fff;}
+  .cw td.key{background:var(--amber-soft);}
+  .cw td.act input{width:100%;height:100%; border:0; text-align:center; text-transform:uppercase; font-size:15px; font-weight:700; color:var(--navy); background:transparent; padding:0;}
+  .cw td.key input{color:#8a5b00;}
+  .cw td.act input:focus{outline:2px solid var(--teal); outline-offset:-2px;}
+  .cw td .n{position:absolute; top:1px; left:2px; font-size:8px; line-height:1; color:var(--muted); font-weight:700;}
+  .clues{margin-top:12px; display:grid; grid-template-columns:1fr; gap:6px;}
+  @media(min-width:560px){.clues{grid-template-columns:1fr 1fr; column-gap:22px;}}
+  .clue{font-size:14px;} .clue b{color:var(--navy);}
+  .key-tip{margin-top:10px; font-size:13.5px; background:var(--amber-soft); border-radius:9px; padding:9px 11px; color:#6b4a00;}
+  .ws td{width:26px;height:26px; border:1px solid #e2e9ee; font-size:13.5px; font-weight:600; color:var(--ink); cursor:pointer; user-select:none; background:#fff;}
+  .ws td.mark{background:var(--teal); color:#fff; border-color:var(--teal);}
+  .wlist{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+  .wchip{display:flex; align-items:center; gap:7px; border:1.5px solid var(--line); border-radius:20px; padding:6px 12px; font-size:13.5px; font-weight:600; cursor:pointer; background:#fff;}
+  .wchip input{accent-color:var(--teal); width:16px;height:16px;}
+  .wchip.done{background:var(--teal-soft); border-color:var(--teal); text-decoration:line-through; color:var(--muted);}
+  .bar{position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line); padding:10px 14px; display:flex; gap:10px; align-items:center; z-index:20; box-shadow:0 -4px 14px rgba(11,39,52,.06);}
+  .bar .status{flex:1; font-size:12.5px; color:var(--muted);}
+  button{font-family:inherit; font-size:15px; font-weight:700; border:0; border-radius:10px; padding:12px 16px; cursor:pointer;}
+  .btn-pdf{background:var(--amber); color:#3a2a00;}
+  .btn-clear{background:#fff; color:var(--muted); border:1.5px solid var(--line); padding:11px 14px;}
+  .btn-pdf:active{transform:translateY(1px);}
+  .steps{background:var(--teal-soft); border-radius:10px; padding:11px 13px; font-size:14px; color:#134e56;}
+  .steps b{color:var(--navy);}
+</style>
+</head>
+<body>
+<header>
+  <div class="dot d1"></div><div class="dot d2"></div>
+  <p class="kick">PROCESSOS LOGÍSTICOS · AULAS 1 A 3</p>
+  <h1>Atividade: Logística, Cadeia de Suprimentos e Estratégia</h1>
+  <p class="sub">Com vídeos de revisão &nbsp;·&nbsp; Prof. Me Alex Ferreira Novaes</p>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="id-grid">
+      <div><label class="fld" for="nome">Nome completo</label><input class="txt" id="nome" placeholder="Seu nome"></div>
+      <div><label class="fld" for="turma">Turma</label><input class="txt" id="turma" placeholder="Ex.: ADM 3A"></div>
+      <div><label class="fld" for="data">Data</label><input class="txt" id="data" placeholder="dd/mm/aaaa"></div>
+    </div>
+    <div class="steps" style="margin-top:14px">
+      <b>Como fazer:</b> assista aos 3 vídeos até o final — as 2 questões de cada vídeo só liberam depois que ele termina. Em seguida, responda as demais partes.<br>
+      <b>Como enviar:</b> toque em <b>Salvar em PDF</b> e envie o arquivo pelo Google Classroom. Suas respostas ficam salvas neste aparelho automaticamente.
+    </div>
+  </div>
+
+  <div class="sec-title"><span class="tag">1</span><h2>Vídeos de revisão</h2></div>
+  <p class="sec-note">Assista a cada vídeo até o fim. As 2 questões aparecem automaticamente quando o vídeo termina.</p>
+  <div id="videos"></div>
+
+  <div class="sec-title"><span class="tag">2</span><h2>Questões discursivas</h2></div>
+  <p class="sec-note">Responda com suas próprias palavras. Não há limite de linhas.</p>
+  <div class="card" id="discursivas"></div>
+
+  <div class="sec-title"><span class="tag">3</span><h2>Questões objetivas</h2></div>
+  <p class="sec-note">Cada questão tem 5 alternativas e apenas 1 correta. Marque a que você considera certa.</p>
+  <div class="card" id="objetivas"></div>
+
+  <div class="sec-title"><span class="tag">4</span><h2>Cruzadinha</h2></div>
+  <p class="sec-note">Preencha as 10 palavras usando as dicas. A coluna destacada em amarelo forma a palavra-chave.</p>
+  <div class="card">
+    <div class="scroll"><div id="crossword"></div></div>
+    <p class="hint">Deslize o dedo para o lado se a grade não couber na tela.</p>
+    <div class="key-tip" id="keyTip"></div>
+    <div class="clues" id="cwClues"></div>
+  </div>
+
+  <div class="sec-title"><span class="tag">5</span><h2>Caça-palavras</h2></div>
+  <p class="sec-note">Encontre as 10 palavras (horizontais, verticais ou diagonais). Toque nas letras para marcá-las e toque na palavra ao encontrá-la.</p>
+  <div class="card">
+    <div class="scroll"><div id="wordsearch"></div></div>
+    <p class="hint">Toque de novo em uma letra para desmarcar.</p>
+    <div class="wlist" id="wsList"></div>
+  </div>
+</div>
+
+<div class="bar">
+  <span class="status" id="status">Rascunho salvo automaticamente ✓</span>
+  <button class="btn-clear" id="clearBtn">Limpar</button>
+  <button class="btn-pdf" id="pdfBtn">Salvar em PDF</button>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+const VERSION = "logistica-scm-estrategia-v4-videos";
+
+/* ===== VÍDEOS (edite o "id" do YouTube ou as questões se quiser) ===== */
+const VIDEOS = [
+  { id:"63o70UWJthM", tag:"Aula 1", title:"O que é logística? — conceitos e aplicações",
+    questions:[
+      { q:"Qual é a missão da logística?",
+        o:["Entregar o produto no menor prazo, sem se preocupar com o custo.",
+           "Colocar o produto certo, no lugar certo, na hora certa e ao menor custo possível.",
+           "Produzir em grande quantidade para formar estoque.",
+           "Vender o produto pelo maior preço possível.",
+           "Cuidar apenas do transporte rodoviário."] },
+      { q:"A logística gerencia o fluxo de produtos e informações:",
+        o:["apenas dentro da fábrica.",
+           "do ponto de origem até o ponto de consumo.",
+           "somente depois da venda.",
+           "apenas no comércio internacional.",
+           "sem envolver o cliente."] }
+    ]},
+  { id:"mevBolfSwCo", tag:"Aula 2", title:"O que é Supply Chain Management (SCM)",
+    questions:[
+      { q:"A gestão da cadeia de suprimentos (SCM) trata de:",
+        o:["apenas do estoque de uma única loja.",
+           "integrar as empresas ao longo da cadeia, do fornecedor ao cliente final.",
+           "somente do transporte aéreo.",
+           "apenas da propaganda dos produtos.",
+           "apenas do setor financeiro."] },
+      { q:"Em relação à logística, o SCM (cadeia de suprimentos) é:",
+        o:["mais amplo, pois integra também fornecedores e clientes.",
+           "mais restrito, pois cuida só do transporte.",
+           "a mesma coisa que armazenagem.",
+           "usado apenas por empresas pequenas.",
+           "sem relação com o fluxo de informações."] }
+    ]},
+  { id:"GqLpNsUu89U", tag:"Aula 3", title:"As estratégias competitivas genéricas de Michael Porter",
+    questions:[
+      { q:"As três estratégias competitivas genéricas de Porter são:",
+        o:["liderança em custos, diferenciação e foco.",
+           "marketing, vendas e finanças.",
+           "compras, produção e entrega.",
+           "push, pull e kanban.",
+           "importação, exportação e cabotagem."] },
+      { q:"A estratégia de diferenciação busca:",
+        o:["oferecer sempre o menor preço do mercado.",
+           "atuar apenas em um nicho específico.",
+           "oferecer um produto ou serviço percebido como único e de maior valor.",
+           "copiar exatamente os concorrentes.",
+           "reduzir a qualidade para baixar o custo."] }
+    ]}
+];
+
+const DISCURSIVAS = [
+  { t:"Com base na definição do CLM, explique o que é logística e apresente os elementos que compõem a sua missão (produto, quantidade, lugar, tempo e custo).", tag:"Aula 1" },
+  { t:"Descreva as cinco fases da evolução da logística — de \"Materiais e Distribuição\" até \"Logística Reversa e Sustentabilidade\" —, destacando a principal característica de cada uma.", tag:"Aula 1" },
+  { t:"Explique o conceito de Administração da Cadeia de Suprimentos (SCM) e como ele se relaciona com a logística integrada e com as relações interempresariais.", tag:"Aula 2" },
+  { t:"Apresente as três estratégias competitivas genéricas de Porter (liderança de custos, diferenciação e foco) e explique um exemplo de aplicação para uma delas.", tag:"Aula 3" },
+  { t:"Explique a Mentalidade Enxuta (Lean) e diferencie a produção empurrada (push) da produção puxada (pull).", tag:"Aula 3" }
+];
+
+const OBJETIVAS = [
+  { tag:"Aula 1", q:"Segundo a definição do Council of Logistics Management (CLM), a logística é o processo de:",
+    o:["Apenas transportar mercadorias entre cidades.",
+       "Planejamento, implementação e controle eficiente do fluxo e da armazenagem de bens, serviços e informações, do ponto de origem ao ponto de consumo.",
+       "Produção de bens em larga escala para estoque.",
+       "Divulgação e propaganda dos produtos ao mercado.",
+       "Contratação e treinamento de pessoal da empresa."] },
+  { tag:"Aula 1", q:"A preocupação com o meio ambiente, a logística reversa e a responsabilidade social empresarial caracterizam qual fase da evolução da logística?",
+    o:["Fase 1 – Materiais e Distribuição",
+       "Fase 2 – Logística Integrada",
+       "Fase 3 – Supply Chain Management",
+       "Fase 4 – SCM e Efficient Consumer Response",
+       "Fase 5 – Logística Reversa e Sustentabilidade"] },
+  { tag:"Aula 2", q:"Sobre a Administração da Cadeia de Suprimentos (SCM), é correto afirmar que:",
+    o:["Restringe-se às atividades internas de uma única empresa.",
+       "Trata da inter-relação das empresas que atuam ao longo de uma cadeia de suprimentos e determina condições de competitividade.",
+       "É sinônimo exclusivo de transporte rodoviário.",
+       "Elimina a necessidade da logística integrada.",
+       "Não envolve o fluxo de informações entre as empresas."] },
+  { tag:"Aula 3", q:"Assinale a alternativa que NÃO representa uma das cinco forças competitivas do modelo de Porter:",
+    o:["Ameaça de novos entrantes",
+       "Poder de negociação dos fornecedores",
+       "Poder de negociação dos compradores",
+       "Ameaça de produtos ou serviços substitutos",
+       "Nível de escolaridade dos funcionários"] },
+  { tag:"Aula 3", q:"Na Mentalidade Enxuta (Lean), a produção puxada (pull) caracteriza-se por:",
+    o:["Produzir grandes lotes de produtos fixos e empurrá-los ao mercado.",
+       "Deflagrar a produção a partir dos pedidos dos clientes, reduzindo lead times e estoques.",
+       "Ignorar o valor definido pelo cliente final.",
+       "Aumentar o esforço humano, o tempo e o espaço utilizados.",
+       "Priorizar a produção em massa independentemente da demanda."] }
+];
+
+const CW_ROWS = 9, CW_COLS = 13;
+const CW_WORDS = [
+  { n:1, a:"CLIENTE",     r:0, c:3, dir:"H", clue:"Aquele para quem a logística deve criar valor, com entrega no lugar, tempo e condições certas." },
+  { n:2, a:"PORTER",      r:1, c:3, dir:"H", clue:"Autor do modelo das cinco forças e das estratégias competitivas genéricas." },
+  { n:3, a:"INTEGRADA",   r:2, c:0, dir:"H", clue:"Logística ___: gestão conjunta de todos os componentes logísticos." },
+  { n:4, a:"MISSAO",      r:3, c:3, dir:"H", clue:"___ da logística: produto certo, no lugar e na hora certos, ao menor custo possível." },
+  { n:5, a:"TRANSPORTE",  r:4, c:2, dir:"H", clue:"Atividade primária que desloca produtos da origem ao destino." },
+  { n:6, a:"FRETE",       r:5, c:3, dir:"H", clue:"Valor pago pelo serviço de transporte de uma carga." },
+  { n:7, a:"MILKRUN",     r:6, c:5, dir:"H", clue:"Coleta programada que passa por vários fornecedores em uma rota (2 palavras, escreva junto)." },
+  { n:8, a:"SERVICO",     r:7, c:1, dir:"H", clue:"Nível de ___ ao cliente: prazo e confiabilidade da entrega." },
+  { n:9, a:"REVERSA",     r:8, c:0, dir:"H", clue:"Logística ___: fluxo de retorno de produtos, embalagens e resíduos." },
+  { n:10,a:"LOGISTICA",   r:0, c:6, dir:"V", clue:"PALAVRA-CHAVE: processo de planejar, implementar e controlar o fluxo de bens, serviços e informações." }
+];
+const CW_CROSS_SWAP = false;
+
+const WS_WORDS = ["LOGISTICA","SUPRIMENTOS","INTEGRADA","ESTRATEGIA","PORTER","OUTSOURCING","REVERSA","LEAN","VALOR","MISSAO"];
+const WS_N = 13;
+
+const KEY = "atividade_"+VERSION;
+let state = { nome:"", turma:"", data:"", vq:{}, vw:{}, disc:{}, obj:{}, cw:{}, wsMarks:{}, wsFound:{}, wsGrid:null };
+function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s) state=Object.assign(state,s);}catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); flash(); }catch(e){} }
+let flashT; function flash(){ const el=document.getElementById('status'); el.textContent="Rascunho salvo ✓"; clearTimeout(flashT); flashT=setTimeout(()=>el.textContent="Rascunho salvo automaticamente ✓",1200); }
+load();
+
+const L=["a","b","c","d","e"];
+
+/* ===== PARTE 1 – VÍDEOS ===== */
+const players={};
+(function buildVideos(){
+  const box=document.getElementById('videos');
+  VIDEOS.forEach((v,vi)=>{
+    const card=document.createElement('div'); card.className='card';
+    const head=document.createElement('div'); head.className='vhead';
+    head.innerHTML=`<span class="vtag">${v.tag}</span> <b>Vídeo ${vi+1} — ${v.title}</b> <span class="vbadge" id="vbadge${vi}">✓ assistido</span>`;
+    card.appendChild(head);
+    const wrap=document.createElement('div'); wrap.className='ytwrap';
+    const holder=document.createElement('div'); holder.id='ytp'+vi; wrap.appendChild(holder);
+    card.appendChild(wrap);
+    const notice=document.createElement('div'); notice.className='vnotice'; notice.id='vnotice'+vi;
+    notice.textContent='🔒 Assista ao vídeo até o final para liberar as 2 questões.';
+    card.appendChild(notice);
+    const panel=document.createElement('div'); panel.className='vpanel'; panel.id='vpanel'+vi; panel.style.display='none';
+    const lead=document.createElement('p'); lead.className='vq-lead'; lead.textContent='Responda com base no que foi tratado no vídeo:';
+    panel.appendChild(lead);
+    v.questions.forEach((item,qj)=>{
+      const q=document.createElement('div'); q.className='q';
+      q.innerHTML=`<div class="qhead"><span class="num">${qj+1}</span><span class="qtext">${item.q}</span></div>`;
+      const opts=document.createElement('div'); opts.className='opts novnum';
+      const keyname='v'+vi+'q'+qj;
+      item.o.forEach((op,oi)=>{
+        const lab=document.createElement('label'); lab.className='opt';
+        const r=document.createElement('input'); r.type='radio'; r.name=keyname; r.value=oi;
+        if(String(state.vq[keyname])===String(oi)){ r.checked=true; lab.classList.add('sel'); }
+        r.addEventListener('change',()=>{ state.vq[keyname]=oi; save();
+          opts.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); lab.classList.add('sel'); });
+        lab.appendChild(r);
+        const sp=document.createElement('span'); sp.innerHTML=`<span class="lt">${L[oi]})</span> ${op}`;
+        lab.appendChild(sp); opts.appendChild(lab);
+      });
+      q.appendChild(opts); panel.appendChild(q);
+    });
+    card.appendChild(panel);
+    box.appendChild(card);
+    if(state.vw['v'+vi]) unlockVideo(vi,true);
+  });
+})();
+
+function unlockVideo(vi,silent){
+  if(!silent && state.vw['v'+vi]) return;
+  state.vw['v'+vi]=1; if(!silent) save();
+  const p=document.getElementById('vpanel'+vi); if(p) p.style.display='block';
+  const n=document.getElementById('vnotice'+vi); if(n) n.style.display='none';
+  const b=document.getElementById('vbadge'+vi); if(b) b.classList.add('show');
+}
+
+/* YouTube IFrame API */
+let ytReady=false;
+window.onYouTubeIframeAPIReady=function(){
+  ytReady=true;
+  VIDEOS.forEach((v,vi)=>{
+    try{
+      players[vi]=new YT.Player('ytp'+vi,{
+        videoId:v.id, playerVars:{rel:0, modestbranding:1},
+        events:{
+          onStateChange:(e)=>{ if(e.data===YT.PlayerState.ENDED) unlockVideo(vi); },
+          onError:()=>{ showFallback(vi,true); }
+        }
+      });
+    }catch(err){ showFallback(vi,true); }
+  });
+  // poll for near-complete watching
+  setInterval(()=>{
+    VIDEOS.forEach((v,vi)=>{
+      const pl=players[vi];
+      if(pl && !state.vw['v'+vi] && pl.getDuration && pl.getCurrentTime){
+        try{ const d=pl.getDuration(), t=pl.getCurrentTime();
+          if(d>0 && t/d>=0.9) unlockVideo(vi);
+        }catch(e){}
+      }
+    });
+  },1000);
+};
+
+function showFallback(vi,withLink){
+  if(state.vw['v'+vi]) return;
+  const n=document.getElementById('vnotice'+vi); if(!n) return;
+  if(document.getElementById('vfb'+vi)) return;
+  const btn=document.createElement('button'); btn.className='vfallback'; btn.id='vfb'+vi;
+  btn.textContent='Não conseguiu carregar o vídeo? Toque para liberar as questões';
+  btn.addEventListener('click',()=>unlockVideo(vi));
+  n.appendChild(btn);
+  if(withLink){
+    const a=document.createElement('a'); a.href='https://www.youtube.com/watch?v='+VIDEOS[vi].id;
+    a.target='_blank'; a.rel='noopener'; a.className='vfallback'; a.style.textAlign='center';
+    a.textContent='Abrir vídeo no YouTube ↗'; n.appendChild(a);
+  }
+}
+// if API never loads (no internet), offer fallback after 12s
+setTimeout(()=>{ if(!ytReady){ VIDEOS.forEach((v,vi)=>showFallback(vi,true)); } },12000);
+
+/* ===== PARTE 2 – DISCURSIVAS ===== */
+(function(){
+  const box=document.getElementById('discursivas');
+  DISCURSIVAS.forEach((item,i)=>{
+    const d=document.createElement('div'); d.className='q';
+    d.innerHTML=`<div class="qhead"><span class="num">${i+1}</span><span class="qtext">${item.t}<span class="qtag">${item.tag}</span></span></div>`;
+    const ta=document.createElement('textarea'); ta.placeholder="Digite sua resposta...";
+    ta.value=state.disc[i]||""; ta.addEventListener('input',()=>{state.disc[i]=ta.value; save();});
+    d.appendChild(ta); box.appendChild(d);
+  });
+})();
+
+/* ===== PARTE 3 – OBJETIVAS ===== */
+(function(){
+  const box=document.getElementById('objetivas');
+  OBJETIVAS.forEach((item,qi)=>{
+    const d=document.createElement('div'); d.className='q';
+    d.innerHTML=`<div class="qhead"><span class="num">${qi+1}</span><span class="qtext">${item.q}<span class="qtag">${item.tag}</span></span></div>`;
+    const opts=document.createElement('div'); opts.className='opts';
+    item.o.forEach((op,oi)=>{
+      const lab=document.createElement('label'); lab.className='opt';
+      const r=document.createElement('input'); r.type='radio'; r.name='obj'+qi; r.value=oi;
+      if(String(state.obj[qi])===String(oi)){ r.checked=true; lab.classList.add('sel'); }
+      r.addEventListener('change',()=>{ state.obj[qi]=oi; save();
+        opts.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); lab.classList.add('sel'); });
+      lab.appendChild(r);
+      const sp=document.createElement('span'); sp.innerHTML=`<span class="lt">${L[oi]})</span> ${op}`;
+      lab.appendChild(sp); opts.appendChild(lab);
+    });
+    d.appendChild(opts); box.appendChild(d);
+  });
+})();
+
+/* ===== PARTE 4 – CRUZADINHA ===== */
+const cwMap = {};
+(function buildCW(){
+  CW_WORDS.forEach(w=>{
+    for(let i=0;i<w.a.length;i++){
+      const r=w.dir==="V"?w.r+i:w.r, c=w.dir==="H"?w.c+i:w.c, k=r+","+c;
+      if(!cwMap[k]) cwMap[k]={letter:w.a[i], isKey:false};
+      if(w.dir==="V") cwMap[k].isKey=true;
+    }
+    const sk=w.r+","+w.c; cwMap[sk]=cwMap[sk]||{letter:w.a[0]}; cwMap[sk].num=w.n;
+  });
+  const t=document.createElement('table'); t.className='grid cw';
+  for(let r=0;r<CW_ROWS;r++){
+    const tr=document.createElement('tr');
+    for(let c=0;c<CW_COLS;c++){
+      const td=document.createElement('td'); const cell=cwMap[r+","+c];
+      if(cell){
+        td.classList.add('act'); if(cell.isKey) td.classList.add('key');
+        if(cell.num){ const n=document.createElement('span'); n.className='n'; n.textContent=cell.num; td.appendChild(n); }
+        const inp=document.createElement('input'); inp.maxLength=1; inp.dataset.k=r+","+c; inp.setAttribute('inputmode','text');
+        inp.value=state.cw[r+","+c]||"";
+        inp.addEventListener('input',()=>{ inp.value=inp.value.toUpperCase().replace(/[^A-ZÀ-Ú]/g,''); state.cw[r+","+c]=inp.value; save(); });
+        td.appendChild(inp);
+      }
+      tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  }
+  document.getElementById('crossword').appendChild(t);
+  const cl=document.getElementById('cwClues');
+  CW_WORDS.filter(w=>w.dir==="H").forEach(w=>{
+    const p=document.createElement('div'); p.className='clue'; p.innerHTML=`<b>${w.n}.</b> ${w.clue}`; cl.appendChild(p);
+  });
+  const key=CW_WORDS.find(w=>w.dir==="V");
+  document.getElementById('keyTip').innerHTML=`<b>${key.n}. Palavra-chave (vertical, em amarelo):</b> ${key.clue}`;
+})();
+
+/* ===== PARTE 5 – CAÇA-PALAVRAS ===== */
+const DIRS=[[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
+function genWS(){
+  for(let attempt=0;attempt<150;attempt++){
+    const g=Array.from({length:WS_N},()=>Array(WS_N).fill(""));
+    let ok=true;
+    for(const w of WS_WORDS){
+      let placed=false;
+      for(let tr=0;tr<500 && !placed;tr++){
+        const [dr,dc]=DIRS[(Math.random()*DIRS.length)|0];
+        const r0=(Math.random()*WS_N)|0, c0=(Math.random()*WS_N)|0;
+        const re=r0+dr*(w.length-1), ce=c0+dc*(w.length-1);
+        if(re<0||re>=WS_N||ce<0||ce>=WS_N) continue;
+        let good=true;
+        for(let i=0;i<w.length;i++){ const ch=g[r0+dr*i][c0+dc*i]; if(ch && ch!==w[i]){good=false;break;} }
+        if(!good) continue;
+        for(let i=0;i<w.length;i++){ g[r0+dr*i][c0+dc*i]=w[i]; }
+        placed=true;
+      }
+      if(!placed){ ok=false; break; }
+    }
+    if(ok){
+      const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      for(let r=0;r<WS_N;r++)for(let c=0;c<WS_N;c++) if(!g[r][c]) g[r][c]=A[(Math.random()*26)|0];
+      return g;
+    }
+  }
+  return null;
+}
+(function buildWS(){
+  if(!state.wsGrid){ state.wsGrid=genWS(); save(); }
+  const g=state.wsGrid;
+  const t=document.createElement('table'); t.className='grid ws';
+  for(let r=0;r<WS_N;r++){
+    const tr=document.createElement('tr');
+    for(let c=0;c<WS_N;c++){
+      const td=document.createElement('td'); td.textContent=g[r][c]; const k=r+","+c;
+      if(state.wsMarks[k]) td.classList.add('mark');
+      td.addEventListener('click',()=>{
+        if(state.wsMarks[k]){ delete state.wsMarks[k]; td.classList.remove('mark'); }
+        else { state.wsMarks[k]=1; td.classList.add('mark'); }
+        save();
+      });
+      tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  }
+  document.getElementById('wordsearch').appendChild(t);
+  const list=document.getElementById('wsList');
+  WS_WORDS.forEach((w,i)=>{
+    const chip=document.createElement('label'); chip.className='wchip'+(state.wsFound[i]?' done':'');
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!state.wsFound[i];
+    cb.addEventListener('change',()=>{ state.wsFound[i]=cb.checked?1:0; chip.classList.toggle('done',cb.checked); save(); });
+    chip.appendChild(cb); chip.appendChild(document.createTextNode(w)); list.appendChild(chip);
+  });
+})();
+
+["nome","turma","data"].forEach(id=>{
+  const el=document.getElementById(id); el.value=state[id]||"";
+  el.addEventListener('input',()=>{ state[id]=el.value; save(); });
+});
+
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  if(confirm("Apagar todas as respostas deste aparelho? A grade do caça-palavras e os vídeos assistidos serão mantidos.")){
+    const grid=state.wsGrid, vw=state.vw;
+    state={ nome:"",turma:"",data:"",vq:{},vw:vw,disc:{},obj:{},cw:{},wsMarks:{},wsFound:{},wsGrid:grid };
+    save(); location.reload();
+  }
+});
+
+/* ===== PDF ===== */
+document.getElementById('pdfBtn').addEventListener('click',generatePDF);
+function generatePDF(){
+  if(!window.jspdf){ alert("Não foi possível carregar o gerador de PDF. Conecte-se à internet e tente novamente."); return; }
+  const { jsPDF }=window.jspdf;
+  const doc=new jsPDF({unit:"mm",format:"a4"});
+  const M=14, PW=210, PH=297, RIGHT=PW-M, TW=PW-2*M;
+  let y=M;
+  const C={navy:[15,61,92], teal:[19,128,140], green:[30,122,70], amber:[244,161,0], ink:[24,39,46], muted:[91,107,115], line:[200,214,222], key:[253,238,203], mark:[210,238,240]};
+  function ensure(h){ if(y+h>PH-M){ doc.addPage(); y=M; } }
+  function setF(sz,style,col){ doc.setFont("helvetica",style||"normal"); doc.setFontSize(sz); const c=col||C.ink; doc.setTextColor(c[0],c[1],c[2]); }
+  function para(txt,sz,style,col,gap){ setF(sz,style,col); const lines=doc.splitTextToSize(txt,TW); ensure(lines.length*sz*0.42+(gap||0)); doc.text(lines,M,y); y+=lines.length*sz*0.42+(gap||1.5); }
+  function heading(tag,txt){ ensure(14); doc.setFillColor(C.teal[0],C.teal[1],C.teal[2]); doc.roundedRect(M,y-1,7,7,1.4,1.4,"F"); setF(11,"bold",[255,255,255]); doc.text(tag,M+3.5,y+3.9,{align:"center"}); setF(15,"bold",C.navy); doc.text(txt,M+11,y+4.2); y+=12; }
+
+  doc.setFillColor(C.navy[0],C.navy[1],C.navy[2]); doc.rect(0,0,PW,26,"F");
+  setF(9,"bold",C.amber); doc.text("PROCESSOS LOGÍSTICOS · AULAS 1 A 3",M,10);
+  setF(13.5,"bold",[255,255,255]); doc.text("Atividade: Logística, Cadeia de Suprimentos e Estratégia",M,18);
+  setF(8.5,"normal",[207,226,236]); doc.text("Com vídeos de revisão · Prof. Me Alex Ferreira Novaes",M,23);
+  y=34;
+  setF(10.5,"bold",C.navy);
+  doc.text(`Nome: ${state.nome||"__________________________"}`,M,y);
+  y+=6; doc.text(`Turma: ${state.turma||"____________"}      Data: ${state.data||"____________"}`,M,y);
+  y+=4; doc.setDrawColor(C.line[0],C.line[1],C.line[2]); doc.line(M,y,RIGHT,y); y+=8;
+
+  heading("1","Questões dos vídeos");
+  VIDEOS.forEach((v,vi)=>{
+    const status=state.vw['v'+vi]?"[assistido]":"[não assistido]";
+    para(`Vídeo ${vi+1} — ${v.title}  ${status}`,10.2,"bold",state.vw['v'+vi]?C.green:C.muted,1.2);
+    v.questions.forEach((qq,qj)=>{
+      para(`${qj+1}. ${qq.q}`,9.8,"bold",C.ink,1);
+      qq.o.forEach((op,oi)=>{
+        const sel=String(state.vq['v'+vi+'q'+qj])===String(oi);
+        para(`   ${sel?"[X]":"[  ]"} ${L[oi]}) ${op}`,9.4,sel?"bold":"normal",sel?C.teal:C.ink,0.6);
+      });
+      y+=1.5;
+    });
+    y+=2.5;
+  });
+
+  ensure(10); heading("2","Questões discursivas");
+  DISCURSIVAS.forEach((item,i)=>{
+    para(`${i+1}. [${item.tag}] ${item.t}`,10.5,"bold",C.navy,1.5);
+    const ans=(state.disc[i]||"").trim();
+    para(ans?ans:"(sem resposta)",10,"normal",ans?C.ink:C.muted,4);
+  });
+
+  ensure(10); heading("3","Questões objetivas");
+  OBJETIVAS.forEach((item,qi)=>{
+    para(`${qi+1}. [${item.tag}] ${item.q}`,10.5,"bold",C.navy,1.5);
+    item.o.forEach((op,oi)=>{
+      const sel=String(state.obj[qi])===String(oi);
+      para(`  ${sel?"[X]":"[  ]"} ${L[oi]}) ${op}`,9.8,sel?"bold":"normal",sel?C.teal:C.ink,0.8);
+    });
+    y+=3;
+  });
+
+  ensure(20); heading("4","Cruzadinha");
+  const cs=7, gx=M+(TW-CW_COLS*cs)/2, gy=y;
+  ensure(CW_ROWS*cs+6);
+  for(let r=0;r<CW_ROWS;r++)for(let c=0;c<CW_COLS;c++){
+    const cell=cwMap[r+","+c]; const x=gx+c*cs, yy=gy+r*cs;
+    if(cell){
+      doc.setFillColor(cell.isKey?C.key[0]:255,cell.isKey?C.key[1]:255,cell.isKey?C.key[2]:255);
+      doc.setDrawColor(120,140,150); doc.rect(x,yy,cs,cs,"FD");
+      if(cell.num){ setF(5,"bold",C.muted); doc.text(String(cell.num),x+0.7,yy+2); }
+      const ltr=(state.cw[r+","+c]||"").toUpperCase();
+      if(ltr){ setF(9,"bold",cell.isKey?[138,91,0]:C.navy); doc.text(ltr,x+cs/2,yy+cs/2+1.6,{align:"center"}); }
+    }
+  }
+  y=gy+CW_ROWS*cs+6;
+  para("Dicas:",9.5,"bold",C.navy,1);
+  CW_WORDS.filter(w=>w.dir==="H").forEach(w=>para(`${w.n}. ${w.clue}`,8.6,"normal",C.ink,0.5));
+  const kw=CW_WORDS.find(w=>w.dir==="V"); para(`${kw.n}. ${kw.clue}`,8.6,"bold",C.teal,3);
+
+  ensure(20); heading("5","Caça-palavras");
+  const ws=6.2, wx=M+(TW-WS_N*ws)/2, wy=y; const g=state.wsGrid;
+  ensure(WS_N*ws+6);
+  doc.setDrawColor(C.line[0],C.line[1],C.line[2]);
+  for(let r=0;r<WS_N;r++)for(let c=0;c<WS_N;c++){
+    const x=wx+c*ws, yy=wy+r*ws;
+    if(state.wsMarks[r+","+c]){ doc.setFillColor(C.mark[0],C.mark[1],C.mark[2]); doc.rect(x,yy,ws,ws,"FD"); }
+    else doc.rect(x,yy,ws,ws,"D");
+    setF(8.2,state.wsMarks[r+","+c]?"bold":"normal",C.ink); doc.text(g[r][c],x+ws/2,yy+ws/2+1.5,{align:"center"});
+  }
+  y=wy+WS_N*ws+6;
+  para("Palavras: "+WS_WORDS.map((w,i)=>(state.wsFound[i]?"[x] ":"[ ] ")+w).join("   "),9,"normal",C.ink,2);
+
+  const nm=(state.nome||"aluno").normalize("NFD").replace(/[^\w]+/g,"_").replace(/^_+|_+$/g,"") || "aluno";
+  doc.save(`Atividade_Logistica_Aulas1a3_${nm}.pdf`);
+}
+</script>
+</body>
+</html>
