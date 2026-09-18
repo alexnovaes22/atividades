@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complementação CH — 3º Trimestre · Encontro 1</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --tinta:#16233b; --tinta2:#3a4a68; --papel:#f4f6fb; --branco:#ffffff;
+    --linha:#d9e0ee; --acento:#1f6f6b; --acento2:#0f4f4b; --econ:#1d4e89;
+    --mkt:#7a2f6a; --caixa:#fbfcfe; --sombra:0 1px 2px rgba(20,35,59,.06),0 8px 24px rgba(20,35,59,.06);
+    --erro:#b23b3b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--tinta);
+    background:var(--papel);line-height:1.55;font-size:16px}
+  .wrap{max-width:920px;margin:0 auto;padding:24px 18px 96px}
+  header.top{background:linear-gradient(135deg,var(--tinta),#22345a);color:#fff;border-radius:16px;
+    padding:22px 24px;box-shadow:var(--sombra);position:relative;overflow:hidden}
+  header.top::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;
+    background:radial-gradient(circle,rgba(31,111,107,.45),transparent 70%)}
+  .kicker{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin:0 0 4px}
+  header.top h1{margin:0;font-size:23px;line-height:1.25}
+  header.top .sub{margin-top:8px;font-size:14px;opacity:.92}
+  .comp{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .comp span{font-size:12px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+    padding:4px 10px;border-radius:999px}
+
+  /* Abas / navegação de sessões */
+  .tabs{display:flex;gap:6px;overflow-x:auto;margin-top:16px;padding-bottom:4px;scrollbar-width:thin}
+  .tab{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:var(--branco);border:1px solid var(--linha);
+    border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;color:var(--tinta2);cursor:pointer;
+    white-space:nowrap;transition:.15s}
+  .tab .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+    background:#e7ecf6;color:var(--tinta2);font-size:12.5px;font-weight:800}
+  .tab:hover{border-color:#bfcbe2}
+  .tab.active{background:var(--acento);border-color:var(--acento);color:#fff}
+  .tab.active .n{background:rgba(255,255,255,.25);color:#fff}
+  .tab.done .n{background:var(--acento2);color:#fff}
+  .tab.done.active .n{background:rgba(255,255,255,.3)}
+  .progress{height:6px;background:#e2e8f4;border-radius:999px;margin-top:12px;overflow:hidden}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--acento),var(--acento2));width:0;transition:width .3s}
+
+  .panel{display:none;animation:fade .25s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .card{background:var(--branco);border:1px solid var(--linha);border-radius:14px;padding:20px 22px;
+    margin-top:18px;box-shadow:var(--sombra)}
+  .card h2{margin:0 0 4px;font-size:19px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .card h2 .badge{font-size:12px;font-weight:700;color:#fff;background:var(--acento);border-radius:8px;
+    padding:3px 9px;letter-spacing:.03em}
+  .card h2 .reler{margin-left:auto;font-size:12.5px;font-weight:700;background:#eef2f9;color:var(--tinta);
+    border:1px solid var(--linha);border-radius:999px;padding:5px 12px;cursor:pointer}
+  .card h2 .reler:hover{filter:brightness(.97)}
+  .sec-desc{color:var(--tinta2);font-size:14.5px;margin:2px 0 14px}
+  label.fld{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
+  input[type=text],textarea,select{width:100%;font:inherit;color:var(--tinta);background:var(--caixa);
+    border:1px solid var(--linha);border-radius:9px;padding:10px 12px;outline:none;transition:border .15s,box-shadow .15s}
+  input[type=text]:focus,textarea:focus,select:focus{border-color:var(--acento);box-shadow:0 0 0 3px rgba(31,111,107,.15)}
+  textarea{min-height:120px;resize:vertical}
+  .grid-names{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .meta-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .q{margin:0 0 18px}
+  .q:last-child{margin-bottom:0}
+  .q .qnum{font-weight:700;color:var(--econ)}
+  .caso{background:#f7f9fd;border:1px solid var(--linha);border-left:4px solid var(--tinta);border-radius:10px;
+    padding:14px 16px;font-size:15px}
+  .caso p{margin:0 0 10px}.caso p:last-child{margin:0}
+  .caso .titulo{font-weight:700;margin-bottom:8px;color:var(--tinta)}
+  .empresa{color:var(--acento2);font-weight:700}
+  /* Cruzadinha */
+  .cz-item{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--linha)}
+  .cz-item:last-child{border-bottom:none}
+  .cz-clue{flex:1 1 300px;font-size:14.5px}
+  .cz-clue b{color:var(--acento2)}
+  .cz-boxes{display:flex;gap:4px;flex-wrap:wrap}
+  .cz-boxes input{width:34px;height:38px;text-align:center;text-transform:uppercase;font-weight:700;
+    font-size:17px;padding:0;background:#fff;border:1.5px solid var(--tinta2);border-radius:6px}
+  /* Palavras cruzadas */
+  .xw-layout{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start}
+  @media(max-width:680px){.xw-layout{grid-template-columns:1fr}}
+  .xw-grid{display:grid;gap:2px;overflow:auto;padding-bottom:4px}
+  .xw-cell{width:32px;height:32px;position:relative}
+  .xw-cell.block{background:transparent}
+  .xw-cell input{width:32px;height:32px;text-align:center;text-transform:uppercase;font-weight:700;
+    font-size:16px;padding:0;border:1.4px solid var(--tinta2);border-radius:4px;background:#fff}
+  .xw-cell .cn{position:absolute;top:0;left:1px;font-size:9px;font-weight:700;color:var(--tinta2);z-index:2;line-height:1}
+  .xw-clues h4{margin:0 0 6px;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta2)}
+  .xw-clues ol{margin:0 0 14px;padding-left:22px}
+  .xw-clues li{font-size:14px;margin-bottom:5px}
+  .xw-clues li b{color:var(--acento2)}
+  /* Complete */
+  .bank{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;padding:12px;background:#f7f9fd;
+    border:1px dashed var(--linha);border-radius:10px}
+  .bank span{font-size:13px;font-weight:600;background:#fff;border:1px solid var(--linha);
+    border-radius:999px;padding:4px 12px;color:var(--acento2)}
+  .cp-item{margin:0 0 14px;font-size:15.5px;line-height:2.1}
+  .cp-item select{display:inline-block;width:auto;min-width:150px;margin:0 4px;padding:5px 8px;
+    vertical-align:middle;font-weight:600}
+  .cp-num{font-weight:700;color:var(--mkt);margin-right:4px}
+  /* Navegação inferior de cada sessão */
+  .navrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px}
+  .navrow .step-of{font-size:13px;color:var(--tinta2)}
+  /* Barra fixa de ações */
+  .actionbar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);
+    border-top:1px solid var(--linha);backdrop-filter:blur(6px);z-index:40}
+  .actionbar .inner{max-width:920px;margin:0 auto;padding:11px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .status{font-size:13px;color:var(--tinta2);flex:1 1 auto;min-width:140px}
+  .status b{color:var(--acento2)}
+  button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:11px 16px;cursor:pointer;transition:filter .15s,transform .05s}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  button:active:not(:disabled){transform:translateY(1px)}
+  .btn-primary{background:var(--acento);color:#fff}
+  .btn-primary:hover:not(:disabled){filter:brightness(1.07)}
+  .btn-ghost{background:#eef2f9;color:var(--tinta)}
+  .btn-ghost:hover:not(:disabled){filter:brightness(.97)}
+  .note{font-size:13px;color:var(--tinta2);margin-top:10px}
+  .req::after{content:" *";color:var(--erro)}
+  dialog{border:none;border-radius:14px;padding:0;max-width:600px;width:92%;box-shadow:0 20px 60px rgba(20,35,59,.35)}
+  dialog::backdrop{background:rgba(20,35,59,.45)}
+  .dlg{padding:22px 24px}
+  .dlg h3{margin:0 0 8px}
+  .codebox{width:100%;min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;
+    word-break:break-all;background:#0f1b30;color:#8fe3d6;border-radius:8px;padding:12px;border:none;resize:vertical}
+  .dlg .row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  @media print{.actionbar,.no-print,.tabs,.progress{display:none!important}.panel{display:block!important}.navrow{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">Complementação de Carga Horária · 3º Trimestre</p>
+    <h1>Encontro 1 — Cenário Econômico e Mudança Organizacional</h1>
+    <div class="sub">Atividade interdisciplinar · uma sessão por vez. Use as abas ou os botões Anterior/Próximo.</div>
+    <div class="comp">
+      <span>📈 Princípios Econômicos</span>
+      <span>👥 Recursos Humanos</span>
+      <span>🎯 Estratégias de Marketing</span>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="progress"><i id="progbar"></i></div>
+  </header>
+
+  <!-- SESSÃO 0 — IDENTIFICAÇÃO -->
+  <div class="panel" data-step="0">
+    <section class="card">
+      <h2><span class="badge">Sessão 1</span> Identificação</h2>
+      <p class="sec-desc">Preencha os nomes de quem realizou a atividade (individual ou até 5 integrantes).</p>
+      <div class="grid-names">
+        <div><label class="fld req">Integrante 1</label><input type="text" id="integrante_0" placeholder="Nome completo"></div>
+        <div><label class="fld">Integrante 2</label><input type="text" id="integrante_1" placeholder="Nome completo"></div>
+        <div><label class="fld">Integrante 3</label><input type="text" id="integrante_2" placeholder="Nome completo"></div>
+        <div><label class="fld">Integrante 4</label><input type="text" id="integrante_3" placeholder="Nome completo"></div>
+        <div><label class="fld">Integrante 5</label><input type="text" id="integrante_4" placeholder="Nome completo"></div>
+      </div>
+      <div class="meta-row">
+        <div><label class="fld">Turma</label><input type="text" id="turma" placeholder="Ex.: 3º ano — Técnico"></div>
+        <div><label class="fld">Data</label><input type="text" id="data" placeholder="__/__/____"></div>
+      </div>
+      <div class="navrow no-print">
+        <span></span><span class="step-of"></span>
+        <button class="btn-primary" data-next>Próximo ▶</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- SESSÃO 1 — ESTUDO DE CASO -->
+  <div class="panel" data-step="1">
+    <section class="card">
+      <h2><span class="badge">Sessão 2</span> Estudo de caso</h2>
+      <p class="sec-desc">Leia com atenção. As próximas sessões se apoiam nesta situação.</p>
+      <div class="caso" id="caso-fonte">
+        <div class="titulo">A virada de preço da <span class="empresa">Aurora Lar</span></div>
+        <p>A <span class="empresa">Aurora Lar</span> é uma rede regional de lojas de móveis e eletrodomésticos com sete unidades no norte do Paraná. Boa parte de suas vendas acontece de forma parcelada, no crediário e no cartão.</p>
+        <p>Ao longo do último semestre, o Copom elevou a taxa <b>SELIC</b> para conter uma inflação persistente. O crédito ficou mais caro, as parcelas subiram e o poder de compra das famílias encolheu. Nas lojas, os clientes passaram a comparar preços com muito mais cuidado, adiar compras de maior valor e migrar para produtos mais baratos — em alguns casos, desistindo da compra ao ver o valor final financiado.</p>
+        <p>Diante da queda nas vendas, a direção decidiu <b>reposicionar</b> a marca: revisar o mix de produtos para incluir opções mais acessíveis, lançar a campanha “Cabe no seu orçamento” e renegociar prazos com fornecedores. Para isso, a equipe de vendas precisaria adotar novas metas, um novo discurso comercial (venda consultiva) e passar por treinamento.</p>
+        <p>Internamente, porém, surgiu forte <b>resistência</b>. Vendedores mais experientes reclamaram das novas metas, circularam boatos de demissão e o clima ficou tenso. Muitos diziam preferir “o jeito de antes”. A direção percebeu que, sem conduzir bem a <b>mudança</b> e engajar as pessoas, o reposicionamento no mercado não se sustentaria.</p>
+      </div>
+      <div class="navrow no-print">
+        <button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span>
+        <button class="btn-primary" data-next>Próximo ▶</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- SESSÃO 2 — QUESTIONÁRIO -->
+  <div class="panel" data-step="2">
+    <section class="card">
+      <h2><span class="badge">Sessão 3</span> Questionário dissertativo <button class="reler" onclick="abrirCaso()">📄 Reler o caso</button></h2>
+      <p class="sec-desc">Responda com suas palavras, relacionando os conceitos ao caso da Aurora Lar. Cinco questões.</p>
+      <div class="q"><label class="fld"><span class="qnum">1.</span> (Econômico) Explique como a elevação da <b>SELIC</b> e a <b>inflação</b> afetam o poder de compra dos clientes da Aurora Lar e a demanda por produtos financiados.</label><textarea id="diss_0" placeholder="Sua resposta..."></textarea></div>
+      <div class="q"><label class="fld"><span class="qnum">2.</span> (Marketing) Analise a <b>sensibilidade de preço</b> dos consumidores nesse cenário e proponha uma estratégia de <b>reposicionamento de mercado</b> adequada ao momento de crise.</label><textarea id="diss_1" placeholder="Sua resposta..."></textarea></div>
+      <div class="q"><label class="fld"><span class="qnum">3.</span> (RH) Identifique as principais fontes de <b>resistência organizacional</b> da equipe de vendas e explique por que elas se intensificam em cenários de <b>incerteza econômica</b>.</label><textarea id="diss_2" placeholder="Sua resposta..."></textarea></div>
+      <div class="q"><label class="fld"><span class="qnum">4.</span> (RH / Gestão) Descreva <b>duas ações de gestão da mudança</b> que a direção poderia adotar para reduzir a resistência e engajar a equipe no reposicionamento.</label><textarea id="diss_3" placeholder="Sua resposta..."></textarea></div>
+      <div class="q"><label class="fld"><span class="qnum">5.</span> (Integradora) Relacione as três dimensões — decisão <b>econômica</b> (macro), <b>marketing</b> (reposicionamento) e <b>RH</b> (gestão da mudança). Por que elas precisam estar alinhadas para a empresa superar a crise?</label><textarea id="diss_4" placeholder="Sua resposta..."></textarea></div>
+      <div class="navrow no-print">
+        <button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span>
+        <button class="btn-primary" data-next>Próximo ▶</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- SESSÃO 3 — CRUZADINHA -->
+  <div class="panel" data-step="3">
+    <section class="card">
+      <h2><span class="badge">Sessão 4</span> Cruzadinha <button class="reler" onclick="abrirCaso()">📄 Reler o caso</button></h2>
+      <p class="sec-desc">Escreva a palavra correspondente a cada definição, uma letra por quadrinho.</p>
+      <div id="cz-list"></div>
+      <div class="navrow no-print">
+        <button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span>
+        <button class="btn-primary" data-next>Próximo ▶</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- SESSÃO 4 — PALAVRAS CRUZADAS -->
+  <div class="panel" data-step="4">
+    <section class="card">
+      <h2><span class="badge">Sessão 5</span> Palavras cruzadas <button class="reler" onclick="abrirCaso()">📄 Reler o caso</button></h2>
+      <p class="sec-desc">Preencha a grade usando as pistas de <b>Horizontais</b> e <b>Verticais</b>. As palavras se cruzam.</p>
+      <div class="xw-layout">
+        <div id="xw-grid" class="xw-grid" aria-label="Grade de palavras cruzadas"></div>
+        <div class="xw-clues">
+          <h4>Horizontais →</h4><ol id="xw-across"></ol>
+          <h4>Verticais ↓</h4><ol id="xw-down"></ol>
+        </div>
+      </div>
+      <div class="navrow no-print">
+        <button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span>
+        <button class="btn-primary" data-next>Próximo ▶</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- SESSÃO 5 — COMPLETE -->
+  <div class="panel" data-step="5">
+    <section class="card">
+      <h2><span class="badge">Sessão 6</span> Complete <button class="reler" onclick="abrirCaso()">📄 Reler o caso</button></h2>
+      <p class="sec-desc">Escolha, no banco de palavras, o termo que completa corretamente cada lacuna.</p>
+      <div class="bank" id="cp-bank"></div>
+      <div id="cp-list"></div>
+      <p class="note">Terminou todas as sessões? Clique em <b>Concluir e salvar em PDF</b> e envie o arquivo no Google Classroom.</p>
+      <div class="navrow no-print">
+        <button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span>
+        <button class="btn-primary" onclick="gerarPDF()">✅ Concluir e salvar em PDF</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="actionbar no-print">
+  <div class="inner">
+    <div class="status" id="status">Rascunho salvo automaticamente neste navegador.</div>
+    <button class="btn-ghost" onclick="baixarRespostas()">⬇️ Baixar respostas (.txt)</button>
+    <button class="btn-primary" onclick="gerarPDF()">📄 Salvar em PDF</button>
+  </div>
+</div>
+
+<!-- Modal: reler o caso -->
+<dialog id="dlg-caso">
+  <div class="dlg">
+    <h3>📄 Estudo de caso</h3>
+    <div class="caso" id="caso-modal" style="margin-top:6px"></div>
+    <div class="row"><button class="btn-primary" onclick="document.getElementById('dlg-caso').close()">Fechar</button></div>
+  </div>
+</dialog>
+
+<!-- Modal: PDF gerado -->
+<dialog id="dlg">
+  <div class="dlg">
+    <h3>✅ PDF gerado</h3>
+    <p style="margin:.2em 0 0;font-size:14.5px;color:var(--tinta2)">
+      O download do PDF começou. Envie esse PDF no <b>Google Classroom</b>.<br>
+      O código abaixo já está incluído no final do PDF. Se o(a) professor(a) pedir, ele está aqui:
+    </p>
+    <textarea class="codebox" id="dlg-code" readonly></textarea>
+    <div class="row">
+      <button class="btn-ghost" onclick="copiarCodigo()">Copiar código</button>
+      <button class="btn-primary" onclick="document.getElementById('dlg').close()">Fechar</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* ====== DADOS DA ATIVIDADE (SEM GABARITO) ====== */
+const VERSAO = "ENC1-v1";
+
+const CRUZADINHA = [
+  {n:1, len:5,  clue:"Taxa básica de juros definida pelo Copom."},
+  {n:2, len:8,  clue:"Aumento generalizado e contínuo dos preços."},
+  {n:3, len:5,  clue:"Custo do dinheiro no tempo; encarece o crédito."},
+  {n:4, len:11, clue:"Reação de oposição dos colaboradores diante do novo."},
+  {n:5, len:9,  clue:"Falta de previsibilidade que marca o cenário de crise."},
+  {n:6, len:10, clue:"Conjunto das condições macroeconômicas de um período."},
+  {n:7, len:5,  clue:"Variável de marketing à qual o consumidor fica sensível na crise."},
+  {n:8, len:16, clue:"Ajuste da posição e da imagem da marca no mercado."},
+  {n:9, len:7,  clue:"Processo de conduzir transformações na organização."},
+  {n:10,len:7,  clue:"Quantidade de bens que o mercado deseja comprar."}
+];
+
+const CRUZADAS = {
+  rows:14, cols:10,
+  cellNumbers:[{row:0,col:4,num:1},{row:1,col:3,num:2},{row:3,col:6,num:3},{row:4,col:2,num:4},{row:4,col:9,num:5},{row:5,col:0,num:6},{row:7,col:2,num:7},{row:9,col:3,num:8},{row:9,col:5,num:9},{row:12,col:1,num:10}],
+  entries:[
+    {num:1,dir:"down",  row:0,col:4,len:6,clue:"___ da mudança: conduzir a transformação reduzindo resistência."},
+    {num:2,dir:"across",row:1,col:3,len:7,clue:"Quantidade de bens que o mercado deseja comprar; cai com juros altos."},
+    {num:3,dir:"down",  row:3,col:6,len:7,clue:"Ambiente onde a empresa precisa se reposicionar na crise."},
+    {num:4,dir:"down",  row:4,col:2,len:5,clue:"Taxa básica de juros definida pelo Copom."},
+    {num:5,dir:"down",  row:4,col:9,len:5,clue:"Encarecem o crédito quando sobem, reduzindo o consumo financiado."},
+    {num:6,dir:"across",row:5,col:0,len:5,clue:"Variável de marketing à qual o consumidor fica mais sensível na crise."},
+    {num:7,dir:"across",row:7,col:2,len:8,clue:"Aumento generalizado e contínuo dos preços; corrói o poder de compra."},
+    {num:8,dir:"across",row:9,col:3,len:5,clue:"Percepção do cliente que justifica pagar por um produto."},
+    {num:9,dir:"down",  row:9,col:5,len:5,clue:"Quem conduz e engaja a equipe durante a mudança."},
+    {num:10,dir:"across",row:12,col:1,len:5,clue:"Momento de incerteza econômica vivido pela empresa do caso."}
+  ]
+};
+
+const BANCO = ["SELIC","INFLAÇÃO","PODER DE COMPRA","JUROS","DEMANDA","PREÇO","REPOSICIONAMENTO","RESISTÊNCIA","MUDANÇA","INCERTEZA"];
+const COMPLETE = [
+  [{t:"Quando o Copom eleva a "},{b:0},{t:", o crédito no país tende a ficar mais caro."}],
+  [{t:"A alta da "},{b:1},{t:" reduz o "},{b:2},{t:" das famílias, que compram menos com a mesma renda."}],
+  [{t:"Com "},{b:3},{t:" mais altos, a "},{b:4},{t:" por bens financiados costuma cair."}],
+  [{t:"Na crise, o consumidor fica mais sensível ao "},{b:5},{t:", o que pode exigir o "},{b:6},{t:" da empresa no mercado."}],
+  [{t:"A equipe de vendas demonstrou "},{b:7},{t:" diante da "},{b:8},{t:" proposta pela direção."}],
+  [{t:"O clima de "},{b:9},{t:" econômica intensifica a insegurança dos colaboradores."}]
+];
+const N_BLANKS = 10;
+
+/* ====== RENDERIZAÇÃO ====== */
+function el(tag, attrs={}, html){const e=document.createElement(tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(html!=null)e.innerHTML=html;return e;}
+
+// Cruzadinha
+const czList=document.getElementById('cz-list');
+CRUZADINHA.forEach(item=>{
+  const row=el('div',{class:'cz-item'});
+  row.appendChild(el('div',{class:'cz-clue'},`<b>${item.n}.</b> ${item.clue}`));
+  const boxes=el('div',{class:'cz-boxes'});
+  for(let i=0;i<item.len;i++){
+    const inp=el('input',{type:'text',maxlength:'1','data-cz':item.n,'data-i':i,'aria-label':`Letra ${i+1}`});
+    inp.addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase();if(e.target.value){const nx=boxes.children[i+1];if(nx)nx.focus();}saveDraft();});
+    boxes.appendChild(inp);
+  }
+  row.appendChild(boxes);
+  czList.appendChild(row);
+});
+
+// Palavras cruzadas
+(function(){
+  const fill=Array.from({length:CRUZADAS.rows},()=>Array(CRUZADAS.cols).fill(false));
+  CRUZADAS.entries.forEach(e=>{const dr=e.dir==='down'?1:0,dc=e.dir==='across'?1:0;for(let i=0;i<e.len;i++)fill[e.row+dr*i][e.col+dc*i]=true;});
+  const numMap={};CRUZADAS.cellNumbers.forEach(c=>numMap[c.row+'_'+c.col]=c.num);
+  const g=document.getElementById('xw-grid');
+  g.style.gridTemplateColumns=`repeat(${CRUZADAS.cols}, 32px)`;
+  for(let r=0;r<CRUZADAS.rows;r++)for(let c=0;c<CRUZADAS.cols;c++){
+    const cell=el('div',{class:'xw-cell'+(fill[r][c]?'':' block')});
+    if(fill[r][c]){
+      if(numMap[r+'_'+c]!=null)cell.appendChild(el('span',{class:'cn'},numMap[r+'_'+c]));
+      const inp=el('input',{type:'text',maxlength:'1','data-xw':r+'_'+c,'aria-label':`Célula ${r+1},${c+1}`});
+      inp.addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase();saveDraft();});
+      cell.appendChild(inp);
+    }
+    g.appendChild(cell);
+  }
+  const across=CRUZADAS.entries.filter(e=>e.dir==='across').sort((a,b)=>a.num-b.num);
+  const down=CRUZADAS.entries.filter(e=>e.dir==='down').sort((a,b)=>a.num-b.num);
+  const oa=document.getElementById('xw-across'),od=document.getElementById('xw-down');
+  across.forEach(e=>oa.appendChild(el('li',{value:e.num},`<b>${e.num}.</b> ${e.clue} <i>(${e.len})</i>`)));
+  down.forEach(e=>od.appendChild(el('li',{value:e.num},`<b>${e.num}.</b> ${e.clue} <i>(${e.len})</i>`)));
+})();
+
+// Complete
+(function(){
+  const bankEl=document.getElementById('cp-bank');
+  BANCO.forEach(w=>bankEl.appendChild(el('span',{},w)));
+  const list=document.getElementById('cp-list');
+  COMPLETE.forEach((sent,si)=>{
+    const p=el('div',{class:'cp-item'});
+    p.appendChild(el('span',{class:'cp-num'},(si+1)+'.'));
+    sent.forEach(part=>{
+      if(part.t!=null){p.appendChild(document.createTextNode(part.t));}
+      else{
+        const sel=el('select',{'data-cp':part.b,'aria-label':`Lacuna ${part.b+1}`});
+        sel.appendChild(el('option',{value:''},'— escolha —'));
+        BANCO.forEach(w=>sel.appendChild(el('option',{value:w},w)));
+        sel.addEventListener('change',saveDraft);
+        p.appendChild(sel);
+      }
+    });
+    list.appendChild(p);
+  });
+})();
+
+/* ====== NAVEGAÇÃO POR SESSÕES ====== */
+const PANELS=[...document.querySelectorAll('.panel')];
+const TAB_LABELS=["Identificação","Caso","Questionário","Cruzadinha","Palavras cruzadas","Complete"];
+const TOTAL=PANELS.length;
+let stepAtual=0;const visitadas=new Set([0]);
+const tabsEl=document.getElementById('tabs');
+TAB_LABELS.forEach((lbl,i)=>{
+  const t=el('div',{class:'tab',role:'button','data-tab':i},`<span class="n">${i+1}</span> ${lbl}`);
+  t.addEventListener('click',()=>irPara(i));
+  tabsEl.appendChild(t);
+});
+function irPara(i){
+  if(i<0||i>=TOTAL)return;
+  stepAtual=i;visitadas.add(i);
+  PANELS.forEach((p,k)=>p.classList.toggle('active',k===i));
+  [...tabsEl.children].forEach((t,k)=>{t.classList.toggle('active',k===i);t.classList.toggle('done',visitadas.has(k)&&k!==i);});
+  document.getElementById('progbar').style.width=(((i+1)/TOTAL)*100)+'%';
+  document.querySelectorAll('.step-of').forEach(s=>s.textContent='Sessão '+(i+1)+' de '+TOTAL);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>irPara(stepAtual+1)));
+document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click',()=>irPara(stepAtual-1)));
+
+// Reler o caso (modal)
+function abrirCaso(){
+  document.getElementById('caso-modal').innerHTML=document.getElementById('caso-fonte').innerHTML;
+  document.getElementById('dlg-caso').showModal();
+}
+
+/* ====== AUTOSAVE (localStorage) ====== */
+const LSKEY='aurora_enc1_v1';
+function coletar(){
+  const integrantes=[];for(let i=0;i<5;i++)integrantes.push(document.getElementById('integrante_'+i).value.trim());
+  const diss=[];for(let i=0;i<5;i++)diss.push(document.getElementById('diss_'+i).value);
+  const cz={};document.querySelectorAll('[data-cz]').forEach(inp=>{const n=inp.getAttribute('data-cz'),i=+inp.getAttribute('data-i');cz[n]=cz[n]||[];cz[n][i]=(inp.value||'').toUpperCase();});
+  Object.keys(cz).forEach(n=>cz[n]=(cz[n].join('')));
+  const xw={};document.querySelectorAll('[data-xw]').forEach(inp=>{if(inp.value)xw[inp.getAttribute('data-xw')]=inp.value.toUpperCase();});
+  const cp=[];for(let i=0;i<N_BLANKS;i++)cp[i]=(document.querySelector(`[data-cp="${i}"]`)||{}).value||'';
+  return {v:VERSAO,meta:{integrantes,turma:document.getElementById('turma').value.trim(),data:document.getElementById('data').value.trim()},diss,cz,xw,cp};
+}
+let saveT;
+function saveDraft(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(LSKEY,JSON.stringify(coletar()));const s=document.getElementById('status');s.innerHTML='Rascunho salvo <b>'+new Date().toLocaleTimeString('pt-BR')+'</b> · continua salvo neste navegador.';}catch(e){}},400);}
+function restaurar(){
+  let d;try{d=JSON.parse(localStorage.getItem(LSKEY));}catch(e){}if(!d)return;
+  (d.meta?.integrantes||[]).forEach((v,i)=>{const e=document.getElementById('integrante_'+i);if(e)e.value=v||'';});
+  if(d.meta){document.getElementById('turma').value=d.meta.turma||'';document.getElementById('data').value=d.meta.data||'';}
+  (d.diss||[]).forEach((v,i)=>{const e=document.getElementById('diss_'+i);if(e)e.value=v||'';});
+  if(d.cz)Object.keys(d.cz).forEach(n=>{const w=d.cz[n]||'';for(let i=0;i<w.length;i++){const inp=document.querySelector(`[data-cz="${n}"][data-i="${i}"]`);if(inp)inp.value=w[i];}});
+  if(d.xw)Object.keys(d.xw).forEach(k=>{const inp=document.querySelector(`[data-xw="${k}"]`);if(inp)inp.value=d.xw[k];});
+  (d.cp||[]).forEach((v,i)=>{const s=document.querySelector(`[data-cp="${i}"]`);if(s)s.value=v||'';});
+}
+document.querySelectorAll('input,textarea').forEach(e=>e.addEventListener('input',saveDraft));
+restaurar();
+irPara(0);
+
+/* ====== CÓDIGO DE ENTREGA ====== */
+function encode(obj){return VERSAO+"."+btoa(unescape(encodeURIComponent(JSON.stringify(obj))));}
+function baixarRespostas(){
+  const code=encode(coletar());
+  const blob=new Blob([code],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='Encontro1_respostas_'+(slugNome())+'.txt';a.click();
+}
+function copiarCodigo(){const t=document.getElementById('dlg-code');t.select();document.execCommand('copy');}
+function slugNome(){const n=(document.getElementById('integrante_0').value||'aluno').trim().split(/\s+/)[0];return n.normalize('NFD').replace(/[^\w]/g,'')||'aluno';}
+
+/* ====== EXPORTAR PDF (jsPDF, texto) ====== */
+function gerarPDF(){
+  const dados=coletar();
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'a4'});
+  const M=48,W=595-M*2;let y=0;const H=842;
+  const tinta=[22,35,59],cinza=[90,105,130],ac=[15,79,75];
+  function novaPagina(){doc.addPage();y=M;rodape();}
+  function rodape(){doc.setFontSize(8);doc.setTextColor(150);doc.text('Complementação CH · 3º Trimestre — Encontro 1',M,H-24);doc.text('pág. '+doc.getNumberOfPages(),595-M,H-24,{align:'right'});doc.setTextColor(0);}
+  function precisa(h){if(y+h>H-40)novaPagina();}
+  function titulo(txt){precisa(30);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...ac);doc.text(txt,M,y);y+=6;doc.setDrawColor(210);doc.line(M,y,M+W,y);y+=14;doc.setTextColor(0);}
+  function paragrafo(txt,opt={}){doc.setFont('helvetica',opt.bold?'bold':'normal');doc.setFontSize(opt.size||10.5);doc.setTextColor(...(opt.color||[30,30,30]));const linhas=doc.splitTextToSize(txt,opt.w||W);linhas.forEach(l=>{precisa(15);doc.text(l,(opt.x||M),y);y+=(opt.lh||14);});doc.setTextColor(0);}
+  function espaco(h){y+=(h||8);}
+
+  y=M;doc.setFillColor(22,35,59);doc.rect(0,0,595,74,'F');
+  doc.setTextColor(255);doc.setFont('helvetica','bold');doc.setFontSize(15);
+  doc.text('Encontro 1 — Cenário Econômico e Mudança Organizacional',M,38);
+  doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(210,220,235);
+  doc.text('Complementação de Carga Horária · 3º Trimestre  ·  Econômico + RH + Marketing',M,56);
+  doc.setTextColor(0);y=98;
+
+  titulo('Identificação');
+  const nomes=dados.meta.integrantes.filter(Boolean);
+  paragrafo('Integrantes: '+(nomes.length?nomes.join('  ·  '):'—'),{bold:true});
+  paragrafo('Turma: '+(dados.meta.turma||'—')+'      Data: '+(dados.meta.data||'—'),{color:cinza,size:10});
+  espaco(6);
+
+  titulo('Parte B — Questionário dissertativo');
+  const perguntas=[
+    '1. (Econômico) SELIC e inflação × poder de compra e demanda financiada.',
+    '2. (Marketing) Sensibilidade de preço e reposicionamento de mercado.',
+    '3. (RH) Fontes de resistência e incerteza econômica.',
+    '4. (RH/Gestão) Duas ações de gestão da mudança.',
+    '5. (Integradora) Alinhamento entre Econômico, Marketing e RH.'
+  ];
+  dados.diss.forEach((resp,i)=>{
+    precisa(40);
+    paragrafo(perguntas[i],{bold:true,size:10.5,color:tinta});
+    paragrafo(resp&&resp.trim()?resp.trim():'(em branco)',{size:10.5,color:resp&&resp.trim()?[30,30,30]:[170,170,170]});
+    espaco(8);
+  });
+
+  titulo('Parte C — Cruzadinha (respostas)');
+  CRUZADINHA.forEach(it=>{precisa(16);paragrafo(it.n+'. '+(dados.cz[it.n]||'—'),{size:10.5});});
+  espaco(6);
+
+  titulo('Parte D — Palavras cruzadas (respostas por pista)');
+  CRUZADAS.entries.slice().sort((a,b)=>a.num-b.num||(a.dir>b.dir?1:-1)).forEach(e=>{
+    const dr=e.dir==='down'?1:0,dc=e.dir==='across'?1:0;let w='';
+    for(let i=0;i<e.len;i++)w+=(dados.xw[(e.row+dr*i)+'_'+(e.col+dc*i)]||'·');
+    precisa(15);paragrafo(e.num+' '+(e.dir==='across'?'H':'V')+'.  '+w,{size:10.5});
+  });
+  espaco(6);
+
+  titulo('Parte E — Complete (respostas)');
+  dados.cp.forEach((v,i)=>{precisa(15);paragrafo('Lacuna '+(i+1)+': '+(v||'—'),{size:10.5});});
+  espaco(10);
+
+  precisa(60);
+  titulo('Código de entrega (para correção)');
+  paragrafo('Não altere este código. Ele permite a correção pelo(a) professor(a).',{color:cinza,size:9});
+  const code=encode(dados);
+  doc.setFont('courier','normal');doc.setFontSize(7.5);doc.setTextColor(60,60,60);
+  doc.splitTextToSize(code,W).forEach(l=>{precisa(10);doc.text(l,M,y);y+=9.5;});
+  doc.setTextColor(0);
+
+  doc.save('Encontro1_'+slugNome()+'.pdf');
+  document.getElementById('dlg-code').value=code;
+  document.getElementById('dlg').showModal();
+}
+</script>
+</body>
+</html>
