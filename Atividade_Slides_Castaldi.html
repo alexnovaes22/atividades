@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atividade: Dicas de Apresentações Profissionais — Uso de Slides — Informática Empresarial</title>
+<style>
+:root{--ink:#1d2430;--muted:#5b6575;--line:#c9d1dc;--blue:#1f4e79;--blue2:#e8f0f8;--cell:#fff2cc;--found:#ffd966;--ok:#2e7d32;--paper:#ffffff;--bg:#eef1f5}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",Roboto,Arial,sans-serif;padding-bottom:110px}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+.guide{background:var(--blue);color:#fff;border-radius:10px;padding:14px 18px;margin-bottom:16px}
+.guide h2{margin:0 0 6px;font-size:17px}
+.guide ol{margin:0;padding-left:20px;font-size:15px}
+.pg{background:var(--paper);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.12);padding:32px 36px;margin-bottom:20px}
+.head{text-align:center;margin-bottom:12px}
+.head .school{font-weight:700;font-size:18px;letter-spacing:.2px}
+.head .disc{color:var(--muted);font-size:15px}
+.idbox{display:grid;grid-template-columns:2fr 1fr;border:1.5px solid var(--ink);margin:10px 0 14px}
+.idbox label{display:flex;align-items:center;gap:6px;padding:6px 10px;font-weight:700;font-size:14px;border-bottom:1px solid var(--ink)}
+.idbox label:nth-child(odd){border-right:1px solid var(--ink)}
+.idbox label:nth-last-child(-n+2){border-bottom:0}
+.idbox input{flex:1;min-width:0;border:0;border-bottom:1px dashed var(--line);font:inherit;font-weight:400;padding:2px 4px;background:transparent}
+.title{color:var(--blue);text-align:center;font-size:21px;margin:6px 0 14px}
+h3{font-size:17px;margin:18px 0 4px}
+.inst{font-style:italic;color:var(--muted);font-size:14px;margin:0 0 10px}
+.scroll{overflow-x:auto;padding-bottom:4px}
+/* cruzadinha */
+table.cw{border-collapse:collapse;margin:0 auto}
+table.cw td{width:34px;height:34px;padding:0;position:relative}
+table.cw td.w{border:1.5px solid var(--ink);background:#fff}
+table.cw td .n{position:absolute;top:1px;left:2px;font-size:9px;font-weight:700;line-height:1;pointer-events:none}
+table.cw input{width:100%;height:100%;border:0;text-align:center;font:700 17px Arial,sans-serif;text-transform:uppercase;background:transparent;padding:0;caret-color:var(--blue)}
+table.cw input:focus{outline:none;background:var(--blue2)}
+table.cw td.hl{background:#f3f8fd}
+table.cw td.ok{background:#e3f4e5}
+table.cw td.ok input{color:#2e7d32;cursor:default}
+table.cw td.err{background:#fde0de;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+@media (prefers-reduced-motion:reduce){table.cw td.err{animation:none}}
+.cwinfo{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin:0 0 8px;font-size:14px}
+.cwinfo b{color:var(--ok)}
+.cwmsg{color:#b3261e;font-weight:600;min-height:21px}
+.clues{display:grid;grid-template-columns:1fr 1fr;gap:4px 28px;margin-top:14px;font-size:14px}
+.clues h4{margin:0 0 4px;font-size:15px}
+.clues p{margin:0 0 3px}
+/* caça-palavras */
+.ws{display:grid;gap:0;margin:0 auto;width:max-content;border:1.5px solid var(--ink);touch-action:none;user-select:none;-webkit-user-select:none}
+.ws div{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font:600 16px Arial,sans-serif;border:.5px solid var(--line);cursor:pointer}
+.ws div.sel{background:#bcd7f0}
+.ws div.f{background:var(--found);font-weight:800}
+.wl{display:grid;grid-template-columns:repeat(5,1fr);gap:2px 10px;margin:12px 0 0;font-size:14px}
+.wl span.done{text-decoration:line-through;color:var(--ok);font-weight:700}
+.wsmsg{text-align:center;font-size:14px;color:var(--muted);min-height:21px;margin:6px 0 0}
+/* completar */
+.fill p{margin:0 0 12px}
+.fill input{border:0;border-bottom:1.5px solid var(--ink);font:inherit;width:170px;padding:0 4px;text-align:center;background:#fafcff}
+.bank{border:1.5px solid var(--ink);padding:6px 10px;font-size:14px;margin-bottom:10px}
+/* planilha */
+table.sh{border-collapse:collapse;margin:0 auto;font:14px Arial,sans-serif}
+table.sh th{background:#e7e6e6;color:#595959;font-weight:400;border:1px solid #a6a6a6;padding:2px 6px;font-size:12px}
+table.sh td{border:1px solid #a6a6a6;padding:3px 6px;height:28px;min-width:84px;text-align:right}
+table.sh td.txt{text-align:left;min-width:150px}
+table.sh td.in{background:var(--cell);padding:0}
+table.sh td.in input{width:84px;height:28px;border:0;background:transparent;text-align:right;font:700 14px Arial,sans-serif;padding:0 6px}
+.q{margin:14px 0 0}
+.q p{margin:0 0 4px}
+.q textarea{width:100%;min-height:58px;border:1px solid var(--line);border-radius:4px;font:inherit;font-size:15px;padding:6px 8px;resize:vertical;background:#fafcff}
+.q .sub{display:flex;gap:8px;align-items:center;margin:4px 0 4px 18px;font-size:15px;flex-wrap:wrap}
+.q .sub input{flex:1;min-width:180px;border:0;border-bottom:1.5px solid var(--ink);font:inherit;padding:0 4px;background:#fafcff}
+code{font:700 14px Consolas,monospace;background:#f1f3f6;padding:0 4px;border-radius:3px}
+/* barra de ações */
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -2px 8px rgba(0,0,0,.06);z-index:10}
+.bar .in{max-width:900px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bar .st{flex:1;font-size:13px;color:var(--muted);min-width:160px}
+button{font:600 15px "Segoe UI",Roboto,Arial,sans-serif;border-radius:8px;padding:10px 16px;cursor:pointer;border:1.5px solid var(--blue);background:#fff;color:var(--blue)}
+button.pri{background:var(--blue);color:#fff}
+button.warn{border-color:#b3261e;color:#b3261e}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #ffb300;outline-offset:1px}
+button:disabled{opacity:.6;cursor:wait}
+/* modo captura do PDF */
+body.cap{background:#fff}
+body.cap .pg{width:794px;box-shadow:none;border-radius:0;padding:34px 40px;margin:0}
+body.cap .scroll{overflow:visible}
+.pv{display:inline-block;min-width:1em}
+.pv-line{display:inline-block;border-bottom:1.5px solid var(--ink);min-width:150px;padding:0 6px;text-align:center;font-weight:700;color:#0d47a1}
+.pv-box{border:1px solid var(--line);border-radius:4px;padding:6px 8px;min-height:44px;white-space:pre-wrap;font-size:15px;color:#0d47a1}
+.pv-cell{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font:700 17px Arial,sans-serif;color:#0d47a1}
+.pv-sh{display:block;text-align:right;padding:0 6px;font:700 14px Arial,sans-serif;color:#0d47a1;line-height:28px}
+.pv-id{flex:1;border-bottom:1px dashed var(--line);padding:2px 4px;font-weight:400}
+@media (max-width:640px){
+ .pg{padding:18px 14px}
+ .idbox{grid-template-columns:1fr}
+ .idbox label{border-right:0!important;border-bottom:1px solid var(--ink)!important}
+ .idbox label:last-child{border-bottom:0!important}
+ .clues{grid-template-columns:1fr}
+ .wl{grid-template-columns:repeat(3,1fr)}
+ table.cw td{width:28px;height:28px}
+ .ws div{width:24px;height:24px;font-size:13px}
+}
+@media print{
+ body{background:#fff;padding:0}
+ .bar,.guide{display:none}
+ .pg{box-shadow:none;margin:0;padding:0 4mm;page-break-after:always}
+ .scroll{overflow:visible}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head><body>
+<main class="wrap">
+<div class="guide"><h2>Como fazer e entregar</h2><ol>
+<li>Preencha seu nome e turma e responda todas as partes. As respostas ficam salvas neste navegador.</li>
+<li>Clique em <b>Gerar PDF</b> para baixar a atividade respondida.</li>
+<li>Clique em <b>Abrir Classroom</b>, entre na atividade, anexe o PDF em <b>Adicionar ou criar → Arquivo</b> e clique em <b>Entregar</b>.</li></ol></div>
+<section class="pg"><div class="head"><div class="school">Escola Estadual Profª Maria do Rosário Castaldi</div><div class="disc">Disciplina: Informática Empresarial</div></div>
+<div class="idbox">
+<label>Aluno(a): <input data-k="id-nome" autocomplete="name"></label>
+<label>Turma: <input data-k="id-turma"></label>
+<label>Professor(a): <input data-k="id-prof"></label>
+<label>Data: <input data-k="id-data"></label>
+</div>
+<h1 class="title">Atividade: Dicas de Apresentações Profissionais — Uso de Slides</h1><h3>Parte 1 — Cruzadinha</h3>
+<p class="inst">Leia as dicas e complete a cruzadinha (sem acentos). Palavra certa fica verde e travada; palavra errada é apagada. Clique duas vezes na mesma casa para trocar entre horizontal e vertical; as setas do teclado também funcionam.</p>
+<div class="cwinfo"><span class="cwmsg" aria-live="assertive"></span><span>Palavras corretas: <b id="cwcount">0</b> de 20</span></div>
+<div class="scroll"><table class="cw"><tr><td></td><td class="w"><span class="n">1</span><input data-k="cw-0-1" data-r="0" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 2"></td><td class="w"><input data-k="cw-0-2" data-r="0" data-c="2" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 3"></td><td class="w"><input data-k="cw-0-3" data-r="0" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 4"></td><td class="w"><input data-k="cw-0-4" data-r="0" data-c="4" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 5"></td><td class="w"><span class="n">2</span><input data-k="cw-0-5" data-r="0" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 6"></td><td class="w"><input data-k="cw-0-6" data-r="0" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 7"></td><td class="w"><input data-k="cw-0-7" data-r="0" data-c="7" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 8"></td><td class="w"><input data-k="cw-0-8" data-r="0" data-c="8" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 9"></td><td></td><td></td><td class="w"><span class="n">3</span><input data-k="cw-0-11" data-r="0" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 12"></td><td></td><td class="w"><span class="n">4</span><input data-k="cw-0-13" data-r="0" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 1, coluna 14"></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td class="w"><input data-k="cw-1-5" data-r="1" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 2, coluna 6"></td><td></td><td></td><td></td><td></td><td></td><td class="w"><input data-k="cw-1-11" data-r="1" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 2, coluna 12"></td><td></td><td class="w"><input data-k="cw-1-13" data-r="1" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 2, coluna 14"></td><td></td></tr><tr><td></td><td class="w"><span class="n">5</span><input data-k="cw-2-1" data-r="2" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 2"></td><td></td><td class="w"><span class="n">6</span><input data-k="cw-2-3" data-r="2" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 4"></td><td class="w"><input data-k="cw-2-4" data-r="2" data-c="4" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 5"></td><td class="w"><input data-k="cw-2-5" data-r="2" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 6"></td><td class="w"><input data-k="cw-2-6" data-r="2" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 7"></td><td class="w"><input data-k="cw-2-7" data-r="2" data-c="7" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 8"></td><td class="w"><input data-k="cw-2-8" data-r="2" data-c="8" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 9"></td><td class="w"><input data-k="cw-2-9" data-r="2" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 10"></td><td></td><td class="w"><input data-k="cw-2-11" data-r="2" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 12"></td><td></td><td class="w"><input data-k="cw-2-13" data-r="2" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 3, coluna 14"></td><td></td></tr><tr><td class="w"><span class="n">7</span><input data-k="cw-3-0" data-r="3" data-c="0" maxlength="2" autocomplete="off" aria-label="Linha 4, coluna 1"></td><td class="w"><input data-k="cw-3-1" data-r="3" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 4, coluna 2"></td><td class="w"><input data-k="cw-3-2" data-r="3" data-c="2" maxlength="2" autocomplete="off" aria-label="Linha 4, coluna 3"></td><td></td><td></td><td class="w"><input data-k="cw-3-5" data-r="3" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 4, coluna 6"></td><td></td><td></td><td></td><td></td><td></td><td class="w"><input data-k="cw-3-11" data-r="3" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 4, coluna 12"></td><td></td><td class="w"><input data-k="cw-3-13" data-r="3" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 4, coluna 14"></td><td></td></tr><tr><td></td><td class="w"><input data-k="cw-4-1" data-r="4" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 2"></td><td></td><td class="w"><span class="n">8</span><input data-k="cw-4-3" data-r="4" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 4"></td><td class="w"><input data-k="cw-4-4" data-r="4" data-c="4" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 5"></td><td class="w"><input data-k="cw-4-5" data-r="4" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 6"></td><td class="w"><input data-k="cw-4-6" data-r="4" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 7"></td><td class="w"><input data-k="cw-4-7" data-r="4" data-c="7" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 8"></td><td class="w"><input data-k="cw-4-8" data-r="4" data-c="8" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 9"></td><td class="w"><input data-k="cw-4-9" data-r="4" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 10"></td><td></td><td class="w"><input data-k="cw-4-11" data-r="4" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 12"></td><td></td><td class="w"><input data-k="cw-4-13" data-r="4" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 5, coluna 14"></td><td></td></tr><tr><td></td><td class="w"><input data-k="cw-5-1" data-r="5" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 6, coluna 2"></td><td></td><td class="w"><input data-k="cw-5-3" data-r="5" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 6, coluna 4"></td><td></td><td class="w"><input data-k="cw-5-5" data-r="5" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 6, coluna 6"></td><td></td><td></td><td></td><td></td><td></td><td class="w"><input data-k="cw-5-11" data-r="5" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 6, coluna 12"></td><td></td><td class="w"><input data-k="cw-5-13" data-r="5" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 6, coluna 14"></td><td></td></tr><tr><td></td><td class="w"><input data-k="cw-6-1" data-r="6" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 2"></td><td></td><td class="w"><input data-k="cw-6-3" data-r="6" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 4"></td><td></td><td class="w"><span class="n">9</span><input data-k="cw-6-5" data-r="6" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 6"></td><td class="w"><input data-k="cw-6-6" data-r="6" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 7"></td><td class="w"><input data-k="cw-6-7" data-r="6" data-c="7" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 8"></td><td class="w"><input data-k="cw-6-8" data-r="6" data-c="8" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 9"></td><td class="w"><span class="n">10</span><input data-k="cw-6-9" data-r="6" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 10"></td><td class="w"><input data-k="cw-6-10" data-r="6" data-c="10" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 11"></td><td class="w"><input data-k="cw-6-11" data-r="6" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 12"></td><td class="w"><input data-k="cw-6-12" data-r="6" data-c="12" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 13"></td><td class="w"><input data-k="cw-6-13" data-r="6" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 7, coluna 14"></td><td></td></tr><tr><td></td><td class="w"><input data-k="cw-7-1" data-r="7" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 8, coluna 2"></td><td></td><td class="w"><input data-k="cw-7-3" data-r="7" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 8, coluna 4"></td><td></td><td class="w"><input data-k="cw-7-5" data-r="7" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 8, coluna 6"></td><td></td><td></td><td></td><td class="w"><input data-k="cw-7-9" data-r="7" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 8, coluna 10"></td><td></td><td class="w"><input data-k="cw-7-11" data-r="7" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 8, coluna 12"></td><td></td><td class="w"><input data-k="cw-7-13" data-r="7" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 8, coluna 14"></td><td></td></tr><tr><td class="w"><span class="n">11</span><input data-k="cw-8-0" data-r="8" data-c="0" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 1"></td><td class="w"><input data-k="cw-8-1" data-r="8" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 2"></td><td class="w"><input data-k="cw-8-2" data-r="8" data-c="2" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 3"></td><td class="w"><input data-k="cw-8-3" data-r="8" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 4"></td><td class="w"><input data-k="cw-8-4" data-r="8" data-c="4" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 5"></td><td class="w"><input data-k="cw-8-5" data-r="8" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 6"></td><td class="w"><input data-k="cw-8-6" data-r="8" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 7"></td><td></td><td></td><td class="w"><input data-k="cw-8-9" data-r="8" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 10"></td><td></td><td class="w"><input data-k="cw-8-11" data-r="8" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 9, coluna 12"></td><td></td><td></td><td></td></tr><tr><td class="w"><input data-k="cw-9-0" data-r="9" data-c="0" maxlength="2" autocomplete="off" aria-label="Linha 10, coluna 1"></td><td></td><td></td><td class="w"><input data-k="cw-9-3" data-r="9" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 10, coluna 4"></td><td></td><td></td><td></td><td></td><td></td><td class="w"><input data-k="cw-9-9" data-r="9" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 10, coluna 10"></td><td></td><td></td><td class="w"><span class="n">12</span><input data-k="cw-9-12" data-r="9" data-c="12" maxlength="2" autocomplete="off" aria-label="Linha 10, coluna 13"></td><td></td><td></td></tr><tr><td class="w"><input data-k="cw-10-0" data-r="10" data-c="0" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 1"></td><td></td><td class="w"><span class="n">13</span><input data-k="cw-10-2" data-r="10" data-c="2" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 3"></td><td class="w"><input data-k="cw-10-3" data-r="10" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 4"></td><td class="w"><input data-k="cw-10-4" data-r="10" data-c="4" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 5"></td><td class="w"><input data-k="cw-10-5" data-r="10" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 6"></td><td class="w"><span class="n">14</span><input data-k="cw-10-6" data-r="10" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 7"></td><td></td><td></td><td class="w"><input data-k="cw-10-9" data-r="10" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 10"></td><td></td><td></td><td class="w"><input data-k="cw-10-12" data-r="10" data-c="12" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 13"></td><td></td><td class="w"><span class="n">15</span><input data-k="cw-10-14" data-r="10" data-c="14" maxlength="2" autocomplete="off" aria-label="Linha 11, coluna 15"></td></tr><tr><td class="w"><input data-k="cw-11-0" data-r="11" data-c="0" maxlength="2" autocomplete="off" aria-label="Linha 12, coluna 1"></td><td></td><td></td><td></td><td></td><td></td><td class="w"><input data-k="cw-11-6" data-r="11" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 12, coluna 7"></td><td></td><td></td><td class="w"><span class="n">16</span><input data-k="cw-11-9" data-r="11" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 12, coluna 10"></td><td class="w"><input data-k="cw-11-10" data-r="11" data-c="10" maxlength="2" autocomplete="off" aria-label="Linha 12, coluna 11"></td><td class="w"><input data-k="cw-11-11" data-r="11" data-c="11" maxlength="2" autocomplete="off" aria-label="Linha 12, coluna 12"></td><td class="w"><input data-k="cw-11-12" data-r="11" data-c="12" maxlength="2" autocomplete="off" aria-label="Linha 12, coluna 13"></td><td class="w"><input data-k="cw-11-13" data-r="11" data-c="13" maxlength="2" autocomplete="off" aria-label="Linha 12, coluna 14"></td><td class="w"><input data-k="cw-11-14" data-r="11" data-c="14" maxlength="2" autocomplete="off" aria-label="Linha 12, coluna 15"></td></tr><tr><td class="w"><input data-k="cw-12-0" data-r="12" data-c="0" maxlength="2" autocomplete="off" aria-label="Linha 13, coluna 1"></td><td></td><td></td><td></td><td></td><td></td><td class="w"><input data-k="cw-12-6" data-r="12" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 13, coluna 7"></td><td></td><td></td><td class="w"><input data-k="cw-12-9" data-r="12" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 13, coluna 10"></td><td></td><td></td><td class="w"><input data-k="cw-12-12" data-r="12" data-c="12" maxlength="2" autocomplete="off" aria-label="Linha 13, coluna 13"></td><td></td><td class="w"><input data-k="cw-12-14" data-r="12" data-c="14" maxlength="2" autocomplete="off" aria-label="Linha 13, coluna 15"></td></tr><tr><td class="w"><span class="n">17</span><input data-k="cw-13-0" data-r="13" data-c="0" maxlength="2" autocomplete="off" aria-label="Linha 14, coluna 1"></td><td class="w"><input data-k="cw-13-1" data-r="13" data-c="1" maxlength="2" autocomplete="off" aria-label="Linha 14, coluna 2"></td><td class="w"><input data-k="cw-13-2" data-r="13" data-c="2" maxlength="2" autocomplete="off" aria-label="Linha 14, coluna 3"></td><td class="w"><input data-k="cw-13-3" data-r="13" data-c="3" maxlength="2" autocomplete="off" aria-label="Linha 14, coluna 4"></td><td class="w"><input data-k="cw-13-4" data-r="13" data-c="4" maxlength="2" autocomplete="off" aria-label="Linha 14, coluna 5"></td><td></td><td class="w"><input data-k="cw-13-6" data-r="13" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 14, coluna 7"></td><td></td><td></td><td></td><td></td><td></td><td class="w"><input data-k="cw-13-12" data-r="13" data-c="12" maxlength="2" autocomplete="off" aria-label="Linha 14, coluna 13"></td><td></td><td class="w"><input data-k="cw-13-14" data-r="13" data-c="14" maxlength="2" autocomplete="off" aria-label="Linha 14, coluna 15"></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td class="w"><span class="n">18</span><input data-k="cw-14-5" data-r="14" data-c="5" maxlength="2" autocomplete="off" aria-label="Linha 15, coluna 6"></td><td class="w"><input data-k="cw-14-6" data-r="14" data-c="6" maxlength="2" autocomplete="off" aria-label="Linha 15, coluna 7"></td><td class="w"><input data-k="cw-14-7" data-r="14" data-c="7" maxlength="2" autocomplete="off" aria-label="Linha 15, coluna 8"></td><td class="w"><input data-k="cw-14-8" data-r="14" data-c="8" maxlength="2" autocomplete="off" aria-label="Linha 15, coluna 9"></td><td class="w"><input data-k="cw-14-9" data-r="14" data-c="9" maxlength="2" autocomplete="off" aria-label="Linha 15, coluna 10"></td><td></td><td></td><td class="w"><input data-k="cw-14-12" data-r="14" data-c="12" maxlength="2" autocomplete="off" aria-label="Linha 15, coluna 13"></td><td></td><td class="w"><input data-k="cw-14-14" data-r="14" data-c="14" maxlength="2" autocomplete="off" aria-label="Linha 15, coluna 15"></td></tr></table></div>
+<div class="clues"><div><h4>Horizontais →</h4><p><b>1.</b> O que você quer que o público aprenda ou decida. (8 letras)</p><p><b>6.</b> Mostra números e dados de forma visual. (7 letras)</p><p><b>7.</b> Deve ser clara e em volume adequado. (3 letras)</p><p><b>8.</b> Forma como o corpo se posiciona ao apresentar. (7 letras)</p><p><b>9.</b> Parte final que resume as ideias principais. (9 letras)</p><p><b>11.</b> Frases curtas em lista, no lugar de textos longos. (7 letras)</p><p><b>13.</b> Devem ser poucas e combinar entre si. (5 letras)</p><p><b>16.</b> Treino da apresentação feito antes do dia. (6 letras)</p><p><b>17.</b> Deve ser direcionado ao público, e não à tela. (5 letras)</p><p><b>18.</b> Deve ser controlado para não passar do limite. (5 letras)</p></div><div><h4>Verticais ↓</h4><p><b>2.</b> Efeito usado na passagem de um slide para outro. (9 letras)</p><p><b>3.</b> Diferença entre a cor do texto e a cor do fundo que facilita a leitura. (9 letras)</p><p><b>4.</b> Equipamento que exibe os slides na parede ou tela. (8 letras)</p><p><b>5.</b> Planejamento da ordem do que será apresentado. (7 letras)</p><p><b>8.</b> Pessoas que assistem à apresentação. (7 letras)</p><p><b>10.</b> Texto fácil de ler, mesmo do fundo da sala. (7 letras)</p><p><b>11.</b> Frase curta no topo do slide que indica o assunto. (6 letras)</p><p><b>12.</b> Recurso visual, como uma foto, que ajuda a explicar a ideia. (6 letras)</p><p><b>14.</b> Cada página de uma apresentação. (5 letras)</p><p><b>15.</b> Tipo de letra usado no texto dos slides. (5 letras)</p></div></div></section><section class="pg"><h3>Parte 2 — Caça-palavras</h3>
+<p class="inst">Encontre as 20 palavras. Elas estão na horizontal (→), na vertical (↓) ou na diagonal (descendo para a direita). Arraste do começo ao fim da palavra, com o mouse ou o dedo.</p>
+<div class="scroll"><div class="ws" style="grid-template-columns:repeat(15,auto)"><div data-r="0" data-c="0">L</div><div data-r="0" data-c="1">E</div><div data-r="0" data-c="2">N</div><div data-r="0" data-c="3">V</div><div data-r="0" data-c="4">A</div><div data-r="0" data-c="5">B</div><div data-r="0" data-c="6">C</div><div data-r="0" data-c="7">S</div><div data-r="0" data-c="8">P</div><div data-r="0" data-c="9">A</div><div data-r="0" data-c="10">U</div><div data-r="0" data-c="11">D</div><div data-r="0" data-c="12">I</div><div data-r="0" data-c="13">O</div><div data-r="0" data-c="14">D</div><div data-r="1" data-c="0">M</div><div data-r="1" data-c="1">M</div><div data-r="1" data-c="2">T</div><div data-r="1" data-c="3">B</div><div data-r="1" data-c="4">N</div><div data-r="1" data-c="5">C</div><div data-r="1" data-c="6">R</div><div data-r="1" data-c="7">D</div><div data-r="1" data-c="8">G</div><div data-r="1" data-c="9">A</div><div data-r="1" data-c="10">B</div><div data-r="1" data-c="11">C</div><div data-r="1" data-c="12">O</div><div data-r="1" data-c="13">O</div><div data-r="1" data-c="14">C</div><div data-r="2" data-c="0">H</div><div data-r="2" data-c="1">A</div><div data-r="2" data-c="2">C</div><div data-r="2" data-c="3">S</div><div data-r="2" data-c="4">I</div><div data-r="2" data-c="5">O</div><div data-r="2" data-c="6">L</div><div data-r="2" data-c="7">B</div><div data-r="2" data-c="8">A</div><div data-r="2" data-c="9">T</div><div data-r="2" data-c="10">U</div><div data-r="2" data-c="11">D</div><div data-r="2" data-c="12">H</div><div data-r="2" data-c="13">V</div><div data-r="2" data-c="14">V</div><div data-r="3" data-c="0">T</div><div data-r="3" data-c="1">R</div><div data-r="3" data-c="2">B</div><div data-r="3" data-c="3">L</div><div data-r="3" data-c="4">M</div><div data-r="3" data-c="5">T</div><div data-r="3" data-c="6">T</div><div data-r="3" data-c="7">A</div><div data-r="3" data-c="8">N</div><div data-r="3" data-c="9">D</div><div data-r="3" data-c="10">B</div><div data-r="3" data-c="11">S</div><div data-r="3" data-c="12">H</div><div data-r="3" data-c="13">B</div><div data-r="3" data-c="14">S</div><div data-r="4" data-c="0">E</div><div data-r="4" data-c="1">G</div><div data-r="4" data-c="2">J</div><div data-r="4" data-c="3">O</div><div data-r="4" data-c="4">A</div><div data-r="4" data-c="5">E</div><div data-r="4" data-c="6">S</div><div data-r="4" data-c="7">D</div><div data-r="4" data-c="8">R</div><div data-r="4" data-c="9">T</div><div data-r="4" data-c="10">O</div><div data-r="4" data-c="11">J</div><div data-r="4" data-c="12">A</div><div data-r="4" data-c="13">S</div><div data-r="4" data-c="14">X</div><div data-r="5" data-c="0">F</div><div data-r="5" data-c="1">E</div><div data-r="5" data-c="2">D</div><div data-r="5" data-c="3">T</div><div data-r="5" data-c="4">C</div><div data-r="5" data-c="5">Y</div><div data-r="5" data-c="6">T</div><div data-r="5" data-c="7">N</div><div data-r="5" data-c="8">T</div><div data-r="5" data-c="9">E</div><div data-r="5" data-c="10">V</div><div data-r="5" data-c="11">S</div><div data-r="5" data-c="12">G</div><div data-r="5" data-c="13">M</div><div data-r="5" data-c="14">D</div><div data-r="6" data-c="0">S</div><div data-r="6" data-c="1">M</div><div data-r="6" data-c="2">C</div><div data-r="6" data-c="3">Z</div><div data-r="6" data-c="4">A</div><div data-r="6" data-c="5">C</div><div data-r="6" data-c="6">O</div><div data-r="6" data-c="7">T</div><div data-r="6" data-c="8">E</div><div data-r="6" data-c="9">A</div><div data-r="6" data-c="10">Z</div><div data-r="6" data-c="11">B</div><div data-r="6" data-c="12">U</div><div data-r="6" data-c="13">G</div><div data-r="6" data-c="14">P</div><div data-r="7" data-c="0">Q</div><div data-r="7" data-c="1">X</div><div data-r="7" data-c="2">A</div><div data-r="7" data-c="3">S</div><div data-r="7" data-c="4">O</div><div data-r="7" data-c="5">S</div><div data-r="7" data-c="6">C</div><div data-r="7" data-c="7">U</div><div data-r="7" data-c="8">O</div><div data-r="7" data-c="9">G</div><div data-r="7" data-c="10">B</div><div data-r="7" data-c="11">A</div><div data-r="7" data-c="12">L</div><div data-r="7" data-c="13">P</div><div data-r="7" data-c="14">E</div><div data-r="8" data-c="0">T</div><div data-r="8" data-c="1">P</div><div data-r="8" data-c="2">P</div><div data-r="8" data-c="3">M</div><div data-r="8" data-c="4">J</div><div data-r="8" data-c="5">U</div><div data-r="8" data-c="6">I</div><div data-r="8" data-c="7">O</div><div data-r="8" data-c="8">T</div><div data-r="8" data-c="9">I</div><div data-r="8" data-c="10">R</div><div data-r="8" data-c="11">E</div><div data-r="8" data-c="12">H</div><div data-r="8" data-c="13">F</div><div data-r="8" data-c="14">R</div><div data-r="9" data-c="0">Z</div><div data-r="9" data-c="1">V</div><div data-r="9" data-c="2">A</div><div data-r="9" data-c="3">H</div><div data-r="9" data-c="4">C</div><div data-r="9" data-c="5">M</div><div data-r="9" data-c="6">E</div><div data-r="9" data-c="7">M</div><div data-r="9" data-c="8">N</div><div data-r="9" data-c="9">T</div><div data-r="9" data-c="10">C</div><div data-r="9" data-c="11">I</div><div data-r="9" data-c="12">L</div><div data-r="9" data-c="13">J</div><div data-r="9" data-c="14">G</div><div data-r="10" data-c="0">R</div><div data-r="10" data-c="1">Q</div><div data-r="10" data-c="2">I</div><div data-r="10" data-c="3">L</div><div data-r="10" data-c="4">P</div><div data-r="10" data-c="5">A</div><div data-r="10" data-c="6">J</div><div data-r="10" data-c="7">S</div><div data-r="10" data-c="8">P</div><div data-r="10" data-c="9">T</div><div data-r="10" data-c="10">U</div><div data-r="10" data-c="11">O</div><div data-r="10" data-c="12">T</div><div data-r="10" data-c="13">A</div><div data-r="10" data-c="14">U</div><div data-r="11" data-c="0">F</div><div data-r="11" data-c="1">U</div><div data-r="11" data-c="2">N</div><div data-r="11" data-c="3">D</div><div data-r="11" data-c="4">O</div><div data-r="11" data-c="5">R</div><div data-r="11" data-c="6">C</div><div data-r="11" data-c="7">D</div><div data-r="11" data-c="8">T</div><div data-r="11" data-c="9">L</div><div data-r="11" data-c="10">R</div><div data-r="11" data-c="11">R</div><div data-r="11" data-c="12">N</div><div data-r="11" data-c="13">O</div><div data-r="11" data-c="14">N</div><div data-r="12" data-c="0">T</div><div data-r="12" data-c="1">E</div><div data-r="12" data-c="2">M</div><div data-r="12" data-c="3">A</div><div data-r="12" data-c="4">E</div><div data-r="12" data-c="5">I</div><div data-r="12" data-c="6">O</div><div data-r="12" data-c="7">F</div><div data-r="12" data-c="8">L</div><div data-r="12" data-c="9">I</div><div data-r="12" data-c="10">E</div><div data-r="12" data-c="11">O</div><div data-r="12" data-c="12">E</div><div data-r="12" data-c="13">E</div><div data-r="12" data-c="14">T</div><div data-r="13" data-c="0">Q</div><div data-r="13" data-c="1">G</div><div data-r="13" data-c="2">E</div><div data-r="13" data-c="3">S</div><div data-r="13" data-c="4">T</div><div data-r="13" data-c="5">O</div><div data-r="13" data-c="6">S</div><div data-r="13" data-c="7">O</div><div data-r="13" data-c="8">B</div><div data-r="13" data-c="9">X</div><div data-r="13" data-c="10">L</div><div data-r="13" data-c="11">S</div><div data-r="13" data-c="12">L</div><div data-r="13" data-c="13">C</div><div data-r="13" data-c="14">A</div><div data-r="14" data-c="0">S</div><div data-r="14" data-c="1">T</div><div data-r="14" data-c="2">L</div><div data-r="14" data-c="3">L</div><div data-r="14" data-c="4">Z</div><div data-r="14" data-c="5">M</div><div data-r="14" data-c="6">U</div><div data-r="14" data-c="7">Q</div><div data-r="14" data-c="8">T</div><div data-r="14" data-c="9">P</div><div data-r="14" data-c="10">C</div><div data-r="14" data-c="11">O</div><div data-r="14" data-c="12">C</div><div data-r="14" data-c="13">E</div><div data-r="14" data-c="14">S</div></div></div>
+<p class="wsmsg" aria-live="polite"></p>
+<p style="text-align:center;font-weight:700;margin:0" id="wscount"></p>
+<div class="wl"><span data-w="ANIMACAO">ANIMACAO</span><span data-w="AUDIO">AUDIO</span><span data-w="CAPA">CAPA</span><span data-w="CLAREZA">CLAREZA</span><span data-w="CONTROLE">CONTROLE</span><span data-w="DADOS">DADOS</span><span data-w="ESTILO">ESTILO</span><span data-w="FUNDO">FUNDO</span><span data-w="GESTOS">GESTOS</span><span data-w="ICONE">ICONE</span><span data-w="LAYOUT">LAYOUT</span><span data-w="MARGEM">MARGEM</span><span data-w="NEGRITO">NEGRITO</span><span data-w="PAUSA">PAUSA</span><span data-w="PERGUNTAS">PERGUNTAS</span><span data-w="SIMPLES">SIMPLES</span><span data-w="SUMARIO">SUMARIO</span><span data-w="TABELA">TABELA</span><span data-w="TEMA">TEMA</span><span data-w="VIDEO">VIDEO</span></div><h3>Parte 3 — Complete as frases</h3><p class="inst">Complete cada frase com a palavra correta.</p><div class="fill"><p><b>1)</b> Cada página de uma apresentação é chamada de <input data-k="fill-0" aria-label="Resposta da frase 1">.</p><p><b>2)</b> Para facilitar a leitura, o texto deve ter bom <input data-k="fill-1" aria-label="Resposta da frase 2"> com a cor do fundo.</p><p><b>3)</b> Em vez de parágrafos longos, o ideal é usar <input data-k="fill-2" aria-label="Resposta da frase 3"> curtos nos slides.</p><p><b>4)</b> Antes do dia da apresentação, é importante <input data-k="fill-3" aria-label="Resposta da frase 4"> para controlar o tempo.</p><p><b>5)</b> Durante a apresentação, devemos manter contato <input data-k="fill-4" aria-label="Resposta da frase 5"> com o público, e não ficar lendo a tela.</p></div></section>
+</main>
+<div class="bar"><div class="in"><span class="st" id="st">As respostas são salvas automaticamente.</span>
+<button class="warn" onclick="limpar()">Apagar respostas</button>
+<button onclick="window.print()">Imprimir</button>
+<button class="pri" id="bpdf" onclick="gerarPDF()">Gerar PDF</button>
+<button onclick="classroom()">Abrir Classroom</button></div></div>
+<script>const ACT={"id": "slides", "title": "Atividade: Dicas de Apresentações Profissionais — Uso de Slides", "ws": [["L", "E", "N", "V", "A", "B", "C", "S", "P", "A", "U", "D", "I", "O", "D"], ["M", "M", "T", "B", "N", "C", "R", "D", "G", "A", "B", "C", "O", "O", "C"], ["H", "A", "C", "S", "I", "O", "L", "B", "A", "T", "U", "D", "H", "V", "V"], ["T", "R", "B", "L", "M", "T", "T", "A", "N", "D", "B", "S", "H", "B", "S"], ["E", "G", "J", "O", "A", "E", "S", "D", "R", "T", "O", "J", "A", "S", "X"], ["F", "E", "D", "T", "C", "Y", "T", "N", "T", "E", "V", "S", "G", "M", "D"], ["S", "M", "C", "Z", "A", "C", "O", "T", "E", "A", "Z", "B", "U", "G", "P"], ["Q", "X", "A", "S", "O", "S", "C", "U", "O", "G", "B", "A", "L", "P", "E"], ["T", "P", "P", "M", "J", "U", "I", "O", "T", "I", "R", "E", "H", "F", "R"], ["Z", "V", "A", "H", "C", "M", "E", "M", "N", "T", "C", "I", "L", "J", "G"], ["R", "Q", "I", "L", "P", "A", "J", "S", "P", "T", "U", "O", "T", "A", "U"], ["F", "U", "N", "D", "O", "R", "C", "D", "T", "L", "R", "R", "N", "O", "N"], ["T", "E", "M", "A", "E", "I", "O", "F", "L", "I", "E", "O", "E", "E", "T"], ["Q", "G", "E", "S", "T", "O", "S", "O", "B", "X", "L", "S", "L", "C", "A"], ["S", "T", "L", "L", "Z", "M", "U", "Q", "T", "P", "C", "O", "C", "E", "S"]], "words": ["CAPA", "SUMARIO", "LAYOUT", "TEMA", "ICONE", "VIDEO", "AUDIO", "ANIMACAO", "MARGEM", "NEGRITO", "TABELA", "DADOS", "CLAREZA", "SIMPLES", "FUNDO", "PAUSA", "GESTOS", "CONTROLE", "ESTILO", "PERGUNTAS"], "cw": [{"n": 1, "d": "A", "cells": [[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8]], "h": "9b4b44c1"}, {"n": 6, "d": "A", "cells": [[2, 3], [2, 4], [2, 5], [2, 6], [2, 7], [2, 8], [2, 9]], "h": "0c60c5e3"}, {"n": 7, "d": "A", "cells": [[3, 0], [3, 1], [3, 2]], "h": "36856f2e"}, {"n": 8, "d": "A", "cells": [[4, 3], [4, 4], [4, 5], [4, 6], [4, 7], [4, 8], [4, 9]], "h": "84b8f4d6"}, {"n": 9, "d": "A", "cells": [[6, 5], [6, 6], [6, 7], [6, 8], [6, 9], [6, 10], [6, 11], [6, 12], [6, 13]], "h": "c653e700"}, {"n": 11, "d": "A", "cells": [[8, 0], [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6]], "h": "c7a3fe63"}, {"n": 13, "d": "A", "cells": [[10, 2], [10, 3], [10, 4], [10, 5], [10, 6]], "h": "07ad59c8"}, {"n": 16, "d": "A", "cells": [[11, 9], [11, 10], [11, 11], [11, 12], [11, 13], [11, 14]], "h": "dc543764"}, {"n": 17, "d": "A", "cells": [[13, 0], [13, 1], [13, 2], [13, 3], [13, 4]], "h": "de5c338e"}, {"n": 18, "d": "A", "cells": [[14, 5], [14, 6], [14, 7], [14, 8], [14, 9]], "h": "1258ba70"}, {"n": 2, "d": "D", "cells": [[0, 5], [1, 5], [2, 5], [3, 5], [4, 5], [5, 5], [6, 5], [7, 5], [8, 5]], "h": "45de01f1"}, {"n": 3, "d": "D", "cells": [[0, 11], [1, 11], [2, 11], [3, 11], [4, 11], [5, 11], [6, 11], [7, 11], [8, 11]], "h": "b78a252b"}, {"n": 4, "d": "D", "cells": [[0, 13], [1, 13], [2, 13], [3, 13], [4, 13], [5, 13], [6, 13], [7, 13]], "h": "e9fa01b4"}, {"n": 5, "d": "D", "cells": [[2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1]], "h": "65348368"}, {"n": 8, "d": "D", "cells": [[4, 3], [5, 3], [6, 3], [7, 3], [8, 3], [9, 3], [10, 3]], "h": "2effc3ab"}, {"n": 10, "d": "D", "cells": [[6, 9], [7, 9], [8, 9], [9, 9], [10, 9], [11, 9], [12, 9]], "h": "277c0856"}, {"n": 11, "d": "D", "cells": [[8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0]], "h": "7b4f2256"}, {"n": 12, "d": "D", "cells": [[9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12]], "h": "e65f2c16"}, {"n": 14, "d": "D", "cells": [[10, 6], [11, 6], [12, 6], [13, 6], [14, 6]], "h": "d290e925"}, {"n": 15, "d": "D", "cells": [[10, 14], [11, 14], [12, 14], [13, 14], [14, 14]], "h": "c6063b4d"}]};
+const KEY='castaldi-'+ACT.id+'-v1';
+let found={};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function status(t){$('#st').textContent=t}
+function collect(){const d={};$$('[data-k]').forEach(e=>d[e.dataset.k]=e.value);d.__found=found;return d}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(collect()));const h=new Date();status('Respostas salvas neste navegador às '+h.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'.')}catch(e){status('Não foi possível salvar automaticamente. Gere o PDF antes de fechar.')}}
+function restore(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+ if(d){$$('[data-k]').forEach(e=>{if(d[e.dataset.k]!=null)e.value=d[e.dataset.k]});found=d.__found||{};status('Suas respostas anteriores foram recuperadas.')}
+ const dt=$('[data-k="id-data"]');if(dt&&!dt.value)dt.value=new Date().toLocaleDateString('pt-BR');
+ $$('textarea').forEach(grow);if(window.wsRender)wsRender();
+ $$('table.cw td.ok').forEach(t=>{t.classList.remove('ok');t.querySelector('input').readOnly=false});if(ACT.cw.length){cwCheck(null,true);if(!$$('table.cw td.err').length&&$('#cwcount').textContent!=String(ACT.cw.length))$('.cwmsg').textContent=''}}
+let tmr;document.addEventListener('input',e=>{if(e.target.matches('textarea'))grow(e.target);if(e.target.dataset.k){clearTimeout(tmr);tmr=setTimeout(save,300)}});
+function grow(t){t.style.height='auto';t.style.height=Math.max(58,t.scrollHeight+2)+'px'}
+function limpar(){if(!confirm('Apagar todas as respostas desta atividade? Isso não pode ser desfeito.'))return;
+ try{localStorage.removeItem(KEY)}catch(e){};$$('[data-k]').forEach(e=>e.value='');found={};if(window.wsRender)wsRender();restore();status('Respostas apagadas.')}
+
+/* ---------- cruzadinha ---------- */
+let dir='A';
+function fnv(s){let h=0x811c9dc5;for(const ch of new TextEncoder().encode(s)){h^=ch;h=Math.imul(h,0x01000193)>>>0}return h.toString(16).padStart(8,'0')}
+const cwIn=(r,c)=>document.querySelector(`table.cw input[data-r="${r}"][data-c="${c}"]`);
+const isLocked=el=>el&&el.parentElement.classList.contains('ok');
+let busy=false;
+function cwCheck(onlyCell,silent){
+ if(!ACT.cw.length)return;let wrong=[];
+ ACT.cw.forEach(w=>{
+  if(onlyCell&&!w.cells.some(([r,c])=>r===onlyCell[0]&&c===onlyCell[1]))return;
+  const els=w.cells.map(([r,c])=>cwIn(r,c));
+  if(els.every(isLocked))return;
+  const s=els.map(e=>e.value).join('');
+  if(s.length<els.length)return;
+  if(fnv(ACT.id+':'+w.n+w.d+':'+s)===w.h){els.forEach(e=>{e.parentElement.classList.add('ok');e.readOnly=true});if(!silent)save()}
+  else wrong.push({w,els});
+ });
+ const erase=()=>{wrong.forEach(({els})=>els.forEach(e=>{e.parentElement.classList.remove('err');if(!isLocked(e))e.value=''}));save()};
+ if(wrong.length){
+  const names=wrong.map(({w})=>w.n+' '+(w.d==='A'?'horizontal':'vertical')).join(', ');
+  $('.cwmsg').textContent=(wrong.length>1?'As palavras '+names+' não estão corretas':'A palavra '+names+' não está correta')+' e foi apagada. Tente de novo.';
+  if(silent){erase()}else{busy=true;wrong.forEach(({els})=>els.forEach(e=>e.parentElement.classList.add('err')));
+   setTimeout(()=>{erase();busy=false;const f=wrong[0].els.find(e=>!isLocked(e));if(f){dir=wrong[0].w.d;f.focus()}},800)}
+ }else if(onlyCell){const done=ACT.cw.filter(w=>w.cells.some(([r,c])=>r===onlyCell[0]&&c===onlyCell[1])&&w.cells.every(([r,c])=>isLocked(cwIn(r,c))));if(done.length)$('.cwmsg').textContent=''}
+ const n=ACT.cw.filter(w=>w.cells.every(([r,c])=>isLocked(cwIn(r,c)))).length;
+ $('#cwcount').textContent=n;
+ if(n===ACT.cw.length)$('.cwmsg').innerHTML='<span style="color:#2e7d32">Parabéns! Você completou toda a cruzadinha.</span>';
+}
+$$('table.cw input').forEach(inp=>{
+ inp.addEventListener('focus',()=>hl(inp));
+ inp.addEventListener('mousedown',()=>{if(document.activeElement===inp){dir=dir==='A'?'D':'A';hl(inp)}});
+ inp.addEventListener('input',()=>{if(busy)return;inp.value=inp.value.replace(/[^a-zA-ZÀ-ÿ]/g,'').slice(-1).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(inp.value){cwCheck([+inp.dataset.r,+inp.dataset.c]);if(!busy)move(inp,1)}});
+ inp.addEventListener('keydown',e=>{const k=e.key;
+  if(busy){e.preventDefault();return}
+  if(isLocked(inp)&&k.length===1){e.preventDefault();move(inp,1);return}
+  if(k==='Backspace'&&(!inp.value||isLocked(inp))){e.preventDefault();let p=inp;do{p=nb(p,dir==='A'?0:-1,dir==='A'?-1:0)}while(p&&isLocked(p));if(p){p.value='';p.focus();save()}}
+  else if(k.startsWith('Arrow')){e.preventDefault();const m={ArrowRight:[0,1,'A'],ArrowLeft:[0,-1,'A'],ArrowDown:[1,0,'D'],ArrowUp:[-1,0,'D']}[k];dir=m[2];const n=nb(inp,m[0],m[1]);if(n)n.focus();else hl(inp)}});
+});
+function nb(inp,dr,dc){return cwIn(+inp.dataset.r+dr,+inp.dataset.c+dc)}
+function move(inp,s){const dr=dir==='D'?s:0,dc=dir==='A'?s:0;let n=nb(inp,dr,dc);
+ if(!n){const o=nb(inp,dir==='A'?s:0,dir==='D'?s:0);if(o){dir=dir==='A'?'D':'A';n=o}}
+ let guard=0;while(n&&isLocked(n)&&guard++<30){const x=nb(n,dir==='D'?s:0,dir==='A'?s:0);if(!x)break;n=x}
+ if(n)n.focus()}
+function hl(inp){$$('table.cw td.hl').forEach(t=>t.classList.remove('hl'));const dr=dir==='D'?1:0,dc=dir==='A'?1:0;
+ let r=+inp.dataset.r,c=+inp.dataset.c;while(cwIn(r-dr,c-dc)){r-=dr;c-=dc}
+ let e;while(e=cwIn(r,c)){e.parentElement.classList.add('hl');r+=dr;c+=dc}}
+
+/* ---------- caça-palavras ---------- */
+(function(){const g=$('.ws');if(!g)return;const N=ACT.ws.length;let start=null,cur=[];
+ const cell=(r,c)=>g.children[r*N+c];
+ function line(a,b){const dr=Math.sign(b[0]-a[0]),dc=Math.sign(b[1]-a[1]),lr=Math.abs(b[0]-a[0]),lc=Math.abs(b[1]-a[1]);
+  if(!(lr===0||lc===0||lr===lc))return null;const n=Math.max(lr,lc)+1,out=[];for(let i=0;i<n;i++)out.push([a[0]+dr*i,a[1]+dc*i]);return out}
+ function paint(){$$('.ws div.sel').forEach(d=>d.classList.remove('sel'));cur.forEach(([r,c])=>cell(r,c).classList.add('sel'))}
+ function at(e){const el=document.elementFromPoint(e.clientX,e.clientY);return el&&el.parentElement===g?[+el.dataset.r,+el.dataset.c]:null}
+ g.addEventListener('pointerdown',e=>{const p=at(e);if(!p)return;start=p;cur=[p];paint();e.preventDefault()});
+ window.addEventListener('pointermove',e=>{if(!start)return;const p=at(e);if(!p)return;const l=line(start,p);if(l){cur=l;paint()}});
+ window.addEventListener('pointerup',()=>{if(!start)return;start=null;
+  const s=cur.map(([r,c])=>ACT.ws[r][c]).join(''),rs=[...s].reverse().join('');
+  const w=ACT.words.find(x=>(x===s||x===rs)&&!found[x]);
+  if(w&&cur.length>1){found[w]=cur;$('.wsmsg').textContent='Você encontrou '+w+'!';save()}
+  else if(cur.length>1){$('.wsmsg').textContent='Essa seleção não forma uma palavra da lista. Tente de novo.'}
+  cur=[];paint();wsRender()});
+ window.wsRender=function(){$$('.ws div.f').forEach(d=>d.classList.remove('f'));Object.values(found).forEach(cs=>cs.forEach(([r,c])=>cell(r,c).classList.add('f')));
+  $$('.wl span').forEach(s=>s.classList.toggle('done',!!found[s.dataset.w]));
+  const n=Object.keys(found).length;$('#wscount').textContent=n+' de '+ACT.words.length+' palavras encontradas'}
+})();
+
+/* ---------- PDF ---------- */
+function slug(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'')}
+async function gerarPDF(){
+ const nome=$('[data-k="id-nome"]').value.trim(),turma=$('[data-k="id-turma"]').value.trim();
+ if(!nome||!turma){alert('Preencha seu nome e sua turma no topo da atividade antes de gerar o PDF.');(nome?$('[data-k="id-turma"]'):$('[data-k="id-nome"]')).focus();return}
+ const vazios=$$('[data-k]:not([data-k^="id-"])').filter(e=>!e.value.trim()).length;
+ if(vazios&&!confirm('Ainda há '+vazios+' campo(s) em branco. Deseja gerar o PDF assim mesmo?'))return;
+ if(typeof html2canvas==='undefined'||!window.jspdf){alert('Não foi possível carregar o gerador de PDF (verifique a internet). Vou abrir a impressão: escolha "Salvar como PDF" no destino.');window.print();return}
+ const b=$('#bpdf');b.disabled=true;b.textContent='Gerando PDF...';save();
+ try{const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:'mm',format:'a4'});const pgs=$$('.pg');
+  for(let i=0;i<pgs.length;i++){
+   const cv=await html2canvas(pgs[i],{scale:2,backgroundColor:'#ffffff',windowWidth:1000,onclone:prep});
+   const W=210,H=297;let w=W,h=cv.height*W/cv.width;if(h>H){w=W*H/h;h=H}
+   if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',.92),'JPEG',(W-w)/2,0,w,h)}
+  pdf.setProperties({title:ACT.title+' - '+nome});
+  pdf.save(slug(ACT.title)+'_'+slug(nome)+'_'+slug(turma)+'.pdf');
+  status('PDF baixado. Agora envie o arquivo no Google Classroom.')}
+ catch(e){alert('Erro ao gerar o PDF: '+e.message+'\nUse o botão Imprimir e escolha "Salvar como PDF".')}
+ b.disabled=false;b.textContent='Gerar PDF'}
+function prep(doc){doc.body.classList.add('cap');
+ const live=$$('[data-k]');const cl=[...doc.querySelectorAll('[data-k]')];
+ cl.forEach((el,i)=>{const v=live[i]?live[i].value:'';const k=el.dataset.k;const s=doc.createElement(el.tagName==='TEXTAREA'?'div':'span');
+  if(k.startsWith('id-')){s.className='pv-id'}else if(el.closest('table.cw')){s.className='pv-cell'}else if(el.closest('table.sh')){s.className='pv-sh'}else if(el.tagName==='TEXTAREA'){s.className='pv-box'}else{s.className='pv-line'}
+  s.textContent=v||(el.tagName==='TEXTAREA'?'':'\u00a0');el.replaceWith(s)});
+ doc.querySelectorAll('.wsmsg').forEach(e=>e.remove());doc.querySelectorAll('.hl,.sel').forEach(e=>e.classList.remove('hl','sel'))}
+function classroom(){window.open('https://classroom.google.com/','_blank','noopener')}
+restore();
+</script>
+</body></html>
