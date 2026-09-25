@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encontro 2 — Mercado de Trabalho, Capital Humano e Atratividade</title>
+<style>
+:root{--fundo:#f3f5f9;--papel:#fff;--tinta:#14233b;--tinta2:#55637a;--linha:#dde3ee;--acento:#0e7c6b;--acento2:#0b5f53;--suave:#e6f3f0;--erro:#c0392b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--tinta);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.6;padding-bottom:90px}
+.wrap{max-width:920px;margin:0 auto;padding:22px 18px}
+header.top{background:linear-gradient(135deg,#14233b,#1d3a5c);color:#fff;border-radius:16px;padding:24px 26px;margin-bottom:16px}
+.kicker{margin:0;font-size:13px;opacity:.8;letter-spacing:.02em}
+header.top h1{margin:6px 0 6px;font-size:24px;line-height:1.25}
+.sub{font-size:14px;opacity:.85}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tab{background:#fff;border:1px solid var(--linha);color:var(--tinta2);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;cursor:pointer}
+.tab.on{background:var(--acento);color:#fff;border-color:var(--acento)}
+.progress{height:6px;background:#e3e8f1;border-radius:9px;overflow:hidden;margin-bottom:16px}
+.progress>div{height:100%;background:var(--acento);width:0;transition:width .25s}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--papel);border:1px solid var(--linha);border-radius:14px;padding:22px 24px;margin-bottom:16px}
+.card h2{margin:0 0 6px;font-size:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{background:var(--suave);color:var(--acento2);font-size:12px;border-radius:999px;padding:3px 10px}
+.reler{margin-left:auto;background:#eef2f9;color:var(--tinta);font-size:13px;padding:6px 11px;border-radius:8px}
+.sec-desc{color:var(--tinta2);margin-top:0}
+.lead{font-size:17px}
+.card h3{font-size:16px;margin:20px 0 4px;color:var(--acento2)}
+.tblwrap{overflow-x:auto}
+table.ind{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+table.ind th,table.ind td{border-bottom:1px solid var(--linha);padding:8px 10px;text-align:left}
+table.ind th{background:#f6f8fc;font-size:13px;color:var(--tinta2)}
+.pergunta{background:var(--suave);border-left:4px solid var(--acento);padding:12px 16px;border-radius:8px;margin-top:18px}
+.fld{display:block;font-weight:600;margin-bottom:6px}
+input[type=text],textarea{font:inherit;width:100%;border:1px solid #cfd7e4;border-radius:9px;padding:9px 11px;background:#fff;color:var(--tinta)}
+textarea{min-height:140px;resize:vertical}
+input:focus,textarea:focus{outline:2px solid #9ad3c8;border-color:var(--acento)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:620px){.grid2{grid-template-columns:1fr}}
+.q{margin:18px 0}.qnum{color:var(--acento)}
+.cz-item{margin:14px 0}
+.cz-clue{margin-bottom:6px}
+.boxes{display:flex;flex-wrap:wrap;gap:4px}
+.boxes input,.xw input{width:32px;height:36px;text-align:center;text-transform:uppercase;font-weight:700;padding:0;font-size:16px}
+.xwwrap{overflow-x:auto;padding:4px 0}
+.xw{display:grid;gap:2px;width:max-content}
+.xw .cell{position:relative;width:34px;height:34px}
+.xw .cell.blk{background:transparent}
+.xw .cell input{width:34px;height:34px;border-radius:4px;border:1px solid #9fb0c8}
+.xw .cell .n{position:absolute;top:1px;left:3px;font-size:9px;color:var(--tinta2);pointer-events:none;z-index:2}
+.clues{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:620px){.clues{grid-template-columns:1fr}}
+.clues h4{margin:0 0 6px}.clues ol{margin:0;padding-left:0;list-style:none}.clues li{margin:5px 0;font-size:14px}
+.cp-item{margin:12px 0}.cp-item input{display:inline-block;width:180px;margin:0 4px}
+.navrow{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px}
+.step-of{font-size:13px;color:var(--tinta2)}
+.actionbar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.95);border-top:1px solid var(--linha);backdrop-filter:blur(6px);z-index:40}
+.actionbar .inner{max-width:920px;margin:0 auto;padding:11px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.status{font-size:13px;color:var(--tinta2);flex:1 1 auto;min-width:140px}
+.status b{color:var(--acento2)}
+button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:11px 16px;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--acento);color:#fff}
+.btn-ghost{background:#eef2f9;color:var(--tinta)}
+.note{font-size:13px;color:var(--tinta2);margin-top:10px}
+.req::after{content:" *";color:var(--erro)}
+dialog{border:none;border-radius:14px;padding:0;max-width:680px;width:94%;box-shadow:0 20px 60px rgba(20,35,59,.35)}
+dialog::backdrop{background:rgba(20,35,59,.45)}
+.dlg{padding:22px 24px;max-height:80vh;overflow:auto}
+.codebox{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;word-break:break-all;background:#0f1b30;color:#8fe3d6;border-radius:8px;padding:12px}
+#entrega{display:none}
+@media print{
+ body{background:#fff;padding:0}.actionbar,.no-print,.tabs,.progress,dialog{display:none!important}
+ .panel{display:block!important}.card{break-inside:auto;border:1px solid #ccc}
+ textarea{border:1px solid #bbb;min-height:0;height:auto;overflow:visible}
+ #entrega{display:block}.codebox{background:#fff;color:#000;border:1px solid #999}
+}
+</style></head><body>
+<div class="wrap">
+<header class="top">
+ <p class="kicker">Complementação de Carga Horária · 3º Trimestre · Princípios Econômicos · Recursos Humanos · Estratégias de Marketing</p>
+ <h1>Encontro 2 — Mercado de Trabalho, Capital Humano e Atratividade</h1>
+ <div class="sub">Atividade interdisciplinar · uma sessão por vez.</div>
+</header>
+<nav class="tabs no-print" id="tabs"></nav>
+<div class="progress no-print"><div id="bar"></div></div>
+
+<div class="panel" data-step="0" data-name="Identificação"><section class="card">
+ <h2><span class="badge">Sessão 1</span> Identificação</h2>
+ <p class="sec-desc">A atividade pode ser feita individualmente ou em grupo de até 5 integrantes. Preencha ao menos um nome.</p>
+ <div class="grid2">
+  <div><label class="fld req" for="nome0">Integrante 1</label><input type="text" id="nome0"></div>
+  <div><label class="fld" for="nome1">Integrante 2</label><input type="text" id="nome1"></div>
+  <div><label class="fld" for="nome2">Integrante 3</label><input type="text" id="nome2"></div>
+  <div><label class="fld" for="nome3">Integrante 4</label><input type="text" id="nome3"></div>
+  <div><label class="fld" for="nome4">Integrante 5</label><input type="text" id="nome4"></div>
+  <div><label class="fld" for="turma">Turma</label><input type="text" id="turma"></div>
+ </div>
+ <div class="navrow no-print"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-step="1" data-name="Estudo de caso"><section class="card" id="caso">
+ <h2><span class="badge">Sessão 2</span> Estudo de caso: Aurora Lar e a disputa por talentos</h2>
+ <p class="lead">Seis meses depois de atravessar a fase mais dura da crise de juros e ajustar seu posicionamento de mercado, a <b>Aurora Lar</b>, rede regional de móveis e eletrodomésticos do norte do Paraná, voltou a ver clientes nas lojas. O problema agora é outro: faltam vendedores para atendê-los.</p>
+<h3>Um mercado de trabalho que mudou de lado</h3>
+<p>Nos últimos dois anos, a região ganhou um centro de distribuição de uma grande empresa de comércio eletrônico e duas lojas de uma rede de atacarejo. Juntas, abriram centenas de vagas, com salários cerca de 12% acima da média do varejo local, vale-refeição e escala de trabalho fixa. Os indicadores regionais mostram o reflexo disso:</p>
+<div class="tblwrap"><table class="ind">
+<thead><tr><th>Indicador (região, dados ilustrativos)</th><th>2024</th><th>2026</th></tr></thead>
+<tbody>
+<tr><td>Taxa de desocupação</td><td>7,1%</td><td>5,2%</td></tr>
+<tr><td>Renda média real do trabalhador</td><td>R$ 2.980</td><td>R$ 3.310</td></tr>
+<tr><td>Taxa de informalidade</td><td>39%</td><td>35%</td></tr>
+</tbody></table></div>
+<p>Com mais vagas disponíveis e trabalhadores mais escolarizados e formalizados, quem tem experiência em vendas passou a ter opções. E está usando essas opções.</p>
+<h3>O que acontece dentro da Aurora Lar</h3>
+<div class="tblwrap"><table class="ind">
+<thead><tr><th>Indicador interno</th><th>Aurora Lar</th><th>Média do setor</th></tr></thead>
+<tbody>
+<tr><td>Rotatividade anual de vendedores</td><td>41%</td><td>25%</td></tr>
+<tr><td>Tempo médio para preencher uma vaga</td><td>38 dias</td><td>21 dias</td></tr>
+<tr><td>Nota em site de avaliação de empregadores</td><td>2,7 / 5</td><td>3,6 / 5</td></tr>
+</tbody></table></div>
+<p>Juliana Castro, gerente de RH, reuniu os comentários mais frequentes deixados por ex-funcionários: a meta muda todo mês e a cobrança é feita na frente da equipe; não existe plano de carreira, e há vendedores com quatro anos no mesmo cargo; os colegas e os clientes são ótimos, mas a gerência não escuta ninguém. Nas entrevistas de desligamento, "falta de reconhecimento" aparece mais que "salário".</p>
+<h3>Quando o problema interno chega ao cliente</h3>
+<p>Em agosto, uma ex-vendedora publicou um vídeo relatando sua rotina na loja. O vídeo passou de 80 mil visualizações na região. Nos comentários, além de outros ex-funcionários confirmando o relato, apareceram clientes dizendo que deixariam de comprar em uma empresa que trata mal quem trabalha nela. Ao mesmo tempo, com equipes incompletas, as lojas passaram a ter filas nos fins de semana, e as reclamações sobre demora no atendimento cresceram 60% em plataformas de reclamação de consumidores.</p>
+<h3>Três propostas na mesa</h3>
+<p>Na reunião de diretoria, surgiram três caminhos. O diretor financeiro propôs um reajuste geral de 10% para os vendedores, o que resolveria "o problema de mercado" mas pressionaria as margens recém-recuperadas. Juliana defendeu um programa de <b>marca empregadora</b> (<i>employer branding</i>): revisar a política de metas, criar trilhas de carreira, formar os gerentes de loja e dar voz aos colaboradores. Renata Alves, coordenadora de marketing, sugeriu uma campanha de <b>comunicação institucional</b> para recuperar a imagem da empresa junto a clientes e candidatos.</p>
+<p>Juliana fez um alerta: "Se a campanha disser que somos um ótimo lugar para trabalhar e nada mudar aqui dentro, o próximo vídeo vai ser pior." A diretora-geral, Helena Prado, pediu uma proposta integrada.</p>
+<div class="pergunta"><b>Questão norteadora:</b> como a Aurora Lar pode voltar a ser atrativa para profissionais e clientes em um mercado de trabalho aquecido, sem comprometer sua sustentabilidade financeira?</div>
+
+ <div class="navrow no-print"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-step="2" data-name="Questionário"><section class="card">
+ <h2><span class="badge">Sessão 3</span> Questionário dissertativo <button class="reler no-print" onclick="abrirCaso()">📄 Reler o caso</button></h2>
+ <p class="sec-desc">Responda com base no estudo de caso e nos conteúdos do encontro. Cinco questões.</p>
+ <div class="q"><label class="fld" for="diss_0"><span class="qnum">1.</span> (Econômico) Interprete os indicadores do mercado de trabalho apresentados no caso (<b>taxa de desocupação</b>, <b>renda média</b> e <b>informalidade</b>). Explique por que esse cenário torna mais difícil para a Aurora Lar contratar e manter vendedores.</label><textarea id="diss_0" placeholder="Sua resposta..."></textarea></div><div class="q"><label class="fld" for="diss_1"><span class="qnum">2.</span> (Recursos Humanos) Explique o que é <b>employer branding</b> (marca empregadora) e faça um diagnóstico da marca empregadora atual da Aurora Lar, apontando pelo menos três pontos fracos evidenciados no caso.</label><textarea id="diss_1" placeholder="Sua resposta..."></textarea></div><div class="q"><label class="fld" for="diss_2"><span class="qnum">3.</span> (Recursos Humanos) A diretoria cogitou resolver o problema apenas com aumento de salário. Proponha <b>três ações de retenção de talentos</b> que vão além da remuneração e justifique cada uma com base no caso.</label><textarea id="diss_2" placeholder="Sua resposta..."></textarea></div><div class="q"><label class="fld" for="diss_3"><span class="qnum">4.</span> (Estratégias de Marketing) Explique como a <b>reputação</b> da empresa afeta ao mesmo tempo a atração de <b>clientes</b> e de <b>profissionais</b>. Em seguida, proponha uma ação de <b>comunicação institucional</b> para a Aurora Lar, indicando público, mensagem e canal.</label><textarea id="diss_3" placeholder="Sua resposta..."></textarea></div><div class="q"><label class="fld" for="diss_4"><span class="qnum">5.</span> (Integradora) Relacione as três dimensões — <b>economia</b> (mercado de trabalho), <b>RH</b> (marca empregadora e retenção) e <b>marketing</b> (reputação e comunicação). Por que a Aurora Lar precisa agir nas três ao mesmo tempo para voltar a ser atrativa?</label><textarea id="diss_4" placeholder="Sua resposta..."></textarea></div>
+ <div class="navrow no-print"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-step="3" data-name="Cruzadinha"><section class="card">
+ <h2><span class="badge">Sessão 4</span> Cruzadinha <button class="reler no-print" onclick="abrirCaso()">📄 Reler o caso</button></h2>
+ <p class="sec-desc">Escreva a palavra correspondente a cada definição, uma letra por quadrinho (sem acentos ou cedilha).</p>
+ <div id="cz-list"></div>
+ <div class="navrow no-print"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-step="4" data-name="Palavras cruzadas"><section class="card">
+ <h2><span class="badge">Sessão 5</span> Palavras cruzadas <button class="reler no-print" onclick="abrirCaso()">📄 Reler o caso</button></h2>
+ <p class="sec-desc">Preencha a grade usando as pistas de <b>Horizontais</b> e <b>Verticais</b> (sem acentos ou cedilha).</p>
+ <div class="xwwrap"><div class="xw" id="xw"></div></div>
+ <div class="clues"><div><h4>Horizontais</h4><ol id="cl-a"></ol></div><div><h4>Verticais</h4><ol id="cl-d"></ol></div></div>
+ <div class="navrow no-print"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-step="5" data-name="Complete"><section class="card">
+ <h2><span class="badge">Sessão 6</span> Complete <button class="reler no-print" onclick="abrirCaso()">📄 Reler o caso</button></h2>
+ <p class="sec-desc">Complete cada frase com a palavra adequada.</p>
+ <div id="cp-list"></div>
+ <div class="navrow no-print"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" onclick="concluir()">✅ Concluir e salvar em PDF</button></div>
+</section></div>
+
+<section class="card" id="entrega">
+ <h2>Código de entrega</h2>
+ <p class="sec-desc">Uso exclusivo do professor. Não altere.</p>
+ <div class="codebox" id="codeOut"></div>
+</section>
+</div>
+
+<div class="actionbar no-print"><div class="inner">
+ <span class="status" id="status">Rascunho salvo automaticamente neste navegador.</span>
+ <button class="btn-primary" onclick="concluir()">Concluir e salvar em PDF</button>
+</div></div>
+
+<dialog id="dlgCaso"><div class="dlg"><div id="casoCopy"></div><div style="text-align:right;margin-top:12px"><button class="btn-primary" onclick="document.getElementById('dlgCaso').close()">Fechar</button></div></div></dialog>
+
+<script>
+const VERSAO="ENC2-v1";const KEY="ch3t_enc2_v1";
+const CZ=[{"n": 1, "len": 11, "clue": "Taxa de ___: percentual da força de trabalho que está sem emprego e procurando ocupação."}, {"n": 2, "len": 15, "clue": "Capacidade de um profissional conseguir e manter-se em um emprego no mercado."}, {"n": 3, "len": 13, "clue": "Situação de quem trabalha sem carteira assinada ou sem registro formal."}, {"n": 4, "len": 7, "clue": "Remuneração fixa paga pelo trabalho; sozinha, não garante a permanência do talento."}, {"n": 5, "len": 7, "clue": "Profissional qualificado e disputado pelas empresas do mercado."}, {"n": 6, "len": 8, "clue": "Conjunto de ações para manter os bons profissionais na empresa."}, {"n": 7, "len": 8, "clue": "Termo em inglês para a rotatividade de pessoal."}, {"n": 8, "len": 10, "clue": "Vantagens oferecidas além do salário, como plano de saúde e vale-alimentação."}, {"n": 9, "len": 8, "clue": "Plano de ___: trajetória de crescimento que a empresa oferece ao colaborador."}, {"n": 10, "len": 9, "clue": "Avaliação construída ao longo do tempo sobre a empresa por clientes, candidatos e sociedade."}];const XW={"rows": 10, "cols": 14, "entries": [{"num": 8, "dir": "across", "row": 6, "col": 3, "len": 11, "clue": "Processo pelo qual a empresa transmite sua identidade, valores e ações aos seus públicos."}, {"num": 1, "dir": "down", "row": 0, "col": 8, "len": 9, "clue": "Razão de existir da empresa, que também atrai profissionais que se identificam com ela."}, {"num": 2, "dir": "down", "row": 1, "col": 5, "len": 6, "clue": "Percepção pública que se forma sobre a empresa."}, {"num": 3, "dir": "down", "row": 1, "col": 10, "len": 9, "clue": "Sentimento que clientes e colaboradores depositam numa marca coerente entre discurso e prática."}, {"num": 4, "dir": "down", "row": 1, "col": 12, "len": 7, "clue": "Capacidade de despertar o interesse de bons profissionais pelas vagas da empresa."}, {"num": 6, "dir": "across", "row": 4, "col": 0, "len": 7, "clue": "Ocupação remunerada; quando sobra no mercado, o trabalhador escolhe onde ficar."}, {"num": 10, "dir": "across", "row": 9, "col": 9, "len": 4, "clue": "Posto de trabalho em aberto que a empresa precisa preencher."}, {"num": 7, "dir": "down", "row": 4, "col": 1, "len": 5, "clue": "Nome e identidade que diferenciam a empresa; no RH, ___ empregadora."}, {"num": 9, "dir": "across", "row": 8, "col": 0, "len": 9, "clue": "Profissional que participa de um processo seletivo."}, {"num": 5, "dir": "across", "row": 2, "col": 2, "len": 5, "clue": "___ organizacional: percepção coletiva dos funcionários sobre o ambiente de trabalho."}]};const CP=["A taxa de desocupação é calculada dividindo o número de desocupados pela força de ___.", "Com o desemprego baixo, cresce o poder de ___ dos trabalhadores nas negociações salariais.", "A ___ média real mostra quanto os trabalhadores ganham, já descontada a inflação.", "Employer branding é a construção da marca ___: como a empresa é percebida como lugar para trabalhar.", "A proposta de ___ ao empregado (EVP) reúne o que a empresa oferece em troca do talento e da dedicação do profissional.", "Colaboradores satisfeitos que recomendam a empresa espontaneamente atuam como ___ da marca.", "Substituir um vendedor gera custos de recrutamento, seleção e ___ do novo contratado.", "A comunicação ___ divulga a identidade, os valores e as ações da organização para seus públicos.", "A reputação é construída pela ___ entre o que a empresa promete e o que ela pratica.", "Uma empresa mal avaliada por ex-funcionários pode perder não só candidatos, mas também ___."];
+const $=id=>document.getElementById(id);
+// Cruzadinha
+CZ.forEach(it=>{const d=document.createElement('div');d.className='cz-item';
+ d.innerHTML=`<div class="cz-clue"><b>${it.n}.</b> ${it.clue} <span class="step-of">(${it.len} letras)</span></div>`;
+ const b=document.createElement('div');b.className='boxes';
+ for(let i=0;i<it.len;i++){const inp=document.createElement('input');inp.type='text';inp.maxLength=1;inp.id=`cz_${it.n}_${i}`;inp.setAttribute('aria-label',`Palavra ${it.n}, letra ${i+1}`);b.appendChild(inp);}
+ d.appendChild(b);$('cz-list').appendChild(d);});
+// Palavras cruzadas
+(function(){const g=$('xw');g.style.gridTemplateColumns=`repeat(${XW.cols},34px)`;const cells={};const nums={};
+ XW.entries.forEach(e=>{nums[e.row+'_'+e.col]=e.num;for(let i=0;i<e.len;i++){const r=e.row+(e.dir==='down'?i:0),c=e.col+(e.dir==='across'?i:0);cells[r+'_'+c]=1;}});
+ for(let r=0;r<XW.rows;r++)for(let c=0;c<XW.cols;c++){const k=r+'_'+c;const d=document.createElement('div');
+  if(cells[k]){d.className='cell';d.innerHTML=(nums[k]?`<span class="n">${nums[k]}</span>`:'')+`<input type="text" maxlength="1" id="xw_${k}" aria-label="Linha ${r+1}, coluna ${c+1}">`;}
+  else d.className='cell blk';g.appendChild(d);}
+ [...XW.entries].sort((a,b)=>a.num-b.num).forEach(e=>{const li=document.createElement('li');li.innerHTML=`<b>${e.num}.</b> ${e.clue} <span class="step-of">(${e.len})</span>`;$(e.dir==='across'?'cl-a':'cl-d').appendChild(li);});})();
+// Complete
+CP.forEach((f,i)=>{const d=document.createElement('div');d.className='cp-item';
+ d.innerHTML=`<b>${i+1}.</b> `+f.replace('___',`<input type="text" id="cp_${i}" aria-label="Lacuna ${i+1}">`);$('cp-list').appendChild(d);});
+// letras: avança
+document.querySelectorAll('.boxes input,.xw input').forEach(inp=>{inp.addEventListener('input',()=>{inp.value=inp.value.toUpperCase().slice(-1);
+ if(inp.value){let n=inp.parentElement.classList.contains('cell')?null:inp.nextElementSibling;if(n)n.focus();}});
+ inp.addEventListener('keydown',ev=>{if(ev.key==='Backspace'&&!inp.value&&inp.previousElementSibling&&inp.previousElementSibling.tagName==='INPUT')inp.previousElementSibling.focus();});});
+// navegação
+const panels=[...document.querySelectorAll('.panel')];let cur=0;
+panels.forEach((p,i)=>{const t=document.createElement('button');t.className='tab';t.textContent=(i+1)+'. '+p.dataset.name;t.onclick=()=>go(i);$('tabs').appendChild(t);});
+function go(i){cur=Math.max(0,Math.min(panels.length-1,i));panels.forEach((p,j)=>p.classList.toggle('on',j===cur));
+ document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',j===cur));
+ $('bar').style.width=((cur+1)/panels.length*100)+'%';
+ document.querySelectorAll('.step-of').forEach(s=>{if(s.closest('.navrow'))s.textContent=`Sessão ${cur+1} de ${panels.length}`;});
+ window.scrollTo({top:0,behavior:'smooth'});try{localStorage.setItem(KEY+'_step',cur)}catch(e){}}
+document.querySelectorAll('[data-prev]').forEach(b=>b.onclick=()=>go(cur-1));
+document.querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>go(cur+1));
+panels[0].querySelector('[data-prev]').disabled=true;
+function abrirCaso(){const src=$('caso').cloneNode(true);src.querySelectorAll('.navrow').forEach(n=>n.remove());src.removeAttribute('id');$('casoCopy').innerHTML='';$('casoCopy').appendChild(src);$('dlgCaso').showModal();}
+// coleta / autosave
+function coletar(){const d={meta:{integrantes:[0,1,2,3,4].map(i=>$('nome'+i).value.trim()),turma:$('turma').value.trim(),data:new Date().toLocaleString('pt-BR')},diss:[],cz:{},xw:{},cp:[]};
+ for(let i=0;i<5;i++)d.diss.push($('diss_'+i).value);
+ CZ.forEach(it=>{let w='';for(let i=0;i<it.len;i++)w+=($(`cz_${it.n}_${i}`).value||'·');d.cz[it.n]=w;});
+ document.querySelectorAll('.xw input').forEach(inp=>{if(inp.value)d.xw[inp.id.slice(3)]=inp.value.toUpperCase();});
+ CP.forEach((_,i)=>d.cp.push($('cp_'+i).value.trim()));return d;}
+const campos=()=>document.querySelectorAll('input[type=text],textarea');
+function salvar(){try{const o={};campos().forEach(c=>o[c.id]=c.value);localStorage.setItem(KEY,JSON.stringify(o));$('status').innerHTML='<b>Rascunho salvo</b> às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch(e){$('status').textContent='Não foi possível salvar o rascunho neste navegador.';}}
+function carregar(){try{const o=JSON.parse(localStorage.getItem(KEY)||'{}');campos().forEach(c=>{if(o[c.id]!=null)c.value=o[c.id];});return parseInt(localStorage.getItem(KEY+'_step')||'0')||0;}catch(e){return 0}}
+let tmr;campos().forEach(c=>c.addEventListener('input',()=>{clearTimeout(tmr);tmr=setTimeout(salvar,500);}));
+function autoGrow(){document.querySelectorAll('textarea').forEach(t=>{t.style.height='auto';t.style.height=Math.max(140,t.scrollHeight+4)+'px';});}
+function concluir(){const d=coletar();
+ if(!d.meta.integrantes.some(Boolean)){alert('Preencha ao menos o nome do Integrante 1 antes de concluir.');go(0);$('nome0').focus();return;}
+ const vaz=d.diss.filter(x=>!x.trim()).length;if(vaz&&!confirm(`Há ${vaz} questão(ões) dissertativa(s) em branco. Deseja concluir mesmo assim?`))return;
+ const code=VERSAO+'.'+btoa(unescape(encodeURIComponent(JSON.stringify(d))));
+ $('codeOut').textContent=code;salvar();autoGrow();
+ alert('Na janela de impressão, escolha "Salvar como PDF" como destino. Depois envie o PDF na tarefa do Google Classroom.');
+ setTimeout(()=>window.print(),150);}
+go(carregar());
+</script></body></html>
