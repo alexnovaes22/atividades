@@ -35,6 +35,10 @@ label.opt input{margin-top:3px;accent-color:var(--plum);transform:scale(1.15)}
 .hint{flex:1;font-size:12.5px;color:var(--muted)}
 button{font-family:inherit;font-size:15px;font-weight:700;border-radius:10px;padding:12px 20px;border:1.5px solid var(--plum);cursor:pointer;background:var(--plum);color:#fff;transition:.12s}
 button:hover{background:var(--plum2)}
+button.btn-ghost{background:#fff;color:var(--plum)}
+button.btn-ghost:hover{background:var(--rose-soft)}
+.saved-flash{color:#1f8a5b;font-weight:700}
+@media(max-width:480px){.bar .hint{display:none}}
 .done{text-align:center;padding:8px 0}
 .done .big{font-family:"Cambria",serif;font-size:22px;color:var(--plum);margin:6px 0 8px}
 .ok-check{width:58px;height:58px;border-radius:50%;background:var(--rose-soft);display:inline-flex;align-items:center;justify-content:center;font-size:30px;color:var(--plum)}
@@ -48,7 +52,7 @@ button:hover{background:var(--plum2)}
   </div>
 
   <div id="form">
-  <div class="instr">Responda com calma e com as suas próprias palavras. Ao terminar, toque em <b>Gerar PDF</b> e <b>envie o arquivo no Google Classroom</b>. Não existe resposta certa ou errada nas questões de reflexão — o que importa é a sua sinceridade.</div>
+  <div class="instr">Responda com calma e com as suas próprias palavras. Se precisar parar, toque em <b>Salvar</b> para guardar as respostas neste aparelho e continuar depois. Ao terminar, toque em <b>Gerar PDF</b> e <b>envie o arquivo no Google Classroom</b>. Não existe resposta certa ou errada nas questões de reflexão — o que importa é a sua sinceridade.</div>
 
   <div class="card">
     <div class="tag">Identificação</div>
@@ -67,7 +71,8 @@ button:hover{background:var(--plum2)}
 </div>
 
 <div class="bar"><div class="inner">
-  <span class="hint" id="hint">Preencha e gere o PDF para entregar.</span>
+  <span class="hint" id="hint">Preencha, salve e gere o PDF para entregar.</span>
+  <button id="save" class="btn-ghost">Salvar</button>
   <button id="btn">Gerar PDF</button>
 </div></div>
 
@@ -190,8 +195,18 @@ button:hover{background:var(--plum2)}
     var b=document.getElementById("btn"); b.textContent="Gerar novamente";
     window.scrollTo(0,0);
   }
+  var hintDefault="Preencha, salve e gere o PDF para entregar.";
+  document.getElementById("save").addEventListener("click",function(){
+    save();
+    var h=document.getElementById("hint"), sb=document.getElementById("save");
+    h.innerHTML='<span class="saved-flash">✓ Respostas salvas neste navegador.</span>';
+    sb.textContent="Salvo ✓";
+    clearTimeout(window.__svt);
+    window.__svt=setTimeout(function(){ h.textContent=hintDefault; sb.textContent="Salvar"; },2500);
+  });
   document.getElementById("btn").addEventListener("click",function(){
     if(document.getElementById("form").style.display==="none"){document.getElementById("form").style.display="";document.getElementById("after").innerHTML="";}
+    save();
     gen();
   });
 })();
