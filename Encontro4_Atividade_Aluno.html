@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encontro 4 — Comportamento do Consumidor e Tendências Sociais</title>
+<style>
+:root{--fundo:#f3f5f9;--papel:#fff;--tinta:#14233b;--tinta2:#55637a;--linha:#dde3ee;--acento:#0e7c6b;--acento2:#0b5f53;--suave:#e6f3f0;--erro:#c0392b;--sombra:0 1px 2px rgba(20,35,59,.06),0 8px 24px rgba(20,35,59,.06)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--tinta);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.6;font-size:16px}
+.wrap{max-width:940px;margin:0 auto;padding:22px 16px 110px}
+header.top{background:linear-gradient(135deg,#14233b,#22345a);color:#fff;border-radius:16px;padding:22px 24px;box-shadow:var(--sombra)}
+.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.85;margin:0 0 6px}
+header.top h1{margin:0;font-size:23px;line-height:1.25}
+.sub{margin-top:8px;font-size:14px;opacity:.9}
+.comp{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.comp span{font-size:12px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:4px 10px;border-radius:999px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 8px}
+.tabs button{background:#fff;border:1px solid var(--linha);color:var(--tinta2);font-weight:600;font-size:13.5px;padding:8px 12px;border-radius:999px}
+.tabs button.on{background:var(--acento);color:#fff;border-color:var(--acento)}
+.progress{height:6px;background:#e3e8f1;border-radius:99px;overflow:hidden}
+#bar{height:100%;width:0;background:var(--acento);transition:width .3s}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--papel);border:1px solid var(--linha);border-radius:14px;padding:20px 22px;margin-top:16px;box-shadow:var(--sombra)}
+.card h2{margin:0 0 6px;font-size:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{background:var(--suave);color:var(--acento2);font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:.04em}
+.sec-desc{color:var(--tinta2);margin:0 0 14px;font-size:14.5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+label.fld{display:block;font-weight:600;font-size:14px;margin-bottom:4px}
+input[type=text],textarea{width:100%;font:inherit;border:1px solid #c9d2e3;border-radius:9px;padding:9px 11px;background:#fbfcfe;color:var(--tinta)}
+input:focus,textarea:focus{outline:2px solid rgba(14,124,107,.35);border-color:var(--acento)}
+textarea{min-height:130px;resize:vertical}
+.q{margin-bottom:18px}.qnum{color:var(--acento2);font-weight:800;margin-right:4px}
+.caso{background:#fbfcfe;border-left:4px solid var(--acento);padding:4px 18px;border-radius:8px}
+.empresa{font-weight:700;color:var(--acento2)}
+.pergunta{background:var(--suave);border-radius:10px;padding:12px 14px;margin:14px 0 6px}
+.cz-item{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-bottom:1px dashed var(--linha)}
+.cz-item:last-child{border-bottom:none}
+.boxes{display:flex;flex-wrap:wrap;gap:4px}
+.boxes input,.xw input{width:32px;height:34px;padding:0;text-align:center;text-transform:uppercase;font-weight:700;font-size:16px;border-radius:6px}
+.xw-wrap{overflow-x:auto;padding-bottom:6px}
+.xw{display:grid;gap:3px;width:max-content;margin:4px auto 14px}
+.xw .cell{position:relative;width:32px;height:34px}
+.xw .cell.void{background:transparent}
+.xw .cell .n{position:absolute;top:1px;left:3px;font-size:9px;font-weight:700;color:var(--acento2);pointer-events:none;z-index:1}
+.xw input{width:32px;background:#fff}
+.clues{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:640px){.clues{grid-template-columns:1fr}}
+.clues h3{margin:0 0 6px;font-size:15px;color:var(--acento2)}
+.clues ol{margin:0;padding-left:0;list-style:none;font-size:14.5px}
+.clues li{margin-bottom:6px}
+.cp-item{margin-bottom:14px}
+.cp-item input{max-width:360px;margin-top:4px}
+.navrow{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:8px}
+.step-of{font-size:13px;color:var(--tinta2)}
+button{font:inherit;font-weight:700;border:none;border-radius:10px;padding:11px 16px;cursor:pointer}
+.btn-primary{background:var(--acento);color:#fff}.btn-primary:hover{background:var(--acento2)}
+.btn-ghost{background:#eef2f9;color:var(--tinta)}
+.btn-fim{background:#14233b;color:#fff}
+.reler{background:#fff;border:1px solid var(--acento);color:var(--acento2);font-size:13px;padding:6px 12px;margin-left:auto}
+.actionbar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--linha);padding:10px 16px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center;z-index:5}
+.status{font-size:13px;color:var(--tinta2)}
+.note{font-size:13px;color:var(--tinta2);margin-top:10px}
+.req::after{content:" *";color:var(--erro)}
+dialog{border:none;border-radius:14px;padding:0;max-width:720px;width:94%;box-shadow:0 20px 60px rgba(20,35,59,.35)}
+dialog::backdrop{background:rgba(20,35,59,.45)}
+.dlg{padding:22px 24px;max-height:80vh;overflow:auto}
+#print-area{display:none}
+@media print{
+ body{background:#fff}.wrap{padding:0}
+ .tabs,.progress,.actionbar,.panel,dialog,.no-print{display:none!important}
+ #print-area{display:block}
+ header.top{background:#fff;color:#000;border:1px solid #999;box-shadow:none}
+ .comp span{border-color:#999}
+ .pr-sec{border:1px solid #bbb;border-radius:8px;padding:10px 14px;margin-top:10px;break-inside:auto}
+ .pr-sec h3{margin:0 0 6px;font-size:15px}
+ .pr-ans{white-space:pre-wrap;border-left:3px solid #999;padding-left:8px;margin:4px 0 10px}
+ .codebox{font-family:Consolas,monospace;font-size:8.5px;word-break:break-all;border:1px solid #999;padding:8px}
+}
+</style></head><body>
+<div class="wrap">
+<header class="top">
+ <p class="kicker">Complementação de Carga Horária · 3º Trimestre</p>
+ <h1>Encontro 4 — Comportamento do Consumidor e Tendências Sociais</h1>
+ <div class="sub">Atividade interdisciplinar · uma sessão por vez · individual ou em grupo de até 5 integrantes.</div>
+ <div class="comp"><span>📈 Princípios Econômicos</span><span>👥 Recursos Humanos</span><span>🎯 Estratégias de Marketing</span></div>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<div class="progress"><div id="bar"></div></div>
+
+<div class="panel" data-name="Identificação"><section class="card">
+ <h2><span class="badge">Sessão 1</span> Identificação</h2>
+ <p class="sec-desc">A atividade pode ser feita individualmente ou em grupo de até 5 integrantes. Preencha ao menos um nome.</p>
+ <div class="grid2">
+  <div><label class="fld req" for="nome0">Integrante 1</label><input type="text" id="nome0" placeholder="Nome completo"></div>
+  <div><label class="fld" for="nome1">Integrante 2</label><input type="text" id="nome1" placeholder="Nome completo"></div>
+  <div><label class="fld" for="nome2">Integrante 3</label><input type="text" id="nome2" placeholder="Nome completo"></div>
+  <div><label class="fld" for="nome3">Integrante 4</label><input type="text" id="nome3" placeholder="Nome completo"></div>
+  <div><label class="fld" for="nome4">Integrante 5</label><input type="text" id="nome4" placeholder="Nome completo"></div>
+  <div><label class="fld" for="turma">Turma</label><input type="text" id="turma" placeholder="Ex.: 3º ano"></div>
+ </div>
+ <div class="navrow"><span></span><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-name="Estudo de caso"><section class="card">
+ <h2><span class="badge">Sessão 2</span> Estudo de caso: Aurora Lar e o novo consumidor</h2>
+ <p class="sec-desc">Leia com atenção. As próximas sessões se apoiam nesta situação.</p>
+ <div class="caso" id="caso-fonte"><p>Depois de reorganizar sua cultura interna, a <span class="empresa">Aurora Lar</span> voltou a olhar para fora. A região norte do Paraná vivia um bom momento: com o avanço da agroindústria e dos serviços, a <b>renda disponível</b> das famílias atendidas pela rede cresceu cerca de <b>8%</b> em um ano. Ao analisar as vendas do mesmo período, Renata Alves, coordenadora de marketing, encontrou um comportamento curioso:</p>
+<p>• a <b>linha básica</b> (fogão de quatro bocas, colchão simples, guarda-roupa padrão) cresceu apenas <b>2%</b>;<br>
+• a <b>linha premium e conectada</b> (smart TVs, fritadeiras elétricas, móveis planejados) cresceu <b>20%</b>;<br>
+• a <b>linha popular sem marca</b> (móveis de aglomerado de baixo custo) <b>caiu 6%</b>.</p>
+<p>Os clientes também tinham mudado. Renata apresentou à diretoria dois perfis que representavam bem a nova realidade. <b>Seu Antônio</b>, 61 anos, aposentado, entrou na loja de Londrina para trocar a geladeira. Fez questão de ser atendido por Dona Cida, vendedora que o conhece há quinze anos, consultou os filhos por telefone antes de fechar, escolheu uma marca que "nunca deu problema" e pagou no crediário. Disse que não confia em comprar eletrodoméstico pela internet. Já <b>Larissa</b>, 26 anos, analista de sistemas, está montando seu primeiro apartamento. Chegou à loja depois de ver um vídeo de uma influenciadora de decoração, já sabia o modelo de fritadeira e de smart TV que queria, comparou avaliações on-line no celular durante o atendimento, perguntou sobre o consumo de energia dos aparelhos e pagou no Pix.</p>
+<p>Dentro das lojas, a equipe de vendas também era uma mistura de <b>gerações</b>. Os vendedores da <b>Geração X</b>, como Dona Cida, tinham carteira fiel de clientes, mas resistiam ao novo sistema de vendas e ao atendimento por WhatsApp. Os gerentes, da <b>Geração Y</b>, cobravam metas e falavam em propósito. Os recém-contratados da <b>Geração Z</b> dominavam redes sociais, pediam horários mais flexíveis e <i>feedback</i> constante. O atrito era visível: "os novatos vivem no celular", reclamavam uns; "os antigos não sabem nem mandar um catálogo", respondiam outros.</p>
+<p>Um dado chamou a atenção de Juliana, gerente de RH: a loja de Cambé, que tinha a equipe mais <b>diversa</b> da rede, com vendedores de várias idades, homens e mulheres, e um colaborador com deficiência auditiva que atendia em Libras, apresentou o maior índice de satisfação dos clientes e a melhor taxa de conversão do ano. "Os clientes se enxergam em quem atende", resumiu a gerente da loja.</p>
+<p>A diretora-geral, Helena Prado, pediu um plano para o próximo semestre que unisse três frentes: o que vender diante da nova renda, como se comunicar com consumidores tão diferentes e como aproveitar melhor a diversidade da própria equipe.</p>
+<div class="pergunta"><b>Questão norteadora:</b> como a Aurora Lar pode ajustar seus produtos, sua comunicação e sua equipe para atender consumidores com rendas, gerações e comportamentos de compra tão diferentes?</div>
+</div>
+ <div class="navrow"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-name="Questionário"><section class="card">
+ <h2><span class="badge">Sessão 3</span> Questionário dissertativo <button class="reler" data-reler>📄 Reler o caso</button></h2>
+ <p class="sec-desc">Responda com suas palavras, relacionando os conceitos ao caso da Aurora Lar. Cinco questões.</p>
+ <div id="diss-list"></div>
+ <div class="navrow"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-name="Cruzadinha"><section class="card">
+ <h2><span class="badge">Sessão 4</span> Cruzadinha <button class="reler" data-reler>📄 Reler o caso</button></h2>
+ <p class="sec-desc">Escreva a palavra correspondente a cada definição, uma letra por quadrinho. Escreva <b>sem acentos e sem cedilha</b> (ex.: COMUNICACAO).</p>
+ <div id="cz-list"></div>
+ <div class="navrow"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-name="Palavras cruzadas"><section class="card">
+ <h2><span class="badge">Sessão 5</span> Palavras cruzadas <button class="reler" data-reler>📄 Reler o caso</button></h2>
+ <p class="sec-desc">Preencha a grade usando as pistas de <b>Horizontais</b> e <b>Verticais</b>. Sem acentos e sem cedilha.</p>
+ <div class="xw-wrap"><div class="xw" id="xw"></div></div>
+ <div class="clues"><div><h3>Horizontais</h3><ol id="cl-across"></ol></div><div><h3>Verticais</h3><ol id="cl-down"></ol></div></div>
+ <div class="navrow"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-primary" data-next>Próximo ▶</button></div>
+</section></div>
+
+<div class="panel" data-name="Complete"><section class="card">
+ <h2><span class="badge">Sessão 6</span> Complete <button class="reler" data-reler>📄 Reler o caso</button></h2>
+ <p class="sec-desc">Complete cada frase com a palavra ou expressão adequada.</p>
+ <div id="cp-list"></div>
+ <p class="note">Terminou? Confira se respondeu tudo e clique em <b>Concluir e salvar em PDF</b>.</p>
+ <div class="navrow"><button class="btn-ghost" data-prev>◀ Anterior</button><span class="step-of"></span><button class="btn-fim" data-fim>✅ Concluir e salvar em PDF</button></div>
+</section></div>
+
+<div id="print-area"></div>
+</div>
+
+<div class="actionbar">
+ <span class="status" id="status">Rascunho salvo automaticamente neste navegador.</span>
+ <button class="btn-ghost" id="btn-limpar">Limpar respostas</button>
+ <button class="btn-fim" data-fim>✅ Concluir e salvar em PDF</button>
+</div>
+
+<dialog id="dlg-caso"><div class="dlg"><h2 style="margin-top:0">Estudo de caso</h2><div class="caso" id="caso-modal"></div><div style="text-align:right;margin-top:14px"><button class="btn-primary" onclick="document.getElementById('dlg-caso').close()">Voltar à atividade</button></div></div></dialog>
+<dialog id="dlg-fim"><div class="dlg">
+ <h2 style="margin-top:0">Quase lá! 📄</h2>
+ <p>Na janela de impressão que vai abrir, escolha <b>"Salvar como PDF"</b> como destino e salve o arquivo. Depois, envie o PDF na tarefa do <b>Google Classroom</b>.</p>
+ <p id="aviso-vazios" style="color:var(--erro);font-weight:600"></p>
+ <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap"><button class="btn-ghost" onclick="document.getElementById('dlg-fim').close()">Voltar e revisar</button><button class="btn-primary" id="btn-print">Abrir janela para salvar PDF</button></div>
+</div></dialog>
+
+<script>
+const D={"xw": {"rows": 13, "cols": 10, "entries": [{"num": 1, "dir": "across", "row": 0, "col": 3, "len": 6, "clue": "Ideia ou convicção que a pessoa tem sobre um produto ou marca; fator psicológico."}, {"num": 1, "dir": "down", "row": 0, "col": 3, "len": 6, "clue": "___ social: divisão da sociedade em grupos com valores, interesses e comportamentos semelhantes."}, {"num": 2, "dir": "down", "row": 1, "col": 9, "len": 8, "clue": "Prática em que um profissional orienta outro; quando o mais jovem ensina o mais velho, é chamada de reversa."}, {"num": 3, "dir": "down", "row": 2, "col": 0, "len": 8, "clue": "Garantir que pessoas diversas tenham participação plena e respeitada na equipe."}, {"num": 4, "dir": "across", "row": 2, "col": 3, "len": 7, "clue": "Avaliação favorável ou desfavorável que a pessoa mantém sobre algo; fator psicológico."}, {"num": 5, "dir": "across", "row": 4, "col": 0, "len": 7, "clue": "Padrões de ___: hábitos de compra que mudam com a renda e com as tendências sociais."}, {"num": 6, "dir": "down", "row": 5, "col": 7, "len": 6, "clue": "Bem cuja demanda aumenta quando a renda do consumidor aumenta."}, {"num": 7, "dir": "down", "row": 6, "col": 5, "len": 7, "clue": "A Geração Z cresceu imersa no mundo ___: são os chamados nativos ___."}, {"num": 8, "dir": "across", "row": 7, "col": 0, "len": 8, "clue": "Bem cuja demanda cresce proporcionalmente mais do que a renda (elasticidade-renda maior que 1)."}, {"num": 9, "dir": "across", "row": 12, "col": 1, "len": 7, "clue": "Grupo de referência que costuma ter forte influência nas decisões de compra."}]}, "cz": [{"n": 1, "len": 12, "clue": "Medida da sensibilidade da quantidade demandada a variações de renda ou de preço."}, {"n": 2, "len": 5, "clue": "Recursos que as famílias recebem e podem gastar ou poupar."}, {"n": 3, "len": 8, "clue": "Bem cuja demanda cai quando a renda do consumidor aumenta."}, {"n": 4, "len": 7, "clue": "Grupo de pessoas nascidas em um mesmo período e com experiências históricas semelhantes."}, {"n": 5, "len": 11, "clue": "Presença de pessoas com idades, origens, perfis e experiências diferentes na equipe."}, {"n": 6, "len": 13, "clue": "Pessoa que, nas redes sociais, afeta a opinião e as compras de seus seguidores."}, {"n": 7, "len": 9, "clue": "Processo psicológico pelo qual o consumidor seleciona, organiza e interpreta informações."}, {"n": 8, "len": 11, "clue": "Carência sentida pela pessoa, que a leva a buscar um produto ou serviço."}, {"n": 9, "len": 6, "clue": "___ de vida: modo como a pessoa vive e usa seu tempo e seu dinheiro."}, {"n": 10, "len": 11, "clue": "Nome em inglês dado à Geração Y."}], "cp": ["A elasticidade-renda mede quanto a quantidade demandada varia quando varia a ___ do consumidor.", "O dinheiro que sobra para as famílias gastarem ou pouparem depois de impostos e descontos é a renda ___.", "Quando a renda aumenta e a procura por um bem diminui, ele é chamado de bem ___.", "Bens com elasticidade-renda maior que 1, como os itens premium, são chamados de bens ___.", "Os profissionais nascidos aproximadamente entre 1965 e 1980 pertencem à Geração ___.", "Os nascidos a partir de meados dos anos 1990, chamados de nativos digitais, formam a Geração ___.", "Equipes com pessoas de idades, origens e perfis diferentes valorizam a ___.", "Família, amigos e influenciadores são exemplos de grupos de ___ que afetam a decisão de compra.", "Motivação, percepção, aprendizagem, crenças e atitudes são fatores ___ do comportamento do consumidor.", "Cultura, subcultura e classe social são fatores ___ que influenciam a compra."], "diss": ["(Econômico) Com os dados do caso, calcule a <b>elasticidade-renda da demanda</b> das três linhas de produtos da Aurora Lar e classifique cada uma (bem normal necessário, bem superior ou bem inferior). Mostre o cálculo.", "(Econômico) Explique como o aumento da <b>renda disponível</b> transformou os <b>padrões de consumo</b> na região da Aurora Lar. O que a empresa deveria mudar em seu <b>mix de produtos</b> a partir disso?", "(RH) Descreva as características das <b>Gerações X, Y e Z</b> presentes na equipe de vendas e o conflito que surgiu entre elas. Proponha <b>duas ações</b> para transformar a <b>diversidade</b> da equipe em vantagem.", "(Marketing) Compare as decisões de compra de <b>Seu Antônio</b> e de <b>Larissa</b>. Identifique ao menos <b>dois fatores socioculturais</b> e <b>dois fatores psicológicos</b> que influenciam cada um e sugira como a Aurora Lar deveria se comunicar com eles.", "(Integradora) Por que uma equipe <b>diversa e intergeracional</b> pode ajudar a Aurora Lar a vender melhor para consumidores com rendas e comportamentos tão diferentes? Relacione economia (renda e elasticidade), RH (gerações e diversidade) e marketing (fatores de decisão de compra)."]};
+const KEY='complCH_T3_enc4_v1';
+const PREFIX='ENC4-v1.';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+
+/* ---------- construção ---------- */
+$('#diss-list').innerHTML=D.diss.map((q,i)=>`<div class="q"><label class="fld" for="diss_${i}"><span class="qnum">${i+1}.</span> ${q}</label><textarea id="diss_${i}" placeholder="Sua resposta..."></textarea></div>`).join('');
+$('#cz-list').innerHTML=D.cz.map(c=>`<div class="cz-item"><div><span class="qnum">${c.n}.</span> ${c.clue} <span class="step-of">(${c.len} letras)</span></div><div class="boxes" data-cz="${c.n}">${Array.from({length:c.len},(_,k)=>`<input type="text" maxlength="1" data-czi="${k}" aria-label="Palavra ${c.n}, letra ${k+1}">`).join('')}</div></div>`).join('');
+$('#cp-list').innerHTML=D.cp.map((f,i)=>{const [a,b]=f.split('___');return `<div class="cp-item"><span class="qnum">${i+1}.</span> ${a}<b>______</b>${b}<br><input type="text" id="cp_${i}" placeholder="Resposta da lacuna ${i+1}"></div>`}).join('');
+
+// palavras cruzadas
+const X=D.xw, cells={}, starts={};
+X.entries.forEach(e=>{starts[e.row+'_'+e.col]=e.num;for(let k=0;k<e.len;k++){const r=e.row+(e.dir==='down'?k:0),c=e.col+(e.dir==='across'?k:0);cells[r+'_'+c]=true;}});
+const xwEl=$('#xw');xwEl.style.gridTemplateColumns=`repeat(${X.cols},32px)`;
+let gh='';for(let r=0;r<X.rows;r++)for(let c=0;c<X.cols;c++){const k=r+'_'+c;
+ gh+=cells[k]?`<div class="cell">${starts[k]?`<span class="n">${starts[k]}</span>`:''}<input type="text" maxlength="1" data-xw="${k}" aria-label="Linha ${r+1}, coluna ${c+1}"></div>`:'<div class="cell void"></div>';}
+xwEl.innerHTML=gh;
+$('#cl-across').innerHTML=X.entries.filter(e=>e.dir==='across').map(e=>`<li><b>${e.num}.</b> ${e.clue} <span class="step-of">(${e.len})</span></li>`).join('');
+$('#cl-down').innerHTML=X.entries.filter(e=>e.dir==='down').map(e=>`<li><b>${e.num}.</b> ${e.clue} <span class="step-of">(${e.len})</span></li>`).join('');
+
+// letras: maiúsculas, sem acento, avança
+function soLetra(v){return v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z]/g,'').slice(-1);}
+let xwDir='across';
+document.addEventListener('input',ev=>{
+ const t=ev.target;
+ if(t.dataset.czi!==undefined||t.dataset.xw!==undefined){
+  t.value=soLetra(t.value);
+  if(t.value){
+   if(t.dataset.czi!==undefined){const n=t.nextElementSibling;if(n)n.focus();}
+   else{const [r,c]=t.dataset.xw.split('_').map(Number);const nk=xwDir==='across'?r+'_'+(c+1):(r+1)+'_'+c;const n=document.querySelector(`[data-xw="${nk}"]`);if(n)n.focus();}
+  }
+ }
+ salvar();
+});
+document.addEventListener('keydown',ev=>{
+ const t=ev.target;
+ if(ev.key==='Backspace'&&!t.value){
+  if(t.dataset.czi!==undefined){const p=t.previousElementSibling;if(p){p.focus();ev.preventDefault();}}
+  else if(t.dataset.xw!==undefined){const [r,c]=t.dataset.xw.split('_').map(Number);const pk=xwDir==='across'?r+'_'+(c-1):(r-1)+'_'+c;const p=document.querySelector(`[data-xw="${pk}"]`);if(p){p.focus();ev.preventDefault();}}
+ }
+ if(t.dataset.xw!==undefined&&['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(ev.key)){
+  const [r,c]=t.dataset.xw.split('_').map(Number);
+  const m={ArrowRight:[0,1],ArrowLeft:[0,-1],ArrowUp:[-1,0],ArrowDown:[1,0]}[ev.key];
+  xwDir=m[0]?'down':'across';
+  const n=document.querySelector(`[data-xw="${(r+m[0])+'_'+(c+m[1])}"]`);if(n){n.focus();ev.preventDefault();}
+ }
+});
+// direção pela célula clicada: se não houver vizinho horizontal, vai para baixo
+document.addEventListener('focusin',ev=>{const t=ev.target;if(t.dataset.xw===undefined)return;const [r,c]=t.dataset.xw.split('_').map(Number);
+ const h=cells[r+'_'+(c+1)]||cells[r+'_'+(c-1)], v=cells[(r+1)+'_'+c]||cells[(r-1)+'_'+c];
+ if(h&&!v)xwDir='across';else if(v&&!h)xwDir='down';});
+
+/* ---------- navegação ---------- */
+const panels=$$('.panel');let cur=0;
+$('#tabs').innerHTML=panels.map((p,i)=>`<button data-go="${i}">${i+1}. ${p.dataset.name}</button>`).join('');
+function ir(i){cur=Math.max(0,Math.min(panels.length-1,i));panels.forEach((p,k)=>p.classList.toggle('on',k===cur));
+ $$('#tabs button').forEach((b,k)=>b.classList.toggle('on',k===cur));
+ $$('.step-of').forEach(s=>{if(!s.closest('.cz-item')&&!s.closest('li'))s.textContent=`Sessão ${cur+1} de ${panels.length}`;});
+ $('#bar').style.width=((cur+1)/panels.length*100)+'%';window.scrollTo({top:0,behavior:'smooth'});
+ try{localStorage.setItem(KEY+'_step',cur)}catch(e){}}
+document.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
+ if(b.dataset.go!==undefined)ir(+b.dataset.go);
+ if(b.hasAttribute('data-next'))ir(cur+1);
+ if(b.hasAttribute('data-prev'))ir(cur-1);
+ if(b.hasAttribute('data-reler')){$('#caso-modal').innerHTML=$('#caso-fonte').innerHTML;$('#dlg-caso').showModal();}
+ if(b.hasAttribute('data-fim'))concluir();
+});
+
+/* ---------- coleta / salvar ---------- */
+function coletar(){
+ const cz={};$$('[data-cz]').forEach(b=>{cz[b.dataset.cz]=Array.from(b.querySelectorAll('input')).map(i=>i.value||' ').join('').replace(/\s+$/,'');});
+ const xw={};$$('[data-xw]').forEach(i=>{if(i.value)xw[i.dataset.xw]=i.value;});
+ return {v:'ENC4-v1',meta:{integrantes:[0,1,2,3,4].map(i=>$('#nome'+i).value.trim()).filter(Boolean),turma:$('#turma').value.trim(),data:new Date().toLocaleString('pt-BR')},
+  diss:D.diss.map((_,i)=>$('#diss_'+i).value),cz,xw,cp:D.cp.map((_,i)=>$('#cp_'+i).value.trim())};
+}
+let tSalvar;
+function salvar(){clearTimeout(tSalvar);tSalvar=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(coletar()));$('#status').textContent='Rascunho salvo às '+new Date().toLocaleTimeString('pt-BR').slice(0,5)+'.';}catch(e){$('#status').textContent='Não foi possível salvar o rascunho neste navegador.';}},400);}
+function carregar(){let d;try{d=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){d=null}if(!d)return;
+ (d.meta.integrantes||[]).forEach((n,i)=>{if($('#nome'+i))$('#nome'+i).value=n;});$('#turma').value=d.meta.turma||'';
+ (d.diss||[]).forEach((v,i)=>{if($('#diss_'+i))$('#diss_'+i).value=v;});
+ Object.entries(d.cz||{}).forEach(([n,w])=>{const ins=document.querySelectorAll(`[data-cz="${n}"] input`);ins.forEach((inp,k)=>inp.value=(w[k]||'').trim());});
+ Object.entries(d.xw||{}).forEach(([k,v])=>{const i=document.querySelector(`[data-xw="${k}"]`);if(i)i.value=v;});
+ (d.cp||[]).forEach((v,i)=>{if($('#cp_'+i))$('#cp_'+i).value=v;});}
+$('#btn-limpar').onclick=()=>{if(!confirm('Apagar todas as respostas deste navegador? Esta ação não pode ser desfeita.'))return;try{localStorage.removeItem(KEY)}catch(e){}location.reload();};
+
+/* ---------- concluir ---------- */
+function encode(o){return PREFIX+btoa(unescape(encodeURIComponent(JSON.stringify(o))));}
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function concluir(){
+ const d=coletar();
+ if(!d.meta.integrantes.length){alert('Preencha ao menos o nome do Integrante 1 antes de concluir.');ir(0);$('#nome0').focus();return;}
+ const vazios=[];if(d.diss.some(v=>!v.trim()))vazios.push('questionário');
+ if(Object.values(d.cz).some(w=>w.replace(/\s/g,'').length<1)||Object.keys(d.cz).length<D.cz.length)vazios.push('cruzadinha');
+ if(Object.keys(d.xw).length<Object.keys(cells).length)vazios.push('palavras cruzadas');
+ if(d.cp.some(v=>!v))vazios.push('complete');
+ $('#aviso-vazios').textContent=vazios.length?'Atenção: ainda há itens em branco em: '+vazios.join(', ')+'. Você pode voltar e revisar ou salvar assim mesmo.':'';
+ montarImpressao(d);$('#dlg-fim').showModal();
+}
+function montarImpressao(d){
+ const czTxt=D.cz.map(c=>`${c.n}. ${esc(d.cz[c.n]||'—')}`).join('<br>');
+ const xwTxt=X.entries.map(e=>{let w='';for(let k=0;k<e.len;k++){const r=e.row+(e.dir==='down'?k:0),c=e.col+(e.dir==='across'?k:0);w+=d.xw[r+'_'+c]||'_';}return `${e.num} ${e.dir==='across'?'Horizontal':'Vertical'}: ${w}`;}).join('<br>');
+ $('#print-area').innerHTML=`
+ <div class="pr-sec"><h3>Identificação</h3>Integrantes: ${esc(d.meta.integrantes.join(', '))}<br>Turma: ${esc(d.meta.turma||'—')}<br>Gerado em: ${esc(d.meta.data)}</div>
+ <div class="pr-sec"><h3>Sessão 3 — Questionário dissertativo</h3>${D.diss.map((q,i)=>`<div><b>${i+1}.</b> ${q}<div class="pr-ans">${esc(d.diss[i]||'(em branco)')}</div></div>`).join('')}</div>
+ <div class="pr-sec"><h3>Sessão 4 — Cruzadinha</h3>${czTxt}</div>
+ <div class="pr-sec"><h3>Sessão 5 — Palavras cruzadas</h3>${xwTxt}</div>
+ <div class="pr-sec"><h3>Sessão 6 — Complete</h3>${d.cp.map((v,i)=>`Lacuna ${i+1}: ${esc(v||'—')}`).join('<br>')}</div>
+ <div class="pr-sec"><h3>Código de entrega (para correção)</h3><div style="font-size:11px;margin-bottom:4px">Não altere este código. Ele permite a correção pelo(a) professor(a).</div><div class="codebox">${encode(d)}</div></div>`;
+}
+$('#btn-print').onclick=()=>{$('#dlg-fim').close();setTimeout(()=>window.print(),250);};
+
+window.addEventListener('beforeprint',()=>{if(!$('#print-area').innerHTML)montarImpressao(coletar());});
+carregar();
+let st=0;try{st=+(localStorage.getItem(KEY+'_step')||0)}catch(e){}
+ir(st||0);
+</script>
+</body></html>
