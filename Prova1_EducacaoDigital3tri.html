@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avaliação de HTML básico, GitHub e VS Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --paper:#F5F7FB; --surface:#FFFFFF; --ink:#1C2541; --muted:#56617D; --line:#D3DAE7;
+  --accent:#2B59C3; --accent-ink:#FFFFFF; --chosen:#E8EEFC; --code-bg:#EDF1F9; --code-ink:#22306B;
+  --warn:#A8401B; --ok:#1F7A4D;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0F1626; --surface:#172036; --ink:#E5EAF4; --muted:#9BA6C0; --line:#2A3553;
+    --accent:#86A8F7; --accent-ink:#0E1630; --chosen:#22305A; --code-bg:#1F2A47; --code-ink:#C9D6FF;
+    --warn:#F2916B; --ok:#6FD3A0;
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:1.0625rem;line-height:1.55}
+.wrap{max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 8rem}
+code,pre{font-family:"IBM Plex Mono",ui-monospace,Consolas,"Courier New",monospace}
+code{background:var(--code-bg);color:var(--code-ink);padding:.05em .35em;border-radius:4px;font-size:.92em;word-break:break-word}
+
+/* Cabeçalho: o título vem "embrulhado" na própria tag */
+.hero .tag{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;color:var(--muted);font-size:1rem;margin:0}
+.hero h1{font-size:clamp(2.1rem,7vw,3.25rem);line-height:1.05;margin:.2rem 0 .2rem 1.25rem;letter-spacing:-.01em}
+.hero .tag.close{margin-bottom:1.5rem}
+.intro{color:var(--muted);max-width:38rem;margin-bottom:1.5rem}
+.intro p{margin:.4rem 0}
+
+fieldset.ident{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:1rem 1.25rem 1.25rem;margin:0;display:grid;grid-template-columns:2fr 1fr;gap:1rem}
+fieldset.ident legend{font-weight:700;padding:0 .4rem}
+.field label{display:block;font-weight:700;font-size:.95rem;margin-bottom:.3rem}
+.field input{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:.55rem .7rem}
+.field input:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+@media (max-width:560px){fieldset.ident{grid-template-columns:1fr}}
+
+.tela[hidden]{display:none}
+.q{padding:1.25rem 1.25rem 1.5rem;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.nav{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1.25rem}
+.nav button{min-width:2.5rem;padding:.35rem .5rem;font-weight:700;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+.nav button.feita{background:var(--chosen);color:var(--ink);border-color:var(--chosen)}
+.nav button.atual{border-color:var(--accent);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.nav button.ident{min-width:auto;padding:.35rem .7rem}
+.rev{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.25rem 1.5rem}
+.rev h2{margin:0 0 .5rem;font-size:1.35rem}
+.rev ol{padding-left:1.4rem;margin:.75rem 0}
+.rev li{margin:.3rem 0}
+.rev li a{color:var(--accent)}
+.rev .vazia{color:var(--warn);font-weight:700}
+.acoes{display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap}
+.qhead{display:flex;align-items:baseline;gap:.75rem;margin-bottom:.35rem}
+.qnum{font-weight:700;font-size:1.35rem;min-width:2ch;color:var(--accent)}
+.topic{font-size:.85rem;color:var(--muted)}
+.stem{margin:.2rem 0 .8rem;font-weight:700}
+pre.code{background:var(--code-bg);color:var(--code-ink);padding:.85rem 1rem;border-radius:8px;overflow-x:auto;font-size:.9rem;line-height:1.5;margin:0 0 .9rem}
+.opts{display:flex;flex-direction:column;gap:.45rem}
+.opt{display:grid;grid-template-columns:auto auto 1fr;gap:.6rem;align-items:start;padding:.6rem .75rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin:.3rem 0 0;accent-color:var(--accent);width:1.05rem;height:1.05rem}
+.opt input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt .letter{font-weight:700;min-width:1.5ch}
+.opt.sel{background:var(--chosen);border-color:var(--accent)}
+
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:.75rem 1.25rem calc(.75rem + env(safe-area-inset-bottom,0px))}
+.bar-in{max-width:46rem;margin:0 auto;display:flex;align-items:center;gap:.75rem}
+.bar button[hidden],.bar[hidden],.nav[hidden]{display:none}
+@media (max-width:480px){.prog .txt{font-size:.85rem}button{padding:.6rem .8rem}}
+.prog{flex:1}
+.prog .txt{font-size:.95rem;color:var(--muted)}
+.track{height:6px;background:var(--line);border-radius:3px;margin-top:.3rem;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .25s}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:8px;padding:.65rem 1.1rem;border:1px solid var(--accent)}
+button.primary{background:var(--accent);color:var(--accent-ink)}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);max-width:28rem;width:calc(100% - 2rem);padding:1.4rem 1.5rem}
+dialog::backdrop{background:rgba(10,15,30,.55)}
+dialog h2{margin:0 0 .5rem;font-size:1.25rem}
+dialog p{margin:.4rem 0}
+dialog .acts{display:flex;justify-content:flex-end;gap:.6rem;margin-top:1.1rem;flex-wrap:wrap}
+.warn{color:var(--warn)} .ok{color:var(--ok)}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <p class="tag">&lt;h1&gt;</p>
+    <h1>Avaliação de HTML básico, GitHub e VS Code</h1>
+    <p class="tag close">&lt;/h1&gt;</p>
+    <div class="intro">
+      <p>São 15 questões. Cada uma tem 5 alternativas e apenas uma correta.</p>
+      <p>As questões aparecem uma por vez. Use os números abaixo para voltar a qualquer uma delas. Suas respostas ficam salvas neste navegador.</p>
+      <p>Na tela de revisão, gere o PDF e anexe o arquivo na atividade do Classroom. Depois de gerar o PDF, a prova é encerrada e não pode mais ser alterada.</p>
+    </div>
+  </header>
+
+  <nav class="nav" id="nav" aria-label="Ir para a questão"></nav>
+
+  <section class="tela" id="tela0">
+  <fieldset class="ident">
+    <legend>Identificação</legend>
+    <div class="field">
+      <label for="nome">Nome completo</label>
+      <input id="nome" autocomplete="name" maxlength="60">
+    </div>
+    <div class="field">
+      <label for="turma">Turma</label>
+      <input id="turma" maxlength="20">
+    </div>
+  </fieldset>
+  </section>
+
+  <div id="questoes"></div>
+
+  <section class="rev" id="telaFim" hidden>
+    <h2>Prova finalizada</h2>
+    <p>O arquivo <strong id="fimArq"></strong> foi baixado. Suas respostas não aparecem mais nesta página nem no PDF: só o professor consegue lê-las.</p>
+    <p>Agora abra a atividade no Classroom, clique em Adicionar ou criar, escolha Arquivo, anexe esse PDF e clique em Entregar.</p>
+    <div class="acoes"><button class="ghost" id="btnDeNovo">Baixar o PDF de novo</button></div>
+  </section>
+
+  <section class="tela rev" id="telaRev" hidden>
+    <h2>Revisão</h2>
+    <p id="revTxt"></p>
+    <ol id="revLista"></ol>
+    <div class="acoes"><button class="primary" id="btnPdf">Gerar PDF</button></div>
+  </section>
+</main>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="prog">
+      <div class="txt" id="progTxt">0 de 15 respondidas</div>
+      <div class="track"><div class="fill" id="progFill"></div></div>
+    </div>
+    <button class="ghost" id="btnAnt">Anterior</button>
+    <button class="primary" id="btnProx">Próxima</button>
+  </div>
+</div>
+
+<dialog id="dlg"><h2 id="dlgT"></h2><div id="dlgB"></div><div class="acts" id="dlgA"></div></dialog>
+
+<script>
+const CFG = { titulo: "Avaliação de HTML básico, GitHub e VS Code", professor: "Prof. Alex" };
+const VERSION = "HTMLB1-v2";
+const STORE = "prova_" + VERSION;
+const BANK = [{"t": "Estrutura do documento", "e": "Qual alternativa apresenta a ordem correta em que as tags da estrutura básica são abertas em um documento HTML?", "o": ["`<html>`, `<!DOCTYPE html>`, `<head>`, `<body>`, `<title>`", "`<!DOCTYPE html>`, `<html>`, `<body>`, `<head>`, `<title>`", "`<!DOCTYPE html>`, `<head>`, `<html>`, `<title>`, `<body>`", "`<!DOCTYPE html>`, `<html>`, `<head>`, `<title>`, `<body>`", "`<html>`, `<head>`, `<body>`, `<title>`, `<!DOCTYPE html>`"]}, {"t": "Estrutura do documento", "e": "O código abaixo tem um erro de estrutura. Qual é ele?", "code": "<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n  <title>Minha Página</title>\n  <p>Olá!</p>\n</body>\n</html>", "o": ["Falta fechar a declaração com `</!DOCTYPE>`.", "A tag `<p>` não pode ser usada dentro de `<body>`.", "A tag `<head>` deveria vir depois de `<body>`.", "A tag `<html>` deveria ficar dentro de `<head>`.", "A tag `<title>` deveria estar dentro de `<head>`, e não dentro de `<body>`."]}, {"t": "Títulos (headings)", "e": "Um aluno está criando a página de um restaurante. Ela tem o nome do restaurante, uma seção chamada \"Cardápio\" e, dentro dela, uma subseção chamada \"Sobremesas\". Qual opção respeita a hierarquia dos títulos?", "o": ["Restaurante em `<h3>`, Cardápio em `<h1>` e Sobremesas em `<h2>`.", "Restaurante em `<h1>`, Cardápio em `<h1>` e Sobremesas em `<h1>`.", "Restaurante em `<h1>`, Cardápio em `<h2>` e Sobremesas em `<h3>`.", "Restaurante em `<h6>`, Cardápio em `<h5>` e Sobremesas em `<h4>`.", "Restaurante em `<title>`, Cardápio em `<h6>` e Sobremesas em `<h1>`."]}, {"t": "Links", "e": "Qual código cria corretamente um link com o texto \"Visite o site\" que leva ao endereço https://www.exemplo.com.br?", "o": ["`<a src=\"https://www.exemplo.com.br\">Visite o site</a>`", "`<link>https://www.exemplo.com.br</link>`", "`<a>https://www.exemplo.com.br</a href>`", "`<a url=\"https://www.exemplo.com.br\">Visite o site</a>`", "`<a href=\"https://www.exemplo.com.br\">Visite o site</a>`"]}, {"t": "Links", "e": "Para que um link abra o destino em uma nova aba do navegador, qual atributo deve ser acrescentado à tag `<a>`?", "o": ["`href=\"_new\"`", "`target=\"_blank\"`", "`open=\"tab\"`", "`target=\"_self\"`", "`new=\"true\"`"]}, {"t": "Imagens", "e": "Qual código insere corretamente a imagem gato.jpg com o texto alternativo \"Gato dormindo\"?", "o": ["`<img src=\"gato.jpg\" alt=\"Gato dormindo\"></img>`", "`<img alt=\"gato.jpg\" src=\"Gato dormindo\">`", "`<image src=\"gato.jpg\" alt=\"Gato dormindo\">`", "`<img src=\"gato.jpg\" alt=\"Gato dormindo\">`", "`<img>gato.jpg</img>`"]}, {"t": "Listas", "e": "Os passos de uma receita de bolo precisam aparecer numerados, em sequência. Qual tag é a mais adequada para criar essa lista?", "o": ["`<ul>`, pois cria uma lista com marcadores (bolinhas).", "`<table>`, pois organiza os passos em colunas.", "`<ol>`, pois cria uma lista ordenada (numerada).", "`<li>`, usada sozinha, sem nenhuma tag de lista em volta.", "`<h1>`, repetida uma vez para cada passo."]}, {"t": "Tabelas", "e": "Em uma tabela HTML, as tags `<tr>`, `<th>` e `<td>` representam, respectivamente:", "o": ["a tabela, o título e o texto.", "uma coluna, uma linha e um cabeçalho.", "uma célula de dado, um cabeçalho e uma linha.", "uma linha, o título da tabela e uma coluna.", "uma linha, uma célula de cabeçalho e uma célula de dado."]}, {"t": "Tabelas", "e": "Observe o código da tabela abaixo. Qual afirmativa descreve corretamente o que será exibido?", "code": "<table>\n  <tr>\n    <th>Nome</th>\n    <th>Idade</th>\n  </tr>\n  <tr>\n    <td>Ana</td>\n    <td>17</td>\n  </tr>\n</table>", "o": ["Uma tabela com 4 linhas e 2 colunas.", "Uma tabela com 2 linhas e 4 colunas.", "Uma tabela com 2 linhas e 2 colunas, sendo a primeira linha de cabeçalho.", "Uma tabela com 1 linha e 4 colunas, pois há apenas uma tag `<table>`.", "Uma tabela com 2 linhas e 2 colunas, todas com células de dado, sem cabeçalho."]}, {"t": "Comentários", "e": "O que o navegador exibe ao abrir uma página com o trecho de código abaixo?", "code": "<h1>Loja do Bairro</h1>\n<!-- <p>Promoção encerrada</p> -->\n<p>Aberto de segunda a sábado</p>", "o": ["Apenas \"Loja do Bairro\".", "Os três textos, sendo o comentário exibido em cinza.", "Os três textos, com os símbolos `<!--` e `-->` visíveis na tela.", "\"Loja do Bairro\" e \"Aberto de segunda a sábado\".", "Nada, pois o comentário anula a página inteira."]}, {"t": "GitHub", "e": "O que é um repositório no GitHub?", "o": ["Um espaço na nuvem que guarda os arquivos de um projeto e o histórico de todas as alterações feitas neles, permitindo trabalhar em equipe.", "Um programa instalado no computador para escrever código, como o Bloco de Notas.", "Um navegador de internet usado para abrir páginas HTML.", "Uma cópia de segurança que apaga as versões antigas a cada novo envio de arquivo.", "Uma tag HTML usada para guardar dados dentro da página."]}, {"t": "GitHub", "e": "Você está na página do seu repositório no GitHub, pelo navegador, e quer enviar o arquivo index.html que está no seu computador. Qual é o caminho correto?", "o": ["Ir em Settings, depois em Pages, e clicar em Upload.", "Clicar em Add file, escolher Upload files, arrastar o arquivo e clicar em Commit changes.", "Clicar em Code e depois em Download ZIP.", "Abrir a aba Issues, criar uma New issue e anexar o arquivo nela.", "Abrir a aba Actions e clicar em New workflow."]}, {"t": "GitHub", "e": "Para publicar o site do repositório com o GitHub Pages, com o index.html na pasta principal do projeto, qual configuração deve ser feita em Settings > Pages?", "o": ["Em Source, escolher Deploy from a branch; em Branch, selecionar main e a pasta / (root) e clicar em Save.", "Em Branch, selecionar None e clicar em Save.", "Em Branch, selecionar main e a pasta /docs, mesmo com o index.html fora dela.", "Não há configuração: o site é publicado sozinho assim que o repositório é criado.", "Em Settings > General, mudar o nome do repositório para pages e clicar em Rename."]}, {"t": "GitHub", "e": "O site já foi publicado pelo GitHub Pages. Agora o professor pede que o link do site apareça na página inicial do repositório, na seção About. Como fazer isso?", "o": ["Renomear o repositório para link-do-site.", "Clicar na engrenagem ao lado de About, marcar a opção Use your GitHub Pages website e clicar em Save changes.", "Criar um arquivo chamado link.txt com o endereço do site.", "Em Settings > General, deixar o repositório como Private.", "Clicar em Code > Download ZIP e enviar o arquivo ao professor."]}, {"t": "VS Code", "e": "Qual é uma forma correta de trabalhar no VS Code com um repositório que está no GitHub?", "o": ["Salvar o arquivo com Ctrl+S, que envia as alterações para o GitHub automaticamente, sem login.", "Instalar a extensão Live Server, que publica os arquivos no GitHub sozinha.", "Digitar o endereço do repositório na barra de pesquisa do Windows.", "Na aba Controle do Código-Fonte (Source Control), clonar o repositório (Clone Repository > Clone from GitHub), entrar com a conta do GitHub e, depois de editar, usar Commit e Sync para enviar as alterações.", "Não é possível: o VS Code não se conecta ao GitHub, só o navegador."]}];
+const XK = "ceep-html-basico-2026", SALT = "hb1#2026";
+const LETRAS = "ABCDE";
+
+/* ---------- estado ---------- */
+function novoEstado(){ return { nome:"", turma:"", seed: Math.floor(Math.random()*2147483647), ans: BANK.map(()=>-1) }; }
+function carregar(){
+  try{
+    const s = JSON.parse(localStorage.getItem(STORE));
+    if(s && Array.isArray(s.ans) && s.ans.length === BANK.length && typeof s.seed === "number") return s;
+  }catch(e){}
+  return novoEstado();
+}
+let st = carregar();
+function salvar(){ try{ localStorage.setItem(STORE, JSON.stringify(st)); }catch(e){} }
+
+/* ---------- embaralhamento das alternativas (por aluno) ---------- */
+function rng(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function ordem(seed){
+  const R = rng(seed);
+  return BANK.map(q=>{ const a=q.o.map((_,i)=>i); for(let i=a.length-1;i>0;i--){ const j=Math.floor(R()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; });
+}
+const ORDEM = ordem(st.seed);
+
+/* ---------- render ---------- */
+function rico(el, txt){
+  txt.split("`").forEach((p,i)=>{
+    if(i%2){ const c=document.createElement("code"); c.textContent=p; el.appendChild(c); }
+    else el.appendChild(document.createTextNode(p));
+  });
+}
+function render(){
+  const box = document.getElementById("questoes");
+  BANK.forEach((q,qi)=>{
+    const sec = document.createElement("section"); sec.className="tela q"; sec.id="q"+(qi+1); sec.hidden=true;
+    sec.setAttribute("aria-labelledby","st"+qi);
+    const head = document.createElement("div"); head.className="qhead";
+    head.innerHTML = '<span class="qnum">'+(qi+1)+'</span><span class="topic"></span>';
+    head.querySelector(".topic").textContent = q.t;
+    const stem = document.createElement("p"); stem.className="stem"; stem.id="st"+qi; rico(stem, q.e);
+    sec.append(head, stem);
+    if(q.code){ const pre=document.createElement("pre"); pre.className="code"; pre.textContent=q.code; sec.appendChild(pre); }
+    const opts = document.createElement("div"); opts.className="opts"; opts.setAttribute("role","radiogroup"); opts.setAttribute("aria-labelledby","st"+qi);
+    ORDEM[qi].forEach((orig,pos)=>{
+      const lab = document.createElement("label"); lab.className="opt";
+      const inp = document.createElement("input"); inp.type="radio"; inp.name="q"+qi; inp.value=orig;
+      if(st.ans[qi]===orig){ inp.checked=true; lab.classList.add("sel"); }
+      inp.addEventListener("change",()=>{
+        st.ans[qi]=orig; salvar();
+        opts.querySelectorAll(".opt").forEach(o=>o.classList.remove("sel")); lab.classList.add("sel");
+        progresso(); montarNav();
+      });
+      const let_ = document.createElement("span"); let_.className="letter"; let_.textContent=LETRAS[pos]+")";
+      const tx = document.createElement("span"); rico(tx, q.o[orig]);
+      lab.append(inp, let_, tx); opts.appendChild(lab);
+    });
+    sec.appendChild(opts); box.appendChild(sec);
+  });
+  const nome=document.getElementById("nome"), turma=document.getElementById("turma");
+  nome.value=st.nome; turma.value=st.turma;
+  nome.addEventListener("input",()=>{ st.nome=nome.value; salvar(); });
+  turma.addEventListener("input",()=>{ st.turma=turma.value; salvar(); });
+  progresso();
+  mostrar(typeof st.tela==="number" ? st.tela : 0);
+}
+/* ---------- navegação: uma tela por vez ---------- */
+const ULT = BANK.length + 1; // 0 = identificação, 1..15 = questões, 16 = revisão
+function telaEl(i){ return i===0 ? document.getElementById("tela0") : i===ULT ? document.getElementById("telaRev") : document.getElementById("q"+i); }
+function mostrar(i){
+  i=Math.max(0,Math.min(ULT,i));
+  for(let k=0;k<=ULT;k++) telaEl(k).hidden = k!==i;
+  st.tela=i; salvar();
+  document.getElementById("btnAnt").disabled = i===0;
+  const prox=document.getElementById("btnProx");
+  prox.hidden = i===ULT;
+  prox.textContent = i===0 ? "Começar" : i===BANK.length ? "Revisar" : "Próxima";
+  if(i===ULT) revisao();
+  montarNav();
+  window.scrollTo({top:0});
+  const foco = i===0 ? null : telaEl(i).querySelector("h2, .stem");
+  if(foco){ foco.setAttribute("tabindex","-1"); foco.focus({preventScroll:true}); }
+}
+function montarNav(){
+  const nav=document.getElementById("nav"); nav.innerHTML="";
+  const mk=(txt,i,cls,label)=>{ const b=document.createElement("button"); b.textContent=txt; b.className=cls||"";
+    if(st.tela===i){ b.classList.add("atual"); b.setAttribute("aria-current","step"); }
+    b.setAttribute("aria-label",label); b.onclick=()=>mostrar(i); nav.appendChild(b); };
+  mk("Identificação",0,"ident","Identificação");
+  BANK.forEach((_,qi)=>mk(String(qi+1),qi+1,st.ans[qi]>=0?"feita":"","Questão "+(qi+1)+(st.ans[qi]>=0?", respondida":", sem resposta")));
+  mk("Revisão",ULT,"ident","Revisão e envio");
+}
+function revisao(){
+  const n=respondidas();
+  document.getElementById("revTxt").textContent = "Você respondeu "+n+" de "+BANK.length+" questões. Confira abaixo e, se estiver tudo certo, gere o PDF.";
+  const ol=document.getElementById("revLista"); ol.innerHTML="";
+  BANK.forEach((q,qi)=>{
+    const li=document.createElement("li"); const a=document.createElement("a"); a.href="#"; a.textContent=q.t;
+    a.onclick=e=>{ e.preventDefault(); mostrar(qi+1); };
+    const r=document.createElement("span");
+    if(st.ans[qi]<0){ r.className="vazia"; r.textContent=": sem resposta"; }
+    else r.textContent=": respondida";
+    li.append(a,r); ol.appendChild(li);
+  });
+}
+function respondidas(){ return st.ans.filter(a=>a>=0).length; }
+function progresso(){
+  const n=respondidas();
+  document.getElementById("progTxt").textContent = n+" de "+BANK.length+" respondidas";
+  document.getElementById("progFill").style.width = (100*n/BANK.length)+"%";
+}
+
+/* ---------- diálogo ---------- */
+function dialogo(titulo, corpoHTML, botoes){
+  const d=document.getElementById("dlg");
+  document.getElementById("dlgT").textContent=titulo;
+  document.getElementById("dlgB").innerHTML=corpoHTML;
+  const a=document.getElementById("dlgA"); a.innerHTML="";
+  botoes.forEach(b=>{ const el=document.createElement("button"); el.className=b.primary?"primary":"ghost"; el.textContent=b.txt; el.onclick=()=>{ d.close(); if(b.fn) b.fn(); }; a.appendChild(el); });
+  d.showModal();
+}
+function esc(s){ return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+/* ---------- código de verificação ---------- */
+function fnv(s){ let h=0x811c9dc5; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return h.toString(16).toUpperCase().padStart(8,"0"); }
+function codificar(payload){
+  const b=new TextEncoder().encode(payload); let h="";
+  for(let i=0;i<b.length;i++) h+=((b[i]^XK.charCodeAt(i%XK.length)).toString(16).padStart(2,"0"));
+  h=h.toUpperCase();
+  return "PROVA-HTMLB1:"+h+":"+fnv(SALT+payload)+":FIM";
+}
+function limpa(s){ return s.replace(/\|/g,"/").replace(/\s+/g," ").trim(); }
+
+/* ---------- PDF ---------- */
+function pdfTxt(s){ return s.replace(/`/g,"").replace(/→/g,"->").replace(/[—–]/g,"-").replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/…/g,"..."); }
+function iniciarPDF(){
+  const nome=limpa(st.nome), turma=limpa(st.turma);
+  if(nome.length<5 || nome.split(" ").length<2){
+    dialogo("Falta o nome completo","<p>Escreva seu nome e sobrenome no campo Identificação, no topo da página.</p>",[{txt:"Ir para o nome",primary:true,fn:()=>{ mostrar(0); document.getElementById("nome").focus(); }}]); return;
+  }
+  if(!turma){
+    dialogo("Falta a turma","<p>Informe sua turma no campo Identificação, no topo da página.</p>",[{txt:"Ir para a turma",primary:true,fn:()=>{ mostrar(0); document.getElementById("turma").focus(); }}]); return;
+  }
+  const brancas = st.ans.map((a,i)=>a<0?i+1:null).filter(Boolean);
+  if(brancas.length){
+    dialogo("Há questões em branco",
+      '<p class="warn">Questões sem resposta: '+brancas.join(", ")+'.</p><p>Questões em branco contam como erro. Depois de gerar o PDF, a prova é encerrada e não pode mais ser alterada.</p>',
+      [{txt:"Gerar mesmo assim",fn:()=>gerarPDF(nome,turma)},{txt:"Voltar e responder",primary:true,fn:()=>mostrar(brancas[0])}]);
+    return;
+  }
+  dialogo("Finalizar a prova?","<p>Depois de gerar o PDF, a prova é encerrada e suas respostas não podem mais ser alteradas.</p>",
+    [{txt:"Voltar",fn:null},{txt:"Gerar PDF e finalizar",primary:true,fn:()=>gerarPDF(nome,turma)}]);
+}
+function gerarPDF(nome,turma){
+  if(!window.jspdf){ dialogo("Sem conexão","<p>O gerador de PDF não carregou. Verifique a internet e recarregue a página. Suas respostas continuam salvas.</p>",[{txt:"Entendi",primary:true}]); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:"mm", format:"a4" });
+  const W=210, M=18, LW=W-2*M; let y=20;
+  const agora=new Date();
+  const dataTxt=agora.toLocaleDateString("pt-BR")+" às "+agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  function cabe(h){ if(y+h>272){ doc.addPage(); y=20; } }
+
+  doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.text(pdfTxt(CFG.titulo),M,y); y+=8;
+  doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
+  doc.text("Aluno(a): "+nome,M,y); y+=5.5;
+  doc.text("Turma: "+turma,M,y); y+=5.5;
+  doc.text("Gerado em: "+dataTxt+"     Respondidas: "+respondidas()+" de "+BANK.length,M,y); y+=4;
+  doc.setDrawColor(180); doc.line(M,y,W-M,y); y+=7;
+
+  doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(40);
+  const aviso=doc.splitTextToSize("As respostas estão registradas de forma codificada no código de verificação abaixo e só podem ser lidas pelo professor.",LW);
+  doc.text(aviso,M,y); y+=aviso.length*5+3;
+  doc.setFontSize(10);
+  BANK.forEach((q,i)=>{
+    const col=i%5, lin=Math.floor(i/5), x=M+col*(LW/5), yy=y+lin*7;
+    doc.setFont("helvetica","bold"); doc.text("Q"+(i+1),x,yy);
+    doc.setFont("helvetica","normal"); doc.text(st.ans[i]<0?"em branco":"respondida",x+9,yy);
+  });
+  y+=Math.ceil(BANK.length/5)*7+2;
+
+  const payload=[VERSION,turma,nome,st.ans.map(a=>a<0?"x":String(a)).join(""),agora.getTime().toString(36),st.seed.toString(36)].join("|");
+  const cod=codificar(payload);
+  const linhas=[]; for(let i=0;i<cod.length;i+=78) linhas.push(cod.slice(i,i+78));
+  cabe(14+linhas.length*3.4);
+  y+=2; doc.setDrawColor(180); doc.line(M,y,W-M,y); y+=5;
+  doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(90);
+  doc.text("Código de verificação para correção. Não edite este arquivo.",M,y); y+=4;
+  doc.setFont("courier","normal"); doc.setFontSize(7.5); doc.setTextColor(40);
+  linhas.forEach(l=>{ doc.text(l,M,y); y+=3.4; });
+
+  const tot=doc.getNumberOfPages();
+  for(let p=1;p<=tot;p++){ doc.setPage(p); doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(120);
+    doc.text(nome+"  |  "+turma,M,288); doc.text("Página "+p+" de "+tot,W-M,288,{align:"right"}); }
+
+  const arq="Prova_HTML_"+nome.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"")+".pdf";
+  doc.save(arq);
+  st.finalizada=true; st.arquivo=arq; salvar();
+  encerrar();
+}
+function encerrar(){
+  document.querySelectorAll(".tela").forEach(t=>t.hidden=true);
+  document.getElementById("nav").hidden=true;
+  document.querySelector(".bar").hidden=true;
+  document.getElementById("questoes").remove();
+  const f=document.getElementById("telaFim"); f.hidden=false;
+  document.getElementById("fimArq").textContent=st.arquivo||"o PDF";
+  window.scrollTo({top:0});
+}
+
+document.getElementById("btnPdf").addEventListener("click",iniciarPDF);
+document.getElementById("btnDeNovo").addEventListener("click",()=>gerarPDF(limpa(st.nome),limpa(st.turma)));
+document.getElementById("btnAnt").addEventListener("click",()=>mostrar(st.tela-1));
+document.getElementById("btnProx").addEventListener("click",()=>{
+  if(st.tela===0 && (limpa(st.nome).split(" ").length<2 || !limpa(st.turma))){
+    dialogo("Identifique-se primeiro","<p>Preencha seu nome completo e sua turma antes de começar.</p>",[{txt:"Entendi",primary:true}]); return;
+  }
+  mostrar(st.tela+1);
+});
+render();
+if(st.finalizada) encerrar();
+</script>
+</body>
+</html>
