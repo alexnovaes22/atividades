@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123b5d">
+<title>Atividade – Operações e Tecnologia na Logística</title>
+<style>
+:root{--navy:#123b5d;--blue:#176b9a;--teal:#168477;--ink:#203040;--muted:#637487;--bg:#f3f7fa;--line:#dbe4eb;--gold:#f0b44d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:linear-gradient(120deg,#123b5d,#176b9a);color:#fff;padding:28px 18px 24px}
+.hero{max-width:980px;margin:auto}.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;font-weight:800;opacity:.8}
+h1{font-size:clamp(1.65rem,5vw,2.5rem);line-height:1.15;margin:.4rem 0}.sub{max-width:720px;color:#e1eef6;margin:0}
+main{max-width:980px;margin:22px auto;padding:0 14px 50px}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:clamp(16px,3vw,24px);margin:16px 0;box-shadow:0 5px 18px #173c5510}
+h2{font-size:1.35rem;color:var(--navy);margin:0 0 8px}h3{font-size:1.05rem;margin:0 0 10px;color:var(--navy)}
+.note{color:var(--muted);margin-top:0}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-weight:700;font-size:.9rem;margin-bottom:4px}
+input[type=text],textarea,select{width:100%;border:1px solid #bdcbd6;border-radius:9px;padding:11px 12px;font:inherit;background:#fff;color:var(--ink);min-height:44px}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:3px solid #75bce0;outline-offset:2px}
+.question{padding:16px 0;border-top:1px solid var(--line)}.question:first-of-type{border-top:0}.qtitle{font-weight:750;margin-bottom:10px}
+.options{display:grid;gap:8px}.option{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer}.option:has(input:checked){border-color:var(--blue);background:#edf7fc}.option input{margin-top:5px;accent-color:var(--blue);flex:0 0 auto}
+.illustration{display:flex;align-items:center;gap:12px;background:#f2f7fa;border-radius:12px;padding:10px 14px;margin:10px 0 13px;color:#31536b;font-size:.9rem}.illustration svg{width:76px;height:62px;flex:none}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.btn{border:0;border-radius:10px;padding:12px 17px;font:700 .96rem system-ui;cursor:pointer;background:var(--blue);color:#fff;min-height:46px}.btn.secondary{background:#e7eff5;color:var(--navy)}.btn.green{background:var(--teal)}.status{font-size:.9rem;color:var(--teal);font-weight:650;min-height:1.4em}
+.memory-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.memory-card{min-height:105px;border:1px solid #cbd8e2;border-radius:12px;background:#edf4f8;color:var(--navy);font-weight:750;cursor:pointer;padding:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}.memory-card .pic{font-size:2rem;line-height:1.25}.memory-card .word{font-size:.85rem}.memory-card.revealed,.memory-card.matched{background:#e1f3ee;border-color:#64b7a6}.memory-card.matched{cursor:default}
+.hangman-box{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.hangman-drawing{width:120px;height:140px;background:#f2f7fa;border-radius:12px;padding:8px}.hangman-drawing svg{width:100%;height:100%}.word-slots{font-size:1.5rem;letter-spacing:.28em;font-weight:800;color:var(--navy);overflow-wrap:anywhere}.letters{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}.letters button{min-width:38px;min-height:40px;border:1px solid #c7d4df;border-radius:8px;background:#fff;color:var(--navy);font-weight:750}.letters button:disabled{opacity:.35}.small{font-size:.88rem;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px}
+@media(max-width:620px){.fields{grid-template-columns:1fr}.memory-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.memory-card{min-height:92px}.actions .btn{flex:1 1 100%}}
+@media print{body{background:#fff;font-size:11pt}header{background:#fff!important;color:#111;padding:0 0 12px;border-bottom:2px solid #123b5d}.sub{color:#333}.panel{box-shadow:none;border:0;border-radius:0;padding:10px 0;margin:8px 0;break-inside:avoid}main{max-width:none;margin:0;padding:0}.actions,.memory-game-controls,.letters,.no-print,footer{display:none!important}.question{break-inside:avoid}.illustration{background:#f5f5f5!important;print-color-adjust:exact}.memory-card{min-height:55px}.memory-grid{grid-template-columns:repeat(5,1fr)}input[type=text],textarea{border:0;border-bottom:1px solid #777;border-radius:0;padding:3px}.answer-line{min-height:28px;border-bottom:1px solid #aaa}.print-only{display:block!important}h2{break-after:avoid}}
+.print-only{display:none}
+</style>
+</head>
+<body>
+<header><div class="hero"><div class="eyebrow">Técnicas e Métodos Aplicados à Logística</div><h1>Atividade: Operações e Tecnologia na Logística</h1><p class="sub">Operadores logísticos, integração e terceirização; sistemas de informação e tecnologias aplicadas às operações.</p></div></header>
+<main>
+<section class="panel">
+<h2>Identificação do estudante</h2><p class="note">Preencha seus dados. Use “Salvar respostas” para guardar o progresso neste dispositivo e continuar depois.</p>
+<div class="fields"><div class="field"><label for="nome">Nome completo</label><input id="nome" type="text" autocomplete="name" placeholder="Digite seu nome"></div><div class="field"><label for="turma">Turma</label><input id="turma" type="text" placeholder="Turma / semestre"></div></div>
+<div class="actions no-print"><button class="btn secondary" onclick="saveProgress()">Salvar respostas</button><button class="btn secondary" onclick="loadProgress()">Recuperar respostas salvas</button><span id="saveStatus" class="status" aria-live="polite"></span></div>
+</section>
+
+<section class="panel" id="objetivas"><h2>Parte 1 – Questões objetivas</h2><p class="note">Assinale apenas uma alternativa correta em cada questão.</p>
+<div class="question"><div class="qtitle">1. Uma empresa contrata um parceiro para executar recebimento, armazenagem, separação, embalagem e transporte de forma coordenada. Esse parceiro atua principalmente como:</div>
+<div class="illustration"><svg viewBox="0 0 100 75" role="img" aria-label="Armazém e caminhão"><path d="M5 28L48 7l43 21v40H5z" fill="#d7e8f2" stroke="#176b9a" stroke-width="3"/><path d="M16 36h26v32H16zM53 36h27v18H53z" fill="#fff" stroke="#176b9a" stroke-width="2"/><path d="M52 56h33l8 9H52z" fill="#168477"/><circle cx="63" cy="67" r="5" fill="#123b5d"/><circle cx="84" cy="67" r="5" fill="#123b5d"/></svg><span>O operador coordena diferentes etapas do fluxo logístico, e não apenas uma tarefa isolada.</span></div>
+<div class="options"><label class="option"><input type="radio" name="q1" value="a"> a) Prestador isolado de transporte (2PL).</label><label class="option"><input type="radio" name="q1" value="b"> b) Operador logístico com serviços integrados.</label><label class="option"><input type="radio" name="q1" value="c"> c) Fornecedor exclusivo de matéria-prima.</label><label class="option"><input type="radio" name="q1" value="d"> d) Sistema de gestão financeira (ERP).</label></div></div>
+<div class="question"><div class="qtitle">2. Uma organização deseja controlar diretamente uma etapa anterior à sua produção, como o fornecimento de insumos. Essa decisão caracteriza integração:</div>
+<div class="illustration"><svg viewBox="0 0 100 75" role="img" aria-label="Fábrica e fornecedores"><path d="M8 63V34l22 12V34l22 12V22h38v41z" fill="#d7e8f2" stroke="#176b9a" stroke-width="3"/><path d="M62 22V8h12v14" fill="#fff" stroke="#176b9a" stroke-width="2"/><path d="M16 53h9v10h-9zm24 0h9v10h-9zm28 0h9v10h-9z" fill="#168477"/></svg><span>Integração vertical para trás: aproxima a empresa de fornecedores e insumos.</span></div>
+<div class="options"><label class="option"><input type="radio" name="q2" value="a"> a) Horizontal.</label><label class="option"><input type="radio" name="q2" value="b"> b) Vertical para frente.</label><label class="option"><input type="radio" name="q2" value="c"> c) Vertical para trás.</label><label class="option"><input type="radio" name="q2" value="d"> d) Distribuída sem integração.</label></div></div>
+<div class="question"><div class="qtitle">3. Qual alternativa expressa corretamente a diferença central entre 3PL e 4PL?</div>
+<div class="illustration"><svg viewBox="0 0 100 75" role="img" aria-label="Rede logística integrada"><rect x="7" y="27" width="25" height="22" rx="4" fill="#d7e8f2" stroke="#176b9a" stroke-width="2"/><rect x="68" y="8" width="25" height="22" rx="4" fill="#d7e8f2" stroke="#176b9a" stroke-width="2"/><rect x="68" y="48" width="25" height="22" rx="4" fill="#d7e8f2" stroke="#176b9a" stroke-width="2"/><path d="M32 38h18V19h18M50 38v21h18" fill="none" stroke="#168477" stroke-width="3"/><circle cx="50" cy="38" r="5" fill="#f0b44d"/></svg><span>3PL concentra-se na execução integrada; 4PL coordena e orquestra a rede de prestadores.</span></div>
+<div class="options"><label class="option"><input type="radio" name="q3" value="a"> a) 3PL executa operações; 4PL integra e governa vários prestadores e sistemas.</label><label class="option"><input type="radio" name="q3" value="b"> b) 3PL é sempre o dono da mercadoria; 4PL é o fabricante.</label><label class="option"><input type="radio" name="q3" value="c"> c) 3PL cuida apenas de finanças; 4PL apenas de estoque.</label><label class="option"><input type="radio" name="q3" value="d"> d) Não existe diferença funcional entre os dois modelos.</label></div></div>
+<div class="question"><div class="qtitle">4. Em um centro de distribuição, qual sistema direciona tarefas de recebimento, endereçamento, armazenagem, picking e expedição?</div>
+<div class="illustration"><svg viewBox="0 0 100 75" role="img" aria-label="Prateleiras de armazém"><path d="M12 8v59M88 8v59M12 24h76M12 45h76M12 66h76" stroke="#176b9a" stroke-width="4"/><g fill="#168477"><rect x="19" y="12" width="17" height="10" rx="2"/><rect x="42" y="12" width="17" height="10" rx="2"/><rect x="66" y="12" width="15" height="10" rx="2"/><rect x="19" y="29" width="17" height="13" rx="2"/><rect x="42" y="29" width="17" height="13" rx="2"/><rect x="66" y="29" width="15" height="13" rx="2"/></g></svg><span>O WMS administra endereços, estoque e tarefas dentro do armazém.</span></div>
+<div class="options"><label class="option"><input type="radio" name="q4" value="a"> a) TMS.</label><label class="option"><input type="radio" name="q4" value="b"> b) RFID.</label><label class="option"><input type="radio" name="q4" value="c"> c) ERP.</label><label class="option"><input type="radio" name="q4" value="d"> d) WMS.</label></div></div>
+<div class="question"><div class="qtitle">5. Uma transportadora precisa consolidar cargas, planejar rotas, acompanhar entregas e auditar fretes. Qual solução é mais diretamente indicada?</div>
+<div class="illustration"><svg viewBox="0 0 100 75" role="img" aria-label="Caminhão em rota"><path d="M8 54h84" stroke="#168477" stroke-width="3" stroke-dasharray="5 4"/><path d="M13 29h47v25H13zM60 37h17l11 12v5H60z" fill="#d7e8f2" stroke="#176b9a" stroke-width="3"/><circle cx="29" cy="57" r="7" fill="#123b5d"/><circle cx="74" cy="57" r="7" fill="#123b5d"/><path d="M70 12l7 7-7 7M77 19H48" fill="none" stroke="#f0a72e" stroke-width="3"/></svg><span>O TMS apoia o planejamento, a execução e o controle do transporte.</span></div>
+<div class="options"><label class="option"><input type="radio" name="q5" value="a"> a) WMS.</label><label class="option"><input type="radio" name="q5" value="b"> b) TMS.</label><label class="option"><input type="radio" name="q5" value="c"> c) Voice picking.</label><label class="option"><input type="radio" name="q5" value="d"> d) Código de barras.</label></div></div>
+</section>
+
+<section class="panel"><h2>Parte 2 – Verdadeiro ou falso</h2><p class="note">Marque V para verdadeiro e F para falso.</p>
+<div id="vf"></div></section>
+<section class="panel"><h2>Parte 3 – Complete as frases</h2><p class="note">Digite o termo ou expressão que completa corretamente cada frase. Não é necessário usar letras maiúsculas.</p>
+<div id="complete"></div></section>
+
+<section class="panel"><h2>Parte 4 – Jogo da memória logística</h2><p class="note">Encontre os 10 pares: cada palavra corresponde à imagem que representa seu conceito. Toque em duas cartas por vez.</p>
+<div class="memory-game-controls actions no-print"><button class="btn secondary" onclick="startMemory()">Embaralhar / reiniciar jogo</button><span id="memoryStatus" class="status" aria-live="polite">0 de 10 pares encontrados.</span></div>
+<div id="memory" class="memory-grid" aria-label="Cartas do jogo da memória"></div>
+</section>
+
+<section class="panel"><h2>Parte 5 – Jogo da forca</h2><p class="note">Descubra as cinco palavras relacionadas aos conteúdos estudados. Escolha as letras; você tem até seis erros por palavra.</p>
+<div class="hangman-box"><div class="hangman-drawing"><svg viewBox="0 0 110 130" aria-label="Desenho da forca"><path d="M8 120h92M25 120V10h55v14" stroke="#7891a4" stroke-width="5" fill="none" stroke-linecap="round"/><g id="gallowsMan" stroke="#d16b54" stroke-width="4" fill="none" stroke-linecap="round"><circle cx="80" cy="39" r="12" style="display:none"/><path d="M80 51v29M80 59l-17 15M80 59l17 15M80 80l-15 23M80 80l15 23"/></g></svg></div><div><div class="small" id="hangmanRound">Palavra 1 de 5</div><div id="hangmanWord" class="word-slots" aria-live="polite"></div><div id="hangmanHint" class="small"></div><div id="hangmanMessage" class="status"></div></div></div>
+<div id="letters" class="letters no-print"></div><div class="actions no-print"><button class="btn secondary" onclick="nextHangman()">Próxima palavra</button><button class="btn secondary" onclick="resetHangman()">Reiniciar forca</button></div>
+</section>
+
+<section class="panel"><h2>Finalização e entrega</h2><p class="note">Antes de concluir, confira seus dados e respostas. O PDF será preparado com suas respostas para salvar ou imprimir.</p>
+<div class="actions no-print"><button class="btn green" onclick="saveProgress()">Salvar respostas</button><button class="btn" onclick="makePDF()">Concluir e gerar PDF</button><button class="btn secondary" onclick="clearAll()">Limpar atividade</button></div>
+<p id="finalStatus" class="status" aria-live="polite"></p>
+<p class="small">Compatibilidade: página responsiva, sem instalação e sem bibliotecas externas. O salvamento automático/manual usa o armazenamento local do navegador neste aparelho. Para continuar em outro aparelho, gere o PDF ou mantenha uma cópia dos dados; o progresso local não é sincronizado entre dispositivos.</p>
+</section>
+<footer>Atividade de estudo – Técnicas e Métodos Aplicados à Logística</footer>
+</main>
+<script>
+const vfQuestions=[
+"Um operador logístico pode reunir recebimento, armazenagem, separação, transporte e devoluções em um serviço integrado.",
+"A integração vertical horizontaliza a atuação entre empresas que ocupam o mesmo nível da cadeia.",
+"O 4PL pode coordenar diversos operadores e transportadores, consolidando informações e indicadores.",
+"O TMS é o sistema especializado em controlar endereços, lotes e tarefas internas do armazém.",
+"A leitura por RFID depende obrigatoriamente de contato visual direto entre etiqueta e scanner."
+];
+const completeQuestions=[
+{q:"O modelo que executa um pacote integrado de operações logísticas é denominado ____.",a:["3pl"]},
+{q:"O sistema que integra compras, vendas, estoque, produção e finanças é o ____.",a:["erp"]},
+{q:"A tecnologia de identificação por radiofrequência é conhecida pela sigla ____.",a:["rfid"]},
+{q:"A atividade de separar os produtos de um pedido no armazém é chamada de ____.",a:["picking"]},
+{q:"A decisão entre realizar uma atividade internamente ou contratar terceiros é conhecida como make or ____.",a:["buy"]}
+];
+const vfAnswers=[true,false,true,false,false];
+function buildQuestions(){
+document.getElementById('vf').innerHTML=vfQuestions.map((q,i)=>`<div class="question"><div class="qtitle">${i+1}. ${q}</div><div class="options"><label class="option"><input type="radio" name="vf${i}" value="V"> Verdadeiro</label><label class="option"><input type="radio" name="vf${i}" value="F"> Falso</label></div></div>`).join('');
+document.getElementById('complete').innerHTML=completeQuestions.map((q,i)=>`<div class="question"><div class="qtitle">${i+1}. ${q.q}</div><input type="text" id="c${i}" autocomplete="off" placeholder="Digite sua resposta"></div>`).join('');
+}
+const pairs=[["ERP","🧩"],["WMS","🏬"],["TMS","🚚"],["RFID","📡"],["PICKING","📦"],["3PL","🤝"],["4PL","🕸️"],["ESTOQUE","🗃️"],["TRANSPORTE","🚛"],["VOICE PICKING","🎧"]];
+let memDeck=[],memChosen=[],memLock=false,memFound=0;
+function startMemory(){memDeck=[];pairs.forEach((p,i)=>{memDeck.push({id:i,type:"word",label:p[0],pic:"🔤"},{id:i,type:"pic",label:p[1],pic:p[1]})});memDeck.sort(()=>Math.random()-.5);memChosen=[];memLock=false;memFound=0;renderMemory();document.getElementById('memoryStatus').textContent='0 de 10 pares encontrados.'}
+function renderMemory(){document.getElementById('memory').innerHTML=memDeck.map((c,i)=>`<button class="memory-card" data-index="${i}" onclick="flipMemory(${i})" aria-label="Carta ${i+1}"><span class="pic">❔</span></button>`).join('')}
+function flipMemory(i){if(memLock||memDeck[i].matched||memChosen.includes(i))return;const c=memDeck[i];memChosen.push(i);showMemoryCard(i);if(memChosen.length===2){const [a,b]=memChosen;if(memDeck[a].id===memDeck[b].id){memDeck[a].matched=memDeck[b].matched=true;memFound++;memChosen=[];document.getElementById('memoryStatus').textContent=`${memFound} de 10 pares encontrados.`;if(memFound===10)document.getElementById('memoryStatus').textContent='Parabéns! Você encontrou todos os pares.'}else{memLock=true;setTimeout(()=>{hideMemoryCard(a);hideMemoryCard(b);memChosen=[];memLock=false},850)}}}
+function showMemoryCard(i){const el=document.querySelectorAll('.memory-card')[i],c=memDeck[i];el.classList.add('revealed');el.innerHTML=c.type==='word'?`<span class="word">${c.label}</span>`:`<span class="pic">${c.pic}</span>`}
+function hideMemoryCard(i){const el=document.querySelectorAll('.memory-card')[i];if(!memDeck[i].matched){el.classList.remove('revealed');el.innerHTML='<span class="pic">❔</span>'}}
+let hangWords=[{w:"INTEGRACAO",h:"Coordenação entre processos, dados e organizações."},{w:"ARMAZEM",h:"Local onde produtos são recebidos e armazenados."},{w:"RASTREABILIDADE",h:"Capacidade de acompanhar o histórico e a localização de um item."},{w:"FRETE",h:"Valor cobrado pelo serviço de transporte."},{w:"ESTOQUE",h:"Conjunto de produtos ou materiais mantidos para uso ou venda."}];
+let hIndex=0,hGuessed=[],hErrors=0,hDone=false;
+function norm(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase()}
+function drawHangman(){const w=hangWords[hIndex].w;document.getElementById('hangmanRound').textContent=`Palavra ${hIndex+1} de 5`;document.getElementById('hangmanHint').textContent='Dica: '+hangWords[hIndex].h;document.getElementById('hangmanWord').textContent=w.split('').map(ch=>ch===' '? ' / ' : hGuessed.includes(ch)?ch:'_').join(' ');document.getElementById('hangmanMessage').textContent=hDone?(hErrors>=6?'Tentativas esgotadas. Palavra: '+w:'Palavra descoberta!'):`Erros: ${hErrors} de 6`;document.getElementById('gallowsMan').querySelector('circle').style.display=hErrors>=1?'block':'none';const parts=document.querySelectorAll('#gallowsMan path');parts.forEach((p,i)=>p.style.display=hErrors>=i+2?'block':'none');document.getElementById('letters').innerHTML='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>`<button onclick="guessLetter('${l}')" ${hGuessed.includes(l)||hDone?'disabled':''}>${l}</button>`).join('')}
+function guessLetter(l){if(hDone||hGuessed.includes(l))return;hGuessed.push(l);if(!hangWords[hIndex].w.includes(l))hErrors++;if(hErrors>=6||hangWords[hIndex].w.split('').every(ch=>ch===' '||hGuessed.includes(ch)))hDone=true;drawHangman()}
+function nextHangman(){if(hIndex<hangWords.length-1){hIndex++;hGuessed=[];hErrors=0;hDone=false;drawHangman()}else document.getElementById('hangmanMessage').textContent='Você chegou à última palavra. Reinicie para jogar novamente.'}
+function resetHangman(){hIndex=0;hGuessed=[];hErrors=0;hDone=false;drawHangman()}
+function collect(){const data={nome:document.getElementById('nome').value,turma:document.getElementById('turma').value,radios:{},complete:[],memory:memFound,hangman:{index:hIndex,guessed:hGuessed,errors:hErrors}};document.querySelectorAll('input[type=radio]:checked').forEach(x=>data.radios[x.name]=x.value);completeQuestions.forEach((_,i)=>data.complete.push(document.getElementById('c'+i).value));return data}
+function saveProgress(){try{localStorage.setItem('atividadeLogisticaV1',JSON.stringify(collect()));document.getElementById('saveStatus').textContent='Respostas salvas neste dispositivo.';document.getElementById('finalStatus').textContent='Progresso salvo.'}catch(e){document.getElementById('saveStatus').textContent='Não foi possível salvar neste navegador. Gere o PDF para guardar suas respostas.'}}
+function loadProgress(){try{const d=JSON.parse(localStorage.getItem('atividadeLogisticaV1')||'null');if(!d){document.getElementById('saveStatus').textContent='Não há respostas salvas neste navegador.';return}document.getElementById('nome').value=d.nome||'';document.getElementById('turma').value=d.turma||'';Object.entries(d.radios||{}).forEach(([n,v])=>{const el=document.querySelector(`input[name="${n}"][value="${v}"]`);if(el)el.checked=true});(d.complete||[]).forEach((v,i)=>{if(document.getElementById('c'+i))document.getElementById('c'+i).value=v});document.getElementById('saveStatus').textContent='Respostas recuperadas.'}catch(e){document.getElementById('saveStatus').textContent='Não foi possível recuperar o salvamento.'}}
+function clearAll(){if(!confirm('Deseja apagar todas as respostas salvas e preenchidas?'))return;document.querySelectorAll('input[type=text]').forEach(x=>x.value='');document.querySelectorAll('input[type=radio]').forEach(x=>x.checked=false);localStorage.removeItem('atividadeLogisticaV1');document.getElementById('saveStatus').textContent='Atividade limpa.'}
+function makePDF(){saveProgress();const d=collect();let out=document.getElementById('pdfAnswers');if(out)out.remove();out=document.createElement('section');out.id='pdfAnswers';out.className='panel';let html=`<h2>Respostas do estudante</h2><p><b>Nome:</b> ${escapeHTML(d.nome||'Não informado')} &nbsp; <b>Turma:</b> ${escapeHTML(d.turma||'Não informada')}</p><h3>Questões objetivas</h3>`;for(let i=1;i<=5;i++)html+=`<p>${i}. ${d.radios['q'+i]?d.radios['q'+i].toUpperCase():'Não respondida'}</p>`;html+='<h3>Verdadeiro ou falso</h3>';for(let i=0;i<5;i++)html+=`<p>${i+1}. ${d.radios['vf'+i]||'Não respondida'}</p>`;html+='<h3>Complete</h3>';d.complete.forEach((v,i)=>html+=`<p>${i+1}. ${escapeHTML(v||'Não respondida')}</p>`);html+=`<h3>Jogos</h3><p>Memória: ${memFound} de 10 pares encontrados.</p><p>Forca: palavra ${hIndex+1} de 5; letras tentadas: ${hGuessed.join(', ')||'nenhuma'}.</p><p><i>Registro das respostas selecionadas e digitadas nesta atividade.</i></p>`;out.innerHTML=html;document.querySelector('main').appendChild(out);document.getElementById('finalStatus').textContent='Preparando impressão/PDF. Escolha “Salvar como PDF” nas opções de impressão.';setTimeout(()=>window.print(),250)}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+buildQuestions();startMemory();drawHangman();
+</script>
+</body></html>
