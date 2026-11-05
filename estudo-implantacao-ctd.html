@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Checklist de Estudo de Implantação – CTD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1d2a3a;
+    --muted: #5b6878;
+    --line: #c9d1db;
+    --paper: #ffffff;
+    --page: #eef1f5;
+    --blue: #3f6ea5;
+    --blue-soft: #e8eff8;
+    --ok: #2f7d4f;
+    --adj: #b5541b;
+    --nsa: #6b7684;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 16px/1.5 "Source Sans 3", "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  .sheet {
+    max-width: 860px;
+    margin: 24px auto;
+    background: var(--paper);
+    padding: 36px 40px 40px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(29,42,58,.12);
+  }
+  header.org {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--ink);
+  }
+  header.org p {
+    margin: 0;
+    font-family: Merriweather, Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.45;
+  }
+  .seal {
+    flex: none;
+    border: 3px double var(--ink);
+    padding: 6px 10px;
+    font-size: .62rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+  }
+  h1 { margin: 26px 0 4px; color: var(--blue); font-size: 1.3rem; line-height: 1.3; }
+  .lead { margin: 0 0 16px; color: var(--muted); max-width: 70ch; }
+
+  .legend {
+    display: grid;
+    gap: 6px;
+    background: var(--blue-soft);
+    border-left: 5px solid var(--blue);
+    padding: 12px 16px;
+    font-size: .92rem;
+  }
+  .legend div { display: flex; gap: 10px; align-items: baseline; }
+  .tag { flex: none; min-width: 64px; text-align: center; color: #fff; font-weight: 700; font-size: .8rem; border-radius: 999px; padding: 1px 8px; }
+  .tag.ok { background: var(--ok); } .tag.adj { background: var(--adj); } .tag.nsa { background: var(--nsa); }
+
+  h2 { margin: 32px 0 10px; color: var(--blue); font-size: 1.05rem; }
+
+  .fields { display: grid; gap: 10px 18px; grid-template-columns: 1fr 1fr; }
+  .fields label, .field { display: flex; flex-direction: column; font-size: .85rem; color: var(--muted); font-weight: 600; }
+  .fields .wide { grid-column: 1 / -1; }
+  input[type=text], input[type=date], input[type=number], textarea {
+    font: inherit;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin-top: 3px;
+    background: #fff;
+    width: 100%;
+  }
+  .inline-radios { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+  input:focus-visible, textarea:focus-visible, .choice input:focus-visible + span, button:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 2px;
+  }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; vertical-align: middle; text-align: left; }
+  th { background: #f4f6f9; font-size: .85rem; color: var(--muted); font-weight: 600; }
+  th.c, td.c { width: 250px; text-align: center; }
+  .choices { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .choice { position: relative; cursor: pointer; }
+  .choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .choice span {
+    display: inline-block;
+    min-width: 66px;
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--muted);
+    user-select: none;
+    text-align: center;
+  }
+  .choice input:checked + span { color: #fff; border-color: transparent; }
+  .choice.ok input:checked + span { background: var(--ok); }
+  .choice.adj input:checked + span { background: var(--adj); }
+  .choice.nsa input:checked + span { background: var(--nsa); }
+  .choice.neutral input:checked + span { background: var(--blue); }
+  tr.is-ok td:first-child { box-shadow: inset 4px 0 0 var(--ok); }
+  tr.is-adj td:first-child { box-shadow: inset 4px 0 0 var(--adj); }
+  tr.is-nsa td:first-child { box-shadow: inset 4px 0 0 var(--nsa); }
+  tr.is-nsa td:first-child { color: var(--muted); }
+
+  .sec-note { margin-top: 8px; }
+  .sec-note textarea { min-height: 60px; }
+
+  .checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .checklist label { display: flex; gap: 10px; align-items: center; cursor: pointer; padding: 4px 0; }
+  .checklist input { width: 20px; height: 20px; accent-color: var(--blue); flex: none; }
+  .conclusion label { padding: 8px 12px; border: 1px solid var(--line); border-radius: 4px; }
+  .conclusion input:checked ~ span { font-weight: 700; }
+
+  .summary { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 4px; margin-bottom: 16px; }
+  .summary div { padding: 10px 12px; border-right: 1px solid var(--line); }
+  .summary div:last-child { border-right: none; }
+  .summary strong { display: block; font-size: 1.5rem; line-height: 1.1; }
+  .summary small { color: var(--muted); font-size: .82rem; }
+  .summary .s-ok strong { color: var(--ok); } .summary .s-adj strong { color: var(--adj); } .summary .s-nsa strong { color: var(--nsa); }
+
+  textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+
+  .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 48px; }
+  .signatures div { border-top: 1px solid var(--ink); padding-top: 6px; font-size: .85rem; color: var(--muted); text-align: center; }
+
+  .actions {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  button { font: inherit; font-weight: 700; border-radius: 4px; padding: 11px 20px; cursor: pointer; border: 1px solid var(--ink); }
+  .primary { background: var(--ink); color: #fff; }
+  .secondary { background: #fff; color: var(--ink); }
+  .hint { font-size: .85rem; color: var(--muted); margin: 10px 0 0; flex-basis: 100%; }
+
+  @media (max-width: 640px) {
+    .sheet { margin: 0; border-radius: 0; padding: 22px 16px 28px; box-shadow: none; }
+    .fields, .signatures { grid-template-columns: 1fr; }
+    .summary { grid-template-columns: 1fr 1fr; }
+    .summary div:nth-child(2) { border-right: none; }
+    .summary div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    th.c, td.c { width: 96px; }
+    .choices { flex-direction: column; }
+    .choice span { min-width: 72px; }
+  }
+
+  @media print {
+    @page { size: A4; margin: 14mm 12mm; }
+    body { background: #fff; font-size: 10.5pt; }
+    .sheet { margin: 0; padding: 0; box-shadow: none; max-width: none; }
+    .actions { display: none !important; }
+    h2 { break-after: avoid; margin-top: 16px; }
+    tr, .summary, .signatures, .checklist { break-inside: avoid; }
+    input[type=text], input[type=date], input[type=number] { border: none; border-bottom: 1px solid #999; border-radius: 0; padding: 2px 0; }
+    textarea { border: 1px solid #999; padding: 6px; min-height: 0; }
+    .sec-note textarea:placeholder-shown { display: none; }
+    .choice input:not(:checked) + span { opacity: .3; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<main class="sheet" id="form">
+
+  <header class="org">
+    <p>Congregação Cristã no Brasil<br>Obra da Piedade – Seminovos Brasil<br>CTD – Centro de Tratamento e Distribuição</p>
+    <div class="seal" aria-hidden="true">CONGREGAÇÃO CRISTÃ<br>NO<br>BRASIL</div>
+  </header>
+
+  <h1>Checklist de Estudo de Implantação – CTD</h1>
+  <p class="lead">Avaliação das condições estruturais e operacionais de um local proposto para receber um Centro de Tratamento e Distribuição.</p>
+
+  <div class="legend" role="note">
+    <div><span class="tag ok">OK</span><span>Atende ao necessário para a implantação.</span></div>
+    <div><span class="tag adj">Ajustar</span><span>Requer adequação antes ou durante a implantação.</span></div>
+    <div><span class="tag nsa">NSA</span><span>Não se aplica a este estudo – o item depende do CTD já estar implantado ou ainda não foi concretizado.</span></div>
+  </div>
+
+  <section>
+    <h2>1. Identificação do estudo</h2>
+    <div class="fields">
+      <label>Regional / CTD de referência<input type="text" name="regional"></label>
+      <label>Município(s) de abrangência<input type="text" name="municipios"></label>
+      <label class="wide">Local / endereço proposto<input type="text" name="endereco"></label>
+      <label>Data do estudo<input type="date" name="data"></label>
+      <div class="field">Situação do imóvel
+        <div class="inline-radios">
+          <label class="choice neutral"><input type="radio" name="imovel" value="Próprio"><span>Próprio</span></label>
+          <label class="choice neutral"><input type="radio" name="imovel" value="Cedido"><span>Cedido</span></label>
+          <label class="choice neutral"><input type="radio" name="imovel" value="Alugado"><span>Alugado</span></label>
+          <label class="choice neutral"><input type="radio" name="imovel" value="A definir"><span>A definir</span></label>
+        </div>
+      </div>
+      <label class="wide">Responsáveis pelo estudo<input type="text" name="resp_estudo"></label>
+      <label class="wide">Responsável local / administração<input type="text" name="resp_local"></label>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Dados de dimensionamento</h2>
+    <div class="fields">
+      <label>Área total disponível (m²)<input type="number" min="0" name="area"></label>
+      <label>Pé-direito aproximado (m)<input type="number" min="0" step="0.1" name="pe_direito"></label>
+      <label>Nº de EAs a serem atendidos<input type="number" min="0" name="n_eas"></label>
+      <label>Nº de colaboradores previstos<input type="number" min="0" name="n_colab"></label>
+      <label class="wide">Dias e horários de funcionamento previstos<input type="text" name="horarios"></label>
+      <label class="wide">Volume estimado de doações (ex.: sacos ou caixas por mês)<input type="text" name="volume"></label>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Imóvel e infraestrutura física</h2>
+    <div class="table-wrap"><table><thead><tr><th>Item avaliado</th><th class="c">Situação</th></tr></thead><tbody>
+      <tr data-item="Área compatível com o volume previsto de recebimento, tratamento e armazenagem"></tr>
+      <tr data-item="Pé-direito adequado para aramados e prateleiras"></tr>
+      <tr data-item="Piso nivelado, firme e resistente a carga"></tr>
+      <tr data-item="Cobertura sem goteiras, infiltrações ou umidade nas paredes"></tr>
+      <tr data-item="Ventilação e iluminação natural/artificial adequadas"></tr>
+      <tr data-item="Instalação elétrica adequada (tomadas para computador, impressora e equipamentos)"></tr>
+      <tr data-item="Sanitário e ponto de água disponíveis"></tr>
+      <tr data-item="Acessibilidade para pessoas com mobilidade reduzida"></tr>
+    </tbody></table></div>
+    <div class="sec-note"><textarea name="obs_s3" placeholder="Observações desta seção (opcional)" aria-label="Observações da seção 3"></textarea></div>
+  </section>
+
+  <section>
+    <h2>4. Localização e acesso</h2>
+    <div class="table-wrap"><table><thead><tr><th>Item avaliado</th><th class="c">Situação</th></tr></thead><tbody>
+      <tr data-item="Acesso para veículos de carga e descarga"></tr>
+      <tr data-item="Área de embarque/desembarque protegida da chuva"></tr>
+      <tr data-item="Localização estratégica em relação aos EAs atendidos"></tr>
+      <tr data-item="Facilidade de acesso para os colaboradores (transporte, estacionamento)"></tr>
+      <tr data-item="Vizinhança e entorno compatíveis com a atividade"></tr>
+    </tbody></table></div>
+    <div class="sec-note"><textarea name="obs_s4" placeholder="Observações desta seção (opcional)" aria-label="Observações da seção 4"></textarea></div>
+  </section>
+
+  <section>
+    <h2>5. Layout e fluxo operacional previsto</h2>
+    <div class="table-wrap"><table><thead><tr><th>Item avaliado</th><th class="c">Situação</th></tr></thead><tbody>
+      <tr data-item="Espaço para área de recebimento e triagem das doações"></tr>
+      <tr data-item="Espaço para área de tratamento (higienização, conferência, pequenos reparos)"></tr>
+      <tr data-item="Espaço para armazenagem em nichos por categoria/tamanho"></tr>
+      <tr data-item="Espaço para separação e expedição aos EAs"></tr>
+      <tr data-item="Espaço para área administrativa (mesa, computador, impressora)"></tr>
+      <tr data-item="Local definido para itens de descarte"></tr>
+      <tr data-item="Fluxo em sentido único possível (recebimento → tratamento → armazenagem → expedição)"></tr>
+      <tr data-item="Croqui ou planta do layout proposto elaborado"></tr>
+    </tbody></table></div>
+    <div class="sec-note"><textarea name="obs_s5" placeholder="Observações desta seção (opcional)" aria-label="Observações da seção 5"></textarea></div>
+  </section>
+
+  <section>
+    <h2>6. Segurança e conservação</h2>
+    <div class="table-wrap"><table><thead><tr><th>Item avaliado</th><th class="c">Situação</th></tr></thead><tbody>
+      <tr data-item="Extintores e sinalização de emergência"></tr>
+      <tr data-item="Rota de saída desobstruída"></tr>
+      <tr data-item="Regularidade junto ao Corpo de Bombeiros (AVCB/CLCB), quando exigida"></tr>
+      <tr data-item="Segurança patrimonial (fechaduras, grades, controle de chaves)"></tr>
+      <tr data-item="Condições contra pragas, poeira e umidade nos itens armazenados"></tr>
+    </tbody></table></div>
+    <div class="sec-note"><textarea name="obs_s6" placeholder="Observações desta seção (opcional)" aria-label="Observações da seção 6"></textarea></div>
+  </section>
+
+  <section>
+    <h2>7. Equipamentos e mobiliário</h2>
+    <div class="table-wrap"><table><thead><tr><th>Item avaliado</th><th class="c">Situação</th></tr></thead><tbody>
+      <tr data-item="Aramados e prateleiras em quantidade suficiente"></tr>
+      <tr data-item="Mesas de triagem e cadeiras"></tr>
+      <tr data-item="Computador e impressora (incluindo impressora de etiquetas)"></tr>
+      <tr data-item="Carrinhos ou equipamentos para movimentação de volumes"></tr>
+      <tr data-item="Placas de identificação dos nichos e do setor – Padrão SIGA"></tr>
+      <tr data-item="Materiais de consumo (sacos, caixas, etiquetas)"></tr>
+    </tbody></table></div>
+    <div class="sec-note"><textarea name="obs_s7" placeholder="Observações desta seção (opcional)" aria-label="Observações da seção 7"></textarea></div>
+  </section>
+
+  <section>
+    <h2>8. Sistema SIGA e conectividade</h2>
+    <div class="table-wrap"><table><thead><tr><th>Item avaliado</th><th class="c">Situação</th></tr></thead><tbody>
+      <tr data-item="Internet disponível e estável no local"></tr>
+      <tr data-item="Cadastro do CTD e dos usuários no Sistema SIGA"></tr>
+      <tr data-item="Padrão de etiquetas e códigos definido"></tr>
+      <tr data-item="Equipe capacitada no SIGA (recebimento, entradas e saídas)"></tr>
+    </tbody></table></div>
+    <div class="sec-note"><textarea name="obs_s8" placeholder="Observações desta seção (opcional)" aria-label="Observações da seção 8"></textarea></div>
+  </section>
+
+  <section>
+    <h2>9. Equipe e organização</h2>
+    <div class="table-wrap"><table><thead><tr><th>Item avaliado</th><th class="c">Situação</th></tr></thead><tbody>
+      <tr data-item="Responsável pelo CTD definido"></tr>
+      <tr data-item="Número de colaboradores suficiente para a demanda prevista"></tr>
+      <tr data-item="Escala de dias e horários definida"></tr>
+      <tr data-item="Treinamento inicial da equipe planejado"></tr>
+      <tr data-item="Identificação da equipe (avental e crachá) providenciada"></tr>
+      <tr data-item="Canal de comunicação com os EAs e as irmãs da Piedade (grupo de WhatsApp)"></tr>
+      <tr data-item="Fluxo de solicitação e envio de doações dos EAs para o CTD definido"></tr>
+    </tbody></table></div>
+    <div class="sec-note"><textarea name="obs_s9" placeholder="Observações desta seção (opcional)" aria-label="Observações da seção 9"></textarea></div>
+  </section>
+
+  <section>
+    <h2>10. Registro fotográfico e documentos</h2>
+    <ul class="checklist">
+      <li><label><input type="checkbox" name="foto_fachada"><span>Fachada e acesso de veículos</span></label></li>
+      <li><label><input type="checkbox" name="foto_interna"><span>Área interna geral</span></label></li>
+      <li><label><input type="checkbox" name="foto_estrutura"><span>Piso, cobertura e instalações</span></label></li>
+      <li><label><input type="checkbox" name="foto_pontos"><span>Pontos de atenção encontrados</span></label></li>
+      <li><label><input type="checkbox" name="doc_croqui"><span>Croqui ou planta do espaço</span></label></li>
+      <li><label><input type="checkbox" name="doc_imovel"><span>Documentação do imóvel (cessão, contrato ou titularidade)</span></label></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>11. Parecer do estudo</h2>
+    <div class="summary" aria-live="polite">
+      <div class="s-ok"><strong id="cOk">0</strong><small>OK</small></div>
+      <div class="s-adj"><strong id="cAdj">0</strong><small>Ajustar</small></div>
+      <div class="s-nsa"><strong id="cNsa">0</strong><small>NSA</small></div>
+      <div><strong id="cPend">0</strong><small>Não avaliados</small></div>
+    </div>
+    <ul class="checklist conclusion">
+      <li><label><input type="radio" name="parecer" value="viavel"><span>Local viável para implantação</span></label></li>
+      <li><label><input type="radio" name="parecer" value="adequacoes"><span>Local viável mediante adequações</span></label></li>
+      <li><label><input type="radio" name="parecer" value="nao"><span>Local não recomendado no momento</span></label></li>
+    </ul>
+    <div class="fields" style="margin-top:14px">
+      <label class="wide">Adequações prioritárias<textarea name="prioridades" style="min-height:90px"></textarea></label>
+      <label>Prazo estimado para implantação<input type="text" name="prazo"></label>
+      <label>Próximo passo<input type="text" name="proximo"></label>
+    </div>
+  </section>
+
+  <section>
+    <h2>Observações gerais</h2>
+    <textarea name="observacoes" aria-label="Observações gerais"></textarea>
+  </section>
+
+  <div class="signatures">
+    <div>Responsável pelo estudo</div>
+    <div>Responsável local / administração</div>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="primary" id="btnPdf">Salvar em PDF</button>
+    <button type="button" class="secondary" id="btnClear">Limpar formulário</button>
+    <p class="hint">Na janela que abrir, escolha <strong>Salvar como PDF</strong> como destino. As respostas ficam guardadas neste navegador até você limpar o formulário.</p>
+  </div>
+</main>
+
+<script>
+(function () {
+  const KEY = 'estudo-implantacao-ctd-v1';
+  const form = document.getElementById('form');
+  let n = 0;
+
+  document.querySelectorAll('tr[data-item]').forEach(tr => {
+    const id = 'q' + (++n);
+    tr.innerHTML = `<td>${tr.dataset.item}</td><td class="c"><div class="choices">
+      <label class="choice ok"><input type="radio" name="${id}" value="OK"><span>OK</span></label>
+      <label class="choice adj"><input type="radio" name="${id}" value="Ajustar"><span>Ajustar</span></label>
+      <label class="choice nsa"><input type="radio" name="${id}" value="NSA"><span>NSA</span></label>
+    </div></td>`;
+  });
+
+  function refresh() {
+    let ok = 0, adj = 0, nsa = 0, pend = 0;
+    document.querySelectorAll('tr[data-item]').forEach(tr => {
+      const v = (tr.querySelector('input:checked') || {}).value;
+      tr.classList.toggle('is-ok', v === 'OK');
+      tr.classList.toggle('is-adj', v === 'Ajustar');
+      tr.classList.toggle('is-nsa', v === 'NSA');
+      if (v === 'OK') ok++; else if (v === 'Ajustar') adj++; else if (v === 'NSA') nsa++; else pend++;
+    });
+    cOk.textContent = ok; cAdj.textContent = adj; cNsa.textContent = nsa; cPend.textContent = pend;
+  }
+
+  function save() {
+    const data = {};
+    form.querySelectorAll('input, textarea').forEach(el => {
+      if (el.type === 'radio') { if (el.checked) data[el.name] = el.value; }
+      else if (el.type === 'checkbox') data[el.name] = el.checked;
+      else data[el.name] = el.value;
+    });
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  function load() {
+    let data = null;
+    try { data = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+    if (!data) return;
+    form.querySelectorAll('input, textarea').forEach(el => {
+      if (!(el.name in data)) return;
+      if (el.type === 'radio') el.checked = data[el.name] === el.value;
+      else if (el.type === 'checkbox') el.checked = !!data[el.name];
+      else el.value = data[el.name];
+    });
+  }
+
+  // Tocar novamente no botão marcado desmarca
+  form.addEventListener('click', e => {
+    const input = e.target;
+    if (!(input instanceof HTMLInputElement) || input.type !== 'radio' || !input.closest('.choice')) return;
+    if (input.dataset.was === '1') { input.checked = false; input.dataset.was = ''; }
+    else {
+      form.querySelectorAll(`input[name="${input.name}"]`).forEach(r => r.dataset.was = '');
+      input.dataset.was = '1';
+    }
+    refresh(); save();
+  });
+  form.addEventListener('input', () => { refresh(); save(); });
+  form.addEventListener('change', () => { refresh(); save(); });
+
+  document.getElementById('btnPdf').addEventListener('click', () => {
+    const local = form.querySelector('[name=endereco]').value.trim() || form.querySelector('[name=municipios]').value.trim();
+    const data = form.querySelector('[name=data]').value;
+    const original = document.title;
+    document.title = ['Estudo de Implantação CTD', local, data].filter(Boolean).join(' - ');
+    window.print();
+    setTimeout(() => { document.title = original; }, 1000);
+  });
+
+  document.getElementById('btnClear').addEventListener('click', () => {
+    if (!confirm('Apagar todas as respostas deste formulário?')) return;
+    form.querySelectorAll('input, textarea').forEach(el => {
+      if (el.type === 'radio' || el.type === 'checkbox') { el.checked = false; el.dataset.was = ''; }
+      else el.value = '';
+    });
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    refresh();
+  });
+
+  load();
+  form.querySelectorAll('input[type=radio]:checked').forEach(r => r.dataset.was = '1');
+  refresh();
+})();
+</script>
+</body>
+</html>
